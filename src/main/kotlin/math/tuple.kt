@@ -5,50 +5,65 @@ import kotlin.math.sqrt
 // By Sebastian Raaphorst, 2022.
 
 data class Tuple(val x: Double, val y: Double, val z: Double, val w: Double): CanBeList<Double> {
-    constructor(x: Number, y: Number, z: Number, w: Number): this(x.toDouble(), y.toDouble(), z.toDouble(), w.toDouble())
-
-//    init {
-//        assert(w == 0.0 || w == 1.0)
-//    }
+    constructor(x: Number, y: Number, z: Number, w: Number):
+            this(x.toDouble(), y.toDouble(), z.toDouble(), w.toDouble())
 
     val magnitude: Double by lazy {
-        sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w)
+        sqrt(x * x + y * y + z * z + w * w)
+    }
+    
+    val normalized: Tuple by lazy {
+        Tuple(x / magnitude, y / magnitude, z / magnitude, w / magnitude)
     }
 
     override fun toList(): List<Double> =
         listOf(x, y, z, w)
 
     fun isPoint(): Boolean = w == 1.0
+
     fun isVector(): Boolean = w == 0.0
 
+    fun dot(other: Tuple): Double =
+        x * other.x + y * other.y + z * other.z + w * other.w
+
+    fun cross(other: Tuple): Tuple {
+        assert(isVector())
+        assert(other.isVector())
+        return vector(
+            y * other.z - z * other.y,
+            z * other.x - x * other.z,
+            x * other.y - y * other.x
+        )
+    }
+
     operator fun plus(other: Tuple): Tuple =
-        Tuple(this.x + other.x, this.y + other.y, this.z + other.z, this.w + other.w)
+        Tuple(x + other.x, y + other.y, z + other.z, w + other.w)
 
     operator fun minus(other: Tuple): Tuple =
-        Tuple(this.x - other.x, this.y - other.y, this.z - other.z, this.w - other.w)
+        Tuple(x - other.x, y - other.y, z - other.z, w - other.w)
 
     // This can only work on vectors.
     operator fun unaryMinus(): Tuple =
-        Tuple(-this.x, -this.y, -this.z, -this.w)
+        Tuple(-x, -y, -z, -w)
 
     operator fun times(scalar: Double): Tuple =
-        Tuple(scalar * this.x, scalar * this.y, scalar * this.z, scalar * this.w)
+        Tuple(scalar * x, scalar * y, scalar * z, scalar * w)
 
     operator fun times(scalar: Number): Tuple =
         this * scalar.toDouble()
 
     operator fun div(scalar: Double): Tuple =
-        Tuple(this.x / scalar, this.y / scalar, this.z / scalar, this.w / scalar)
+        Tuple(x / scalar, y / scalar, z / scalar, w / scalar)
 
     operator fun div(scalar: Number): Tuple =
         this / scalar.toDouble()
 
     override fun equals(other: Any?): Boolean =
         other is Tuple
-                && almostEquals(this.x, other.x)
-                && almostEquals(this.y, other.y)
-                && almostEquals(this.z, other.z)
-                && this.w == other.w
+                && almostEquals(x, other.x)
+                && almostEquals(y, other.y)
+                && almostEquals(z, other.z)
+                && w == other.w
 
     override fun hashCode(): Int =
         31 * (31 * (31 * x.hashCode() + y.hashCode()) + z.hashCode()) + w.hashCode()
@@ -81,4 +96,4 @@ operator fun Double.times(tuple: Tuple): Tuple =
     Tuple(this * tuple.x, this * tuple.y, this * tuple.z, this * tuple.w)
 
 operator fun Number.times(tuple: Tuple): Tuple =
-    this.toDouble() * tuple
+    toDouble() * tuple
