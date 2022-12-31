@@ -1,0 +1,8 @@
+.gradle
+/.idea
+.DS_Store
+/build
+/gradle/
+/gradle/wrapper/
+/gradle/wrapper/*
+

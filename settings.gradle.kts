@@ -1,0 +1,3 @@
+
+rootProject.name = "raytracer-challenge"
+
