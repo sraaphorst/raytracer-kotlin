@@ -1,28 +1,8 @@
 package exec
 
-import math.Tuple
-
 // By Sebastian Raaphorst, 2022.
 
-data class Projectile(val position: Tuple, val velocity: Tuple) {
-    init {
-        assert(position.isPoint())
-        assert(velocity.isVector())
-    }
-}
-
-data class Environment(val gravity: Tuple, val wind: Tuple) {
-    init {
-        assert(gravity.isVector())
-        assert(wind.isVector())
-    }
-}
-
-fun tick(environment: Environment, projectile: Projectile): Projectile {
-    val position = projectile.position + projectile.velocity
-    val velocity = projectile.velocity + environment.gravity + environment.wind
-    return Projectile(position, velocity)
-}
+import math.Tuple
 
 fun main() {
     val projectile = Projectile(Tuple.point(0, 1, 0), Tuple.vector(1, 1, 0).normalized)
