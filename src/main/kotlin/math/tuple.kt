@@ -1,8 +1,8 @@
 package math
 
-import kotlin.math.sqrt
-
 // By Sebastian Raaphorst, 2022.
+
+import kotlin.math.sqrt
 
 data class Tuple(val x: Double, val y: Double, val z: Double, val w: Double): CanBeList<Double> {
     constructor(x: Number, y: Number, z: Number, w: Number):
@@ -58,12 +58,13 @@ data class Tuple(val x: Double, val y: Double, val z: Double, val w: Double): Ca
     operator fun div(scalar: Number): Tuple =
         this / scalar.toDouble()
 
-    override fun equals(other: Any?): Boolean =
-        other is Tuple
-                && almostEquals(x, other.x)
-                && almostEquals(y, other.y)
-                && almostEquals(z, other.z)
-                && w == other.w
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Tuple
+        return almostEquals(this, other)
+    }
 
     override fun hashCode(): Int =
         31 * (31 * (31 * x.hashCode() + y.hashCode()) + z.hashCode()) + w.hashCode()
