@@ -2,7 +2,9 @@ package math
 
 // By Sebastian Raaphorst, 2022.
 
-data class Color(val r: Double, val g: Double, val b: Double): CanBeList<Double> {
+import output.Show
+
+data class Color(val r: Double, val g: Double, val b: Double): CanBeList<Double>, Show {
     constructor(r: Number, g: Number, b: Number):
         this(r.toDouble(), g.toDouble(), b.toDouble())
 
@@ -23,6 +25,8 @@ data class Color(val r: Double, val g: Double, val b: Double): CanBeList<Double>
 
     operator fun times(scalar: Number): Color =
         this * scalar.toDouble()
+
+    override fun show(): String = toString()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

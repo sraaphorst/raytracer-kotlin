@@ -2,9 +2,10 @@ package math
 
 // By Sebastian Raaphorst, 2022.
 
+import output.Show
 import kotlin.math.sqrt
 
-data class Tuple(val x: Double, val y: Double, val z: Double, val w: Double): CanBeList<Double> {
+data class Tuple(val x: Double, val y: Double, val z: Double, val w: Double): CanBeList<Double>, Show {
     constructor(x: Number, y: Number, z: Number, w: Number):
             this(x.toDouble(), y.toDouble(), z.toDouble(), w.toDouble())
 
@@ -42,7 +43,6 @@ data class Tuple(val x: Double, val y: Double, val z: Double, val w: Double): Ca
     operator fun minus(other: Tuple): Tuple =
         Tuple(x - other.x, y - other.y, z - other.z, w - other.w)
 
-    // This can only work on vectors.
     operator fun unaryMinus(): Tuple =
         Tuple(-x, -y, -z, -w)
 
@@ -57,6 +57,8 @@ data class Tuple(val x: Double, val y: Double, val z: Double, val w: Double): Ca
 
     operator fun div(scalar: Number): Tuple =
         this / scalar.toDouble()
+
+    override fun show(): String = toString()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

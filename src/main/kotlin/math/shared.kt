@@ -2,7 +2,6 @@ package math
 
 // By Sebastian Raaphorst, 2022.
 
-import output.Canvas
 import kotlin.math.absoluteValue
 
 const val DEFAULT_PRECISION = 1e-5
