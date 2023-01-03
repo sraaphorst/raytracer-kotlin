@@ -29,12 +29,15 @@ fun main() {
         .map { it.position }
         .takeWhile { it.y >= 0 }
 
-    sequence.forEach {
-        val x = it.x.roundToInt()
-        val y = 550 - it.y.roundToInt()
-        (0..size).forEach { deltac -> (0..size).forEach { deltar ->
-            canvas.writePixel(x + deltac, y + deltar, color)
-        } }
+    with(canvas) {
+        sequence.forEach {
+            val x = it.x.roundToInt()
+            val y = 550 - it.y.roundToInt()
+            (0..size).forEach { deltaC -> (0..size).forEach { deltaR ->
+                writePixel(x + deltaC, y + deltaR, color)
+            } }
+        }
+
+        toPPMFile(File("cannonrender.ppm"))
     }
-    canvas.toPPMFile(File("cannonrender.ppm"))
 }

@@ -52,7 +52,7 @@ class TestCanvas {
         c.clear(Color(1, 0.8, 0.6))
         val expected = """
             P3
-            5 3
+            10 2
             255
             255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204
             153 255 204 153 255 204 153 255 204 153 255 204 153
@@ -60,5 +60,6 @@ class TestCanvas {
             153 255 204 153 255 204 153 255 204 153 255 204 153
             
         """.trimIndent()
+        assertEquals(expected, c.toPPM())
     }
 }

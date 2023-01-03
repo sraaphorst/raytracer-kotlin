@@ -3,14 +3,13 @@ package output
 // By Sebastian Raaphorst, 2022.
 
 import math.Color
-import math.almostEquals
 import math.times
 import java.io.File
 import kotlin.math.roundToInt
 
-data class Canvas(val width: Int,
-                  val height: Int,
-                  private val pixels: Array<Array<Color>> = Array(width) { Array(height) { Color.BLACK } }) {
+class Canvas(val width: Int,
+             val height: Int,
+             private val pixels: Array<Array<Color>> = Array(width) { Array(height) { Color.BLACK } }) {
 
     fun clear(color: Color) =
         (0 until width).forEach { x -> (0 until height).forEach { y -> writePixel(x, y, color) } }
@@ -27,7 +26,7 @@ data class Canvas(val width: Int,
         return pixels[x][y]
     }
 
-    private fun format_row(y: Int): String {
+    private fun formatRow(y: Int): String {
         var rowStr = ""
         var lineStr = ""
 
@@ -53,22 +52,8 @@ data class Canvas(val width: Int,
 
     fun toPPM(): String =
         ("P3\n$width $height\n255\n" + (0 until height)
-            .joinToString("\n", transform = ::format_row)) + '\n'
+            .joinToString("\n", transform = ::formatRow)) + '\n'
 
     fun toPPMFile(file: File) =
         file.writeText(toPPM())
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Canvas
-        if (width != other.width) return false
-        if (height != other.height) return false
-//        return pixels.contentDeepEquals(other.pixels))
-        return pixels.zip(other.pixels).all { (r1, r2) -> r1.zip(r2).all { (p1, p2) -> almostEquals(p1, p2) } }
-    }
-
-    override fun hashCode(): Int =
-        31 * (31 * width + height) + pixels.contentDeepHashCode()
 }
