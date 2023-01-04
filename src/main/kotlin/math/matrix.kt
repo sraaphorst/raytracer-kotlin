@@ -2,7 +2,11 @@ package math
 
 // By Sebastian Raaphorst, 2023.
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import output.Show
+import kotlin.math.cos
+import kotlin.math.sin
 
 data class Matrix(val values: List<List<Double>>, val m: Int = 4, val n: Int = 4): CanBeList<Double>, Show {
     init {
@@ -30,16 +34,16 @@ data class Matrix(val values: List<List<Double>>, val m: Int = 4, val n: Int = 4
     override fun toList(): List<Double> =
         values.flatten()
 
-    operator fun times(other: Matrix): Matrix {
-        if (n != other.m)
-            throw ArithmeticException("Cannot multiply a ($n,$m) matrix and a (${other.m},${other.n} matrix.")
-        val newValues = (0 until m).map { i ->
-            (0 until other.n).map { j ->
-                (0 until n).sumOf { k -> this[i, k] * other[k, j] }
-            }
-        }
-        return Matrix(newValues, m, other.n)
-    }
+    operator fun times(other: Matrix): Matrix =
+        multiplication(this, other)
+//        if (n != other.m)
+//            throw ArithmeticException("Cannot multiply a ($n,$m) matrix and a (${other.m},${other.n} matrix.")
+//        val newValues = (0 until m).map { i ->
+//            (0 until other.n).map { j ->
+//                (0 until n).sumOf { k -> this[i, k] * other[k, j] }
+//            }
+//        }
+//        return Matrix(newValues, m, other.n)
 
     operator fun times(t: Tuple): Tuple {
         if (n != 4 || m != 4)
@@ -49,6 +53,9 @@ data class Matrix(val values: List<List<Double>>, val m: Int = 4, val n: Int = 4
         }
         return Tuple(x, y, z, w)
     }
+
+    fun andThen(other: Matrix): Matrix =
+        other * this
 
     fun transpose(): Matrix =
         Matrix((0 until n).map { j ->
@@ -70,7 +77,7 @@ data class Matrix(val values: List<List<Double>>, val m: Int = 4, val n: Int = 4
 
     val determinant: Double by lazy {
         if (m != n)
-            throw ArithmeticException("Cannot calculate determinant of non-square matrix:\n${this.show()}")
+            throw ArithmeticException("Cannot calculate determinant of non-square matrix:\n${show()}")
         return@lazy when(m) {
             1 -> this[0,0]
             else -> (0 until m).sumOf { this[0,it] * cofactor(0, it ) }
@@ -78,14 +85,7 @@ data class Matrix(val values: List<List<Double>>, val m: Int = 4, val n: Int = 4
     }
 
     val inverse: Matrix by lazy {
-        if (almostEquals(0, determinant))
-            throw ArithmeticException("Matrix has determinant 0 and cannot be inverted:\n${this.show()}")
-        return@lazy Matrix(
-            (0 until m).map { x ->
-                (0 until n).map { y ->
-                    cofactor(y, x) / determinant
-                }
-            }, m, n)
+        calculateInverse(this)
     }
 
     override fun show(): String {
@@ -137,6 +137,70 @@ data class Matrix(val values: List<List<Double>>, val m: Int = 4, val n: Int = 4
 
         fun fromVar(m: Int, n: Int, vararg values: Number) =
             from(values.toList().chunked(n), m, n)
+
+        private fun calculateInverse(m: Matrix): Matrix = runBlocking(Dispatchers.Default) {
+            if (almostEquals(0, m.determinant))
+                throw ArithmeticException("Matrix has determinant 0 and cannot be inverted:\n${m.show()}")
+            return@runBlocking Matrix(
+                (0 until m.m).map { x ->
+                    (0 until m.n).pmap { y ->
+                        m.cofactor(y, x) / m.determinant
+                    }
+                }, m.m, m.n)
+        }
+
+        private fun multiplication(m1: Matrix, m2: Matrix): Matrix = runBlocking {
+            if (m1.n != m2.m)
+                throw ArithmeticException("Cannot multiply a ($m1.n,$m1.m) matrix and a (${m2.m},${m2.n} matrix.")
+            val newValues = (0 until m1.m).map { i ->
+                (0 until m2.n).pmap { j ->
+                    (0 until m1.n).sumOf { k -> m1[i, k] * m2[k, j] }
+                }
+            }
+            return@runBlocking Matrix(newValues, m1.m, m2.n)
+        }
+
+        fun translate(x: Number, y: Number, z: Number): Matrix =
+            Matrix(listOf(
+                listOf(1.0, 0.0, 0.0, x.toDouble()),
+                listOf(0.0, 1.0, 0.0, y.toDouble()),
+                listOf(0.0, 0.0, 1.0, z.toDouble()),
+                listOf(0.0, 0.0, 0.0, 1.0)))
+
+        fun scale(x: Number, y: Number, z: Number): Matrix =
+            Matrix(listOf(
+                listOf(x.toDouble(), 0.0, 0.0, 0.0),
+                listOf(0.0, y.toDouble(), 0.0, 0.0),
+                listOf(0.0, 0.0, z.toDouble(), 0.0),
+                listOf(0.0, 0.0, 0.0, 1.0)))
+
+        fun rotationX(rad: Number): Matrix =
+            Matrix(listOf(
+                listOf(1.0, 0.0, 0.0, 0.0),
+                listOf(0.0, cos(rad.toDouble()), -sin(rad.toDouble()), 0.0),
+                listOf(0.0, sin(rad.toDouble()), cos(rad.toDouble()), 0.0),
+                listOf(0.0, 0.0, 0.0, 1.0)))
+
+        fun rotationY(rad: Number): Matrix =
+            Matrix(listOf(
+                listOf(cos(rad.toDouble()), 0.0, sin(rad.toDouble()), 0.0),
+                listOf(0.0, 1.0, 0.0, 0.0),
+                listOf(-sin(rad.toDouble()), 0.0, cos(rad.toDouble()), 0.0),
+                listOf(0.0, 0.0, 0.0, 1.0)))
+
+        fun rotationZ(rad: Number): Matrix =
+            Matrix(listOf(
+                listOf(cos(rad.toDouble()), -sin(rad.toDouble()), 0.0, 0.0),
+                listOf(sin(rad.toDouble()), cos(rad.toDouble()), 0.0, 0.0),
+                listOf(0.0, 0.0, 1.0, 0.0),
+                listOf(0.0, 0.0, 0.0, 1.0)))
+
+        fun shear(xy: Number, xz: Number, yx: Number, yz: Number, zx: Number, zy: Number): Matrix =
+            Matrix(listOf(
+                listOf(1.0, xy.toDouble(), xz.toDouble(), 0.0),
+                listOf(yx.toDouble(), 1.0, yz.toDouble(), 0.0),
+                listOf(zx.toDouble(), zy.toDouble(), 1.0, 0.0),
+                listOf(0.0, 0.0, 0.0, 1.0)))
     }
 }
 

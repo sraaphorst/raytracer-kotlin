@@ -3,6 +3,7 @@ package math
 // By Sebastian Raaphorst, 2022.
 
 import org.junit.jupiter.api.Test
+import kotlin.math.PI
 import kotlin.math.absoluteValue
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -137,5 +138,20 @@ class SharedTest {
     fun `AssertNotAlmostEquals tuple tuple`() {
         val t2 = Tuple(0, 0, 0, DEFAULT_PRECISION * 2)
         assertNotAlmostEquals(ZERO_TUPLE, t2)
+    }
+
+    @Test
+    fun `Transformations between degrees and radians`() {
+        assertAlmostEquals(0, degreesToRadians(0))
+        assertAlmostEquals(PI / 2, degreesToRadians(90))
+        assertAlmostEquals(PI, degreesToRadians(180))
+        assertAlmostEquals(3 * PI / 2, degreesToRadians(270))
+        assertAlmostEquals(2 * PI, degreesToRadians(360))
+
+        assertAlmostEquals(0, radiansToDegrees(0.0))
+        assertAlmostEquals(90, radiansToDegrees(PI / 2))
+        assertAlmostEquals(180, radiansToDegrees(PI))
+        assertAlmostEquals(270, radiansToDegrees(3 * PI / 2))
+        assertAlmostEquals(360, radiansToDegrees(2 * PI))
     }
 }

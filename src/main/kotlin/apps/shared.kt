@@ -1,4 +1,4 @@
-package exec
+package apps
 
 // By Sebastian Raaphorst, 2022.
 
