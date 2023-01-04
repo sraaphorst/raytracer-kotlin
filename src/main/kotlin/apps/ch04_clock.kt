@@ -59,5 +59,5 @@ fun main() {
         canvas[newP.x, newP.y] = minuteColor
     }
 
-    canvas.toPPMFile(File("clock.ppm"))
+    canvas.toPPMFile(File("ch04_clock.ppm"))
 }

@@ -2,8 +2,6 @@ package math
 
 // By Sebastian Raaphorst, 2023.
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import output.Show
 import kotlin.math.cos
 import kotlin.math.sin
@@ -34,16 +32,16 @@ data class Matrix(val values: List<List<Double>>, val m: Int = 4, val n: Int = 4
     override fun toList(): List<Double> =
         values.flatten()
 
-    operator fun times(other: Matrix): Matrix =
-        multiplication(this, other)
-//        if (n != other.m)
-//            throw ArithmeticException("Cannot multiply a ($n,$m) matrix and a (${other.m},${other.n} matrix.")
-//        val newValues = (0 until m).map { i ->
-//            (0 until other.n).map { j ->
-//                (0 until n).sumOf { k -> this[i, k] * other[k, j] }
-//            }
-//        }
-//        return Matrix(newValues, m, other.n)
+    operator fun times(other: Matrix): Matrix {
+        if (n != other.m)
+            throw ArithmeticException("Cannot multiply a ($m,$n) matrix and a (${other.m},${other.n} matrix.")
+        val newValues = (0 until m).map { i ->
+            (0 until other.n).map { j ->
+                (0 until n).sumOf { k -> this[i, k] * other[k, j] }
+            }
+        }
+        return Matrix(newValues, m, other.n)
+    }
 
     operator fun times(t: Tuple): Tuple {
         if (n != 4 || m != 4)
@@ -85,7 +83,14 @@ data class Matrix(val values: List<List<Double>>, val m: Int = 4, val n: Int = 4
     }
 
     val inverse: Matrix by lazy {
-        calculateInverse(this)
+        if (almostEquals(0, determinant))
+            throw ArithmeticException("Matrix has determinant 0 and cannot be inverted:\n${show()}")
+        return@lazy Matrix(
+            (0 until m).map { x ->
+                (0 until n).map { y ->
+                    cofactor(y, x) / determinant
+                }
+            }, m, n)
     }
 
     override fun show(): String {
@@ -137,28 +142,6 @@ data class Matrix(val values: List<List<Double>>, val m: Int = 4, val n: Int = 4
 
         fun fromVar(m: Int, n: Int, vararg values: Number) =
             from(values.toList().chunked(n), m, n)
-
-        private fun calculateInverse(m: Matrix): Matrix = runBlocking(Dispatchers.Default) {
-            if (almostEquals(0, m.determinant))
-                throw ArithmeticException("Matrix has determinant 0 and cannot be inverted:\n${m.show()}")
-            return@runBlocking Matrix(
-                (0 until m.m).map { x ->
-                    (0 until m.n).pmap { y ->
-                        m.cofactor(y, x) / m.determinant
-                    }
-                }, m.m, m.n)
-        }
-
-        private fun multiplication(m1: Matrix, m2: Matrix): Matrix = runBlocking {
-            if (m1.n != m2.m)
-                throw ArithmeticException("Cannot multiply a ($m1.n,$m1.m) matrix and a (${m2.m},${m2.n} matrix.")
-            val newValues = (0 until m1.m).map { i ->
-                (0 until m2.n).pmap { j ->
-                    (0 until m1.n).sumOf { k -> m1[i, k] * m2[k, j] }
-                }
-            }
-            return@runBlocking Matrix(newValues, m1.m, m2.n)
-        }
 
         fun translate(x: Number, y: Number, z: Number): Matrix =
             Matrix(listOf(

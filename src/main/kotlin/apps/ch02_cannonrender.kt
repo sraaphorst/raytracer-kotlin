@@ -38,6 +38,6 @@ fun main() {
             } }
         }
 
-        toPPMFile(File("cannonrender.ppm"))
+        toPPMFile(File("ch02_cannonrender.ppm"))
     }
 }
