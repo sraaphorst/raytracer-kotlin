@@ -14,26 +14,26 @@ class TestCanvas {
         assertEquals(20, c.height)
         (0 until 10)
             .forEach { x -> (0 until 20)
-                .forEach { y -> assertEquals(Color.BLACK, c.pixel(x, y)) }
+                .forEach { y -> assertEquals(Color.BLACK, c[x, y]) }
             }
     }
 
     @Test
     fun `Write pixel to Canvas`() {
         val c = Canvas(10, 20)
-        c.writePixel(2, 3, Color.RED)
+        c[2, 3] = Color.RED
         (0 until 10)
             .forEach { x -> (0 until 20)
                 .forEach { y ->
-                    assertEquals(if (x == 2 && y == 3) Color.RED else Color.BLACK, c.pixel(x, y)) }}
+                    assertEquals(if (x == 2 && y == 3) Color.RED else Color.BLACK, c[x, y]) }}
     }
 
     @Test
     fun `Canvas to PPM`() {
         val c = Canvas(5, 3)
-        c.writePixel(0, 0, Color(1.5, 0, 0))
-        c.writePixel(2, 1, Color(0, 0.5, 0))
-        c.writePixel(4, 2, Color(-0.5, 0, 1))
+        c[0, 0] = Color(1.5, 0, 0)
+        c[2, 1] = Color(0, 0.5, 0)
+        c[4, 2] = Color(-0.5, 0, 1)
         val expected = """
             P3
             5 3

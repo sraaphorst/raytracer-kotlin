@@ -5,21 +5,18 @@ package math
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.lang.ArithmeticException
+import kotlin.math.PI
+import kotlin.math.sqrt
 import kotlin.test.assertEquals
 
 class MatrixTest {
     companion object {
-        val m1 = Matrix.from(listOf(
-            listOf(1, 2, 3, 4),
-            listOf(5.5, 6.5, 7.5, 8.5),
-            listOf(9, 10, 11, 12),
-        ), 3, 4)
-
-        val m2 = Matrix.fromList(listOf(1, 2, 3, 4, 5.5, 6.5, 7.5, 8.5, 9, 10, 11, 12), 3, 4)
+        val sqrt2by2 = sqrt(2.0) / 2.0
     }
 
     @Test
     fun `Construct 3x4 matrix`() {
+        val m1 = Matrix.fromVar(3, 4, 1, 2, 3, 4, 5.5, 6.5, 7.5, 8.5, 9, 10, 11, 12)
         assertEquals(3, m1.m)
         assertEquals(4, m1.n)
         assertAlmostEquals(1, m1[0,0])
@@ -38,11 +35,14 @@ class MatrixTest {
 
     @Test
     fun `Construct 3x4 matrix as row`() {
+        val m1 = Matrix.fromVar(3, 4, 1, 2, 3, 4, 5.5, 6.5, 7.5, 8.5, 9, 10, 11, 12)
+        val m2 = Matrix.fromList(listOf(1, 2, 3, 4, 5.5, 6.5, 7.5, 8.5, 9, 10, 11, 12), 3, 4)
         assertEquals(m1, m2)
     }
 
     @Test
     fun `Matrix row calls`() {
+        val m1 = Matrix.fromVar(3, 4, 1, 2, 3, 4, 5.5, 6.5, 7.5, 8.5, 9, 10, 11, 12)
         assertAlmostEquals(listOf(1, 2, 3, 4), m1.row(0))
         assertAlmostEquals(listOf(5.5, 6.5, 7.5, 8.5), m1.row(1))
         assertAlmostEquals(listOf(9, 10, 11, 12), m1.row(2))
@@ -50,6 +50,7 @@ class MatrixTest {
 
     @Test
     fun `Matrix col calls`() {
+        val m1 = Matrix.fromVar(3, 4, 1, 2, 3, 4, 5.5, 6.5, 7.5, 8.5, 9, 10, 11, 12)
         assertAlmostEquals(listOf(1, 5.5, 9), m1.col(0))
         assertAlmostEquals(listOf(2, 6.5, 10), m1.col(1))
         assertAlmostEquals(listOf(3, 7.5, 11), m1.col(2))
@@ -216,5 +217,172 @@ class MatrixTest {
         val m2 = Matrix.fromVar(4, 4, 8, 2, 2, 2, 3, -1, 7, 0, 7, 0, 5, 4, 6, -2, 0, 5)
         val c = m1 * m2
         assertAlmostEquals(m1, c * m2.inverse)
+    }
+
+    @Test
+    fun `Translate moves point`() {
+        val t = Matrix.translate(5, -3, 2)
+        val p = Tuple.point(-3, 4, 5)
+        val expected = Tuple.point(2, 1, 7)
+        assertAlmostEquals(expected, t * p)
+    }
+
+    @Test
+    fun `Translate inverse moves point in negative direction`() {
+        val t = Matrix.translate(5, -3, 2)
+        val tinv = t.inverse
+        val p = Tuple.point(-3, 4, 5)
+        val expected = Tuple.point(-8, 7, 3)
+        assertAlmostEquals(expected, tinv * p)
+    }
+
+    @Test
+    fun `Translate does not affect vectors`() {
+        val t = Matrix.translate(5, -3, 2)
+        val v = Tuple.vector(-3, 4, 5)
+        assertAlmostEquals(v, t * v)
+    }
+
+    @Test
+    fun `Scale scales point`() {
+        val t = Matrix.scale(2, 3, 4)
+        val p = Tuple.point(-4, 6, 8)
+        val expected = Tuple.point(-8, 18, 32)
+        assertAlmostEquals(expected, t * p)
+    }
+
+    @Test
+    fun `Scale scales vector`() {
+        val t = Matrix.scale(2, 3, 4)
+        val v = Tuple.vector(-4, 6, 8)
+        val expected = Tuple.vector(-8, 18, 32)
+        assertAlmostEquals(expected, t * v)
+    }
+
+    @Test
+    fun `Scale inverse shrinks vector`() {
+        val t = Matrix.scale(2, 3, 4).inverse
+        val v = Tuple.vector(-4, 6, 8)
+        val expected = Tuple.vector(-2, 2, 2)
+        assertAlmostEquals(expected, t * v)
+    }
+
+    @Test
+    fun `Scaling with negative value reflects`() {
+        val t = Matrix.scale(-1, 1, 1)
+        val p = Tuple.point(2, 3, 4)
+        val expected = Tuple.point(-2, 3, 4)
+        assertAlmostEquals(expected, t * p)
+    }
+
+    @Test
+    fun `Rotate PY around x axis`() {
+        val m1 = Matrix.rotationX(PI / 4.0)
+        val expected1 = Tuple.point(0, sqrt2by2, sqrt2by2)
+        val m2 = Matrix.rotationX(PI / 2.0)
+        val expected2 = Tuple.point(0, 0, 1)
+        assertAlmostEquals(expected1, m1 * Tuple.PY)
+        assertAlmostEquals(expected2, m2 * Tuple.PY)
+    }
+
+    @Test
+    fun `Rotate PY inversely around x axis`() {
+        val m = Matrix.rotationX(PI / 4.0).inverse
+        val expected = Tuple.point(0, sqrt2by2, -sqrt2by2)
+        assertAlmostEquals(expected, m * Tuple.PY)
+    }
+
+    @Test
+    fun `Rotate PZ around y axis`() {
+        val m1 = Matrix.rotationY(PI / 4.0)
+        val expected1 = Tuple.point(sqrt2by2, 0, sqrt2by2)
+        val m2 = Matrix.rotationY(PI / 2.0)
+        val expected2 = Tuple.point(1, 0, 0)
+        assertAlmostEquals(expected1, m1 * Tuple.PZ)
+        assertAlmostEquals(expected2, m2 * Tuple.PZ)
+    }
+
+    @Test
+    fun `Rotate PZ inversely around y axis`() {
+        val m = Matrix.rotationY(PI / 4.0).inverse
+        val expected = Tuple.point(-sqrt2by2, 0, sqrt2by2)
+        assertAlmostEquals(expected, m * Tuple.PZ)
+    }
+
+    @Test
+    fun `Rotate PY around z axis`() {
+        val m1 = Matrix.rotationZ(PI / 4.0)
+        val expected1 = Tuple.point(-sqrt2by2, sqrt2by2, 0)
+        val m2 = Matrix.rotationZ(PI / 2.0)
+        val expected2 = Tuple.point(-1, 0, 0)
+        assertAlmostEquals(expected1, m1 * Tuple.PY)
+        assertAlmostEquals(expected2, m2 * Tuple.PY)
+    }
+
+    @Test
+    fun `Rotate PY inversely around z axis`() {
+        val m = Matrix.rotationZ(PI / 4.0).inverse
+        val expected = Tuple.point(sqrt2by2, sqrt2by2, 0)
+        assertAlmostEquals(expected, m * Tuple.PY)
+    }
+
+    @Test
+    fun `Shear moves x in proportion to y`() {
+        val m = Matrix.shear(1, 0, 0, 0, 0, 0)
+        val p = Tuple.point(2, 3, 4)
+        val expected = Tuple.point(5, 3, 4)
+        assertAlmostEquals(expected, m * p)
+    }
+
+    @Test
+    fun `Shear moves x in proportion to z`() {
+        val m = Matrix.shear(0, 1, 0, 0, 0, 0)
+        val p = Tuple.point(2, 3, 4)
+        val expected = Tuple.point(6, 3, 4)
+        assertAlmostEquals(expected, m * p)
+    }
+
+    @Test
+    fun `Shear moves y in proportion to x`() {
+        val m = Matrix.shear(0, 0, 1, 0, 0, 0)
+        val p = Tuple.point(2, 3, 4)
+        val expected = Tuple.point(2, 5, 4)
+        assertAlmostEquals(expected, m * p)
+    }
+
+    @Test
+    fun `Shear moves y in proportion to z`() {
+        val m = Matrix.shear(0, 0, 0, 1, 0, 0)
+        val p = Tuple.point(2, 3, 4)
+        val expected = Tuple.point(2, 7, 4)
+        assertAlmostEquals(expected, m * p)
+    }
+
+    @Test
+    fun `Shear moves z in proportion to x`() {
+        val m = Matrix.shear(0, 0, 0, 0, 1, 0)
+        val p = Tuple.point(2, 3, 4)
+        val expected = Tuple.point(2, 3, 6)
+        assertAlmostEquals(expected, m * p)
+    }
+
+    @Test
+    fun `Shear moves z in proportion to y`() {
+        val m = Matrix.shear(0, 0, 0, 0, 0, 1)
+        val p = Tuple.point(2, 3, 4)
+        val expected = Tuple.point(2, 3, 7)
+        assertAlmostEquals(expected, m * p)
+    }
+
+    @Test
+    fun `Chaining translations`() {
+        val p = Tuple.point(1, 0, 1)
+        val m1 = Matrix.rotationX(PI / 2)
+        val m2 = Matrix.scale(5, 5, 5)
+        val m3 = Matrix.translate(10, 5, 7)
+        assertAlmostEquals(Tuple.point(1, -1, 0), m1 * p)
+        assertAlmostEquals(Tuple.point(5, -5, 0), m2 * m1 * p)
+        assertAlmostEquals(Tuple.point(15, 0, 7), m3 * m2 * m1 * p)
+        assertAlmostEquals(Tuple.point(15, 0, 7), m1.andThen(m2).andThen(m3) * p)
     }
 }

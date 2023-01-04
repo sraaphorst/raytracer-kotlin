@@ -3,6 +3,7 @@ package math
 // By Sebastian Raaphorst, 2022.
 
 import kotlin.math.absoluteValue
+import kotlin.math.PI
 
 const val DEFAULT_PRECISION = 1e-5
 
@@ -50,3 +51,9 @@ fun <S : Number, T : Number> almostEquals(l1: List<S>,
     if (l1.size != l2.size) return false
     return l1.zip(l2).all { (e1, e2) -> almostEquals(e1, e2, precision) }
 }
+
+fun degreesToRadians(degrees: Number): Double =
+    degrees.toDouble() / 180.0 * PI
+
+fun radiansToDegrees(radians: Number): Double =
+    180.0 * radians.toDouble() / PI

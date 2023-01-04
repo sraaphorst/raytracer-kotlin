@@ -92,6 +92,22 @@ data class Tuple(val x: Double, val y: Double, val z: Double, val w: Double): Ca
         val VZ: Tuple by lazy {
             vector(0, 0, 1)
         }
+
+        val PZERO: Tuple by lazy {
+            point(0, 0, 0)
+        }
+
+        val PX: Tuple by lazy {
+            point(1, 0, 0)
+        }
+
+        val PY: Tuple by lazy {
+            point(0, 1, 0)
+        }
+
+        val PZ: Tuple by lazy {
+            point(0, 0, 1)
+        }
     }
 }
 

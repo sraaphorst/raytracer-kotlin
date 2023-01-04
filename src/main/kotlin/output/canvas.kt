@@ -12,18 +12,20 @@ class Canvas(val width: Int,
              private val pixels: Array<Array<Color>> = Array(width) { Array(height) { Color.BLACK } }) {
 
     fun clear(color: Color) =
-        (0 until width).forEach { x -> (0 until height).forEach { y -> writePixel(x, y, color) } }
+        (0 until width).forEach { x -> (0 until height).forEach { y -> this[x, y] = color } }
 
-    fun writePixel(x: Int, y: Int, color: Color) {
-        assert(x in 0 until width)
-        assert(y in 0 until height)
-        pixels[x][y] = color
+    operator fun get(x: Int, y: Int): Color {
+        if (x !in (0 until width) || y !in (0 until height))
+            throw IllegalArgumentException("Canvas size: ($width,$height), tried to get point ($x,$y).")
+        return pixels[x][y]
     }
 
-    fun pixel(x: Int, y: Int): Color {
-        assert(x in 0 until width)
-        assert(y in 0 until height)
-        return pixels[x][y]
+    operator fun set(x: Number, y: Number, color: Color) {
+        val xInt = x.toInt()
+        val yInt = y.toInt()
+        if (xInt !in (0 until width) || yInt !in (0 until height))
+            throw IllegalArgumentException("Canvas size: ($width,$height), tried to set point ($xInt,$yInt).")
+        pixels[x.toInt()][y.toInt()] = color
     }
 
     private fun formatRow(y: Int): String {
@@ -31,7 +33,7 @@ class Canvas(val width: Int,
         var lineStr = ""
 
         // Convert the entire line into a row of values from 0 to 255.
-        val line = (0 until width).flatMap { x -> (255 * pixel(x, y)).toList().map {
+        val line = (0 until width).flatMap { x -> (255 * pixels[x][y]).toList().map {
             it.roundToInt().coerceAtLeast(0).coerceAtMost(255)
         } }
         line.forEach {

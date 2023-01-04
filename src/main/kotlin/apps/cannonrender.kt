@@ -1,4 +1,4 @@
-package exec
+package apps
 
 // By Sebastian Raaphorst, 2022.
 
@@ -34,7 +34,7 @@ fun main() {
             val x = it.x.roundToInt()
             val y = 550 - it.y.roundToInt()
             (0..size).forEach { deltaC -> (0..size).forEach { deltaR ->
-                writePixel(x + deltaC, y + deltaR, color)
+                this[x + deltaC, y + deltaR] = color
             } }
         }
 
