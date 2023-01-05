@@ -55,12 +55,13 @@ data class Matrix(val values: List<List<Double>>, val m: Int = 4, val n: Int = 4
     fun andThen(other: Matrix): Matrix =
         other * this
 
-    fun transpose(): Matrix =
-        Matrix((0 until n).map { j ->
+    val transpose: Matrix by lazy {
+        return@lazy Matrix((0 until n).map { j ->
             (0 until m).map { i ->
                 this[i, j]
             }
         }, n, m)
+    }
 
     fun submatrix(x: Int, y: Int): Matrix =
         Matrix((0 until m-1).map { i -> (0 until n-1).map { j ->

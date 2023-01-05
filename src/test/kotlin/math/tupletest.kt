@@ -3,6 +3,7 @@ package math
 // By Sebastian Raaphorst, 2022.
 
 import org.junit.jupiter.api.Test
+import kotlin.math.sqrt
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -159,5 +160,22 @@ class TupleTest {
         val v2 = Tuple.vector(2, 3, 4)
         assertAlmostEquals(Tuple.vector(-1, 2, -1), v1.cross(v2))
         assertAlmostEquals(Tuple.vector(1, -2, 1), v2.cross(v1))
+    }
+
+    @Test
+    fun `Reflecting a vector approaching at 45 deg`() {
+        val v = Tuple.vector(1, -1, 0)
+        val n = Tuple.VY
+        val vr = v.reflect(n)
+        assertAlmostEquals(Tuple.vector(1, 1, 0), vr)
+    }
+
+    @Test
+    fun `Reflecting a vector off a slanted surface`() {
+        val v = -Tuple.VY
+        val sqrt2by2 = sqrt(2.0) / 2
+        val n = Tuple.vector(sqrt2by2, sqrt2by2, 0)
+        val vr = v.reflect(n)
+        assertAlmostEquals(Tuple.VX, vr)
     }
 }
