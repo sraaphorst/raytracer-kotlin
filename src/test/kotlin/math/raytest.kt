@@ -1,8 +1,8 @@
 package math
 
-import org.junit.jupiter.api.Test
-
 // By Sebastian Raaphorst, 2023.
+
+import org.junit.jupiter.api.Test
 
 class RayTest {
     @Test

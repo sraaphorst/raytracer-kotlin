@@ -20,21 +20,35 @@ data class Tuple(val x: Double, val y: Double, val z: Double, val w: Double): Ca
     override fun toList(): List<Double> =
         listOf(x, y, z, w)
 
-    fun isPoint(): Boolean = w == 1.0
+    fun isPoint(): Boolean =
+        w == 1.0
 
-    fun isVector(): Boolean = w == 0.0
+    fun isVector(): Boolean =
+        w == 0.0
+
+    fun toPoint(): Tuple =
+        Tuple(x, y, z, 1.0)
+
+    fun toVector(): Tuple =
+        Tuple(x, y, z, 0.0)
 
     fun dot(other: Tuple): Double =
         x * other.x + y * other.y + z * other.z + w * other.w
 
     fun cross(other: Tuple): Tuple {
-        assert(isVector())
-        assert(other.isVector())
+        if (!isVector() || !other.isVector())
+            throw IllegalArgumentException("Cross product can only be done for vectors: $this, $other.")
         return vector(
             y * other.z - z * other.y,
             z * other.x - x * other.z,
             x * other.y - y * other.x
         )
+    }
+
+    fun reflect(normal: Tuple): Tuple {
+        if (!this.isVector() || !normal.isVector())
+            throw IllegalArgumentException("Reflecting tuples requires vectors: v=$this, normal=$normal.")
+        return this - normal * 2 * this.dot(normal)
     }
 
     operator fun plus(other: Tuple): Tuple =
