@@ -3,10 +3,21 @@ package math
 // By Sebastian Raaphorst, 2023.
 
 import shapes.Shape
+import shapes.Sphere
 
 data class Intersection(val t: Double, val shape: Shape) {
     constructor(t: Number, shape: Shape):
             this(t.toDouble(), shape)
+
+    fun computations(ray: Ray): Computations {
+        val point = ray.position(t)
+        val eyeV = -ray.direction
+        val normalV = shape.normalAt(point)
+        return if (normalV.dot(eyeV) < 0)
+            Computations(t, shape, point, eyeV, -normalV, true)
+        else
+            Computations(t, shape, point, eyeV, normalV, false)
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
