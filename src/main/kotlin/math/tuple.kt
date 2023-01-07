@@ -72,6 +72,35 @@ data class Tuple(val x: Double, val y: Double, val z: Double, val w: Double): Ca
     operator fun div(scalar: Number): Tuple =
         this / scalar.toDouble()
 
+    // Calculate the view transformation, i.e. transformation that orients the world relative
+    // to your eye; however, we actually move the eye (camera) as it makes more sense than moving
+    // the entire world.
+    // The `this` parameter is the point in the scene FROM where you want the eye to be.
+    // The `to` parameter is the point at which you want the eye to look.
+    // The vector up indicates which way is up, as would be expected.
+    // Note that as this returns a Matrix, it is tested in matrixtest.
+    fun viewTransformationFrom(to: Tuple, up: Tuple): Matrix {
+        if (!this.isPoint())
+            throw IllegalArgumentException("viewTransformationFrom requires eye point as this: $this.")
+        if (!to.isPoint())
+            throw IllegalArgumentException("viewTransformationFrom requires to parameter to be a point: $to.")
+        if (!up.isVector())
+            throw IllegalArgumentException("viewTransformationFrom requires up parameter to be a vector: $up")
+        val forward = (to - this).normalized
+        val left = forward.cross(up.normalized)
+
+        // This allows up vector to only be approximately up.
+        val trueUp = left.cross(forward)
+
+        // Calculate the transformation: an orientation transform and a translation to move scene into place.
+        return Matrix.fromVar(4, 4,
+                 left.x,       left.y,        left.z, 0,
+               trueUp.x,     trueUp.y,      trueUp.z, 0,
+            -(forward.x), -(forward.y), -(forward.z), 0,
+                       0,            0,            0, 1) *
+                Matrix.translate(-(this.x), -(this.y), -(this.z))
+    }
+
     override fun show(): String = toString()
 
     override fun equals(other: Any?): Boolean {

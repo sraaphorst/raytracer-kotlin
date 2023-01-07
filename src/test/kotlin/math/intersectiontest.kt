@@ -5,6 +5,7 @@ package math
 import org.junit.jupiter.api.Test
 import shapes.Sphere
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class IntersectionTest {
@@ -62,6 +63,14 @@ class IntersectionTest {
         assertAlmostEquals(Tuple.point(0, 0, -1), comps.point)
         assertAlmostEquals(Tuple.vector(0, 0, -1), comps.eyeV)
         assertAlmostEquals(Tuple.vector(0, 0, -1), comps.normalV)
+    }
+
+    @Test
+    fun `Hit when intersection occurs on the outside`() {
+        val r = Ray(Tuple.point(0, 0, -5), Tuple.VZ)
+        val x = Intersection(4, s)
+        val comps = x.computations(r)
+        assertFalse(comps.inside)
     }
 
     @Test
