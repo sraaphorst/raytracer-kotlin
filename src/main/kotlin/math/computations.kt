@@ -1,5 +1,7 @@
 package math
 
+// By Sebastian Raaphorst, 2023.
+
 import shapes.Shape
 
 data class Computations(val t: Double,

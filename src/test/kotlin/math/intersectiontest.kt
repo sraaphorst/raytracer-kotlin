@@ -45,7 +45,7 @@ class IntersectionTest {
     }
 
     @Test
-    fun `hit is always min nonnegative intersection`() {
+    fun `hit is always min non-negative intersection`() {
         val i1 = Intersection(5, s)
         val i2 = Intersection(7, s)
         val i3 = Intersection(-3, s)

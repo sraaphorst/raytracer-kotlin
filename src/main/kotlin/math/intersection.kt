@@ -3,7 +3,6 @@ package math
 // By Sebastian Raaphorst, 2023.
 
 import shapes.Shape
-import shapes.Sphere
 
 data class Intersection(val t: Double, val shape: Shape) {
     constructor(t: Number, shape: Shape):

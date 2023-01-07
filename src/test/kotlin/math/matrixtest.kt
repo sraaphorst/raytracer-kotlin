@@ -230,10 +230,10 @@ class MatrixTest {
     @Test
     fun `Translate inverse moves point in negative direction`() {
         val t = Matrix.translate(5, -3, 2)
-        val tinv = t.inverse
+        val tInv = t.inverse
         val p = Tuple.point(-3, 4, 5)
         val expected = Tuple.point(-8, 7, 3)
-        assertAlmostEquals(expected, tinv * p)
+        assertAlmostEquals(expected, tInv * p)
     }
 
     @Test

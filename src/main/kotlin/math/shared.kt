@@ -11,10 +11,6 @@ interface CanBeList<T> {
     fun toList(): List<T>
 }
 
-interface Multiplicative<T> {
-    operator fun times(other: T): T
-}
-
 fun <S : Number, T : Number> almostEquals(x: S,
                                           y: T,
                                           precision: Double = DEFAULT_PRECISION): Boolean =
