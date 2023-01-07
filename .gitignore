@@ -6,4 +6,4 @@
 /gradle/wrapper/
 /gradle/wrapper/*
 *.ppm
-
+*.log

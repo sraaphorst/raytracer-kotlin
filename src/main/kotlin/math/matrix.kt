@@ -32,6 +32,17 @@ data class Matrix(val values: List<List<Double>>, val m: Int = 4, val n: Int = 4
     override fun toList(): List<Double> =
         values.flatten()
 
+    operator fun plus(other: Matrix): Matrix {
+        if (n != other.n || m != other.m)
+            throw ArithmeticException("Cannot add a ($m,$n) matrix and a (${other.m},${other.n}) matrix.")
+        val newValues = values.zip(other.values).map {
+            (l1, l2) -> l1.zip(l2).map {
+                (e1, e2) -> e1 + e2
+            }
+        }
+        return Matrix(newValues, m, n)
+    }
+
     operator fun times(other: Matrix): Matrix {
         if (n != other.m)
             throw ArithmeticException("Cannot multiply a ($m,$n) matrix and a (${other.m},${other.n} matrix.")

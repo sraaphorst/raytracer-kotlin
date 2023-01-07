@@ -5,10 +5,4 @@ package light
 import math.Color
 import math.Tuple
 
-data class PointLight(override val position: Tuple,
-                      override val intensity: Color = Color.WHITE): Light {
-    init {
-        if (!position.isPoint())
-            throw IllegalArgumentException("PointLight position must be a point: $position.")
-    }
-}
+class PointLight(position: Tuple, intensity: Color = Color.WHITE): Light(position, intensity)

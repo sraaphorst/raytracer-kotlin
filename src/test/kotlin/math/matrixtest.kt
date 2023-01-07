@@ -230,10 +230,10 @@ class MatrixTest {
     @Test
     fun `Translate inverse moves point in negative direction`() {
         val t = Matrix.translate(5, -3, 2)
-        val tinv = t.inverse
+        val tInv = t.inverse
         val p = Tuple.point(-3, 4, 5)
         val expected = Tuple.point(-8, 7, 3)
-        assertAlmostEquals(expected, tinv * p)
+        assertAlmostEquals(expected, tInv * p)
     }
 
     @Test
@@ -384,5 +384,46 @@ class MatrixTest {
         assertAlmostEquals(Tuple.point(5, -5, 0), m2 * m1 * p)
         assertAlmostEquals(Tuple.point(15, 0, 7), m3 * m2 * m1 * p)
         assertAlmostEquals(Tuple.point(15, 0, 7), m1.andThen(m2).andThen(m3) * p)
+    }
+
+    @Test
+    fun `View transformation matrix for the default orientation`() {
+        val from = Tuple.PZERO
+        val to = Tuple.point(0, 0, -1)
+        val up = Tuple.VY
+        val t = from.viewTransformationFrom(to, up)
+        assertAlmostEquals(Matrix.I, t)
+    }
+
+    @Test
+    fun `View transformation matrix looking in +z direction`() {
+        val from = Tuple.PZERO
+        val to = Tuple.PZ
+        val up = Tuple.VY
+        val t = from.viewTransformationFrom(to, up)
+        assertAlmostEquals(Matrix.scale(-1, 1, -1), t)
+    }
+
+    @Test
+    fun `View transformation moves the world`() {
+        val from = Tuple.point(0, 0, 8)
+        val to = Tuple.PZERO
+        val up = Tuple.VY
+        val t = from.viewTransformationFrom(to, up)
+        assertAlmostEquals(Matrix.translate(0, 0, -8), t)
+    }
+
+    @Test
+    fun `View transformation that is arbitrary`() {
+        val from = Tuple.point(1, 3, 2)
+        val to = Tuple.point(4, -2, 8)
+        val up = Tuple.vector(1, 1, 0)
+        val t = from.viewTransformationFrom(to, up)
+        val expected = Matrix.fromVar(4, 4,
+            -0.50709, 0.50709,  0.67612, -2.36643,
+             0.76772, 0.60609,  0.12122, -2.82843,
+            -0.35857, 0.59761, -0.71714,  0.00000,
+             0.00000, 0.00000,  0.00000,  1.00000)
+        assertAlmostEquals(expected, t)
     }
 }
