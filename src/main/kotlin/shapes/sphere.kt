@@ -10,13 +10,11 @@ import math.Tuple
 import kotlin.math.sqrt
 
 class Sphere(transformation: Matrix = Matrix.I, material: Material = Material()): Shape(transformation, material) {
-    override fun intersect(ray: Ray): List<Intersection> {
-        val tRay = ray.transform(transformation.inverse)
+    override fun localIntersect(rayLocal: Ray): List<Intersection> {
+        val sphereToRay = rayLocal.origin - Tuple.PZERO
 
-        val sphereToRay = tRay.origin - Tuple.PZERO
-
-        val a = tRay.direction.dot(tRay.direction)
-        val b = 2 * tRay.direction.dot(sphereToRay)
+        val a = rayLocal.direction.dot(rayLocal.direction)
+        val b = 2 * rayLocal.direction.dot(sphereToRay)
         val c = sphereToRay.dot(sphereToRay) - 1
 
         val discriminant = b * b - 4 * a * c
@@ -30,15 +28,6 @@ class Sphere(transformation: Matrix = Matrix.I, material: Material = Material())
         }
     }
 
-    override fun normalAt(worldPoint: Tuple): Tuple {
-        if (!worldPoint.isPoint())
-            throw IllegalArgumentException("Sphere::normalAt cannot accept a vector: $worldPoint")
-        val objectPoint = transformation.inverse * worldPoint
-        val objectNormal = objectPoint - Tuple.PZERO
-
-        // Convert back to a vector in world space.
-        // Note w may have changed, so we have to transform it back.
-        val worldNormal = transformation.inverse.transpose * objectNormal
-        return worldNormal.toVector().normalized
-    }
+    override fun localNormalAt(localPoint: Tuple): Tuple =
+        localPoint - Tuple.PZERO
 }
