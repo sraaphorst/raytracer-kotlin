@@ -45,7 +45,7 @@ class IntersectionTest {
     }
 
     @Test
-    fun `hit is always min non-negative intersection`() {
+    fun `hit is always min positive intersection`() {
         val i1 = Intersection(5, s)
         val i2 = Intersection(7, s)
         val i3 = Intersection(-3, s)
@@ -82,5 +82,15 @@ class IntersectionTest {
         assertAlmostEquals(Tuple.vector(0, 0, -1), comps.eyeV)
         assertTrue(comps.inside)
         assertAlmostEquals(Tuple.vector(0, 0, -1), comps.normalV)
+    }
+
+    @Test
+    fun `Hit should offset the point`() {
+        val r = Ray(Tuple.point(0, 0, -5), Tuple.VZ)
+        val s = Sphere(Matrix.translate(0, 0, 1))
+        val x = Intersection(5, s)
+        val comps = x.computations(r)
+        assertTrue(comps.overPoint.z < -DEFAULT_PRECISION/2)
+        assertTrue(comps.point.z > comps.overPoint.z)
     }
 }

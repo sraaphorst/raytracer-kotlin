@@ -14,10 +14,12 @@ import java.io.File
 import kotlin.math.PI
 
 fun main() {
+    val multipleLights = false
+
     val world = run {
         val floor = run {
             val t = Matrix.scale(10, 0.01, 10)
-            val m = Material(specular = 0.0)
+            val m = if (multipleLights) Material(Color.RED, specular = 0.0) else Material(specular = 0.0)
             Sphere(t, m)
         }
 
@@ -26,7 +28,7 @@ fun main() {
                     Matrix.rotationY(-PI / 4) *
                     Matrix.rotationX(PI / 2) *
                     Matrix.scale(10, 0.01, 10)
-            val m = Material(specular = 0.0)
+            val m = if (multipleLights) Material(Color.GREEN, specular = 0.0) else Material(specular = 0.0)
             Sphere(t, m)
         }
 
@@ -35,7 +37,7 @@ fun main() {
                     Matrix.rotationY(PI / 4) *
                     Matrix.rotationX(PI / 2) *
                     Matrix.scale(10, 0.01, 10)
-            val m = Material(specular = 0.0)
+            val m = if (multipleLights) Material(Color.BLUE, specular = 0.0) else Material(specular = 0.0)
             Sphere(t, m)
         }
 
@@ -63,9 +65,17 @@ fun main() {
         }
 
         // Light source is white, shining from above and to the left.
-        val light = PointLight(Tuple.point(-10, 10, -10))
-
-        World(listOf(floor, leftWall, rightWall, middleSphere, rightSphere, leftSphere), light)
+        val lights = run {
+            if (multipleLights)
+                listOf(
+                    PointLight(Tuple.point(-10, 10, -10), Color(0.25, 0.25, 0.25)),
+                    PointLight(Tuple.point(10, 10, -10), Color(0.25, 0.25, 0.25)),
+                    PointLight(Tuple.point(0, 10, -10), Color(0.25, 0.25, 0.25))
+                )
+            else
+                listOf(PointLight(Tuple.point(-10, 10, -10)))
+        }
+        World(listOf(floor, leftWall, rightWall, middleSphere, rightSphere, leftSphere), lights)
     }
 
     // Create the camera.

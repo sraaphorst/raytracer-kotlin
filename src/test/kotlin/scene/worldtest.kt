@@ -105,4 +105,19 @@ class WorldTest {
         val p = Tuple.point(-2, 2, -2)
         assertFalse(w.isShadowed(p, w.lights.first()))
     }
+
+    @Test
+    fun `shadeHit is given intersection in shadow`() {
+        val light = PointLight(Tuple.point(0, 0, -10))
+        val s1 = Sphere()
+        val s2 = Sphere(Matrix.translate(0, 0, 10))
+        val w = World(listOf(s1, s2), light)
+
+        val r = Ray(Tuple.point(0, 0, 5), Tuple.VZ)
+        val x = Intersection(4, s2)
+        val comps = x.computations(r)
+        val c = w.shadeHit(comps)
+
+        assertAlmostEquals(Color(0.1, 0.1, 0.1), c)
+    }
 }

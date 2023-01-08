@@ -19,8 +19,9 @@ data class World(val shapes: List<Shape>, val lights: List<Light>) {
             Color.BLACK
         else
             lights.map { light ->
-                val shadowed = isShadowed(comps.point, light)
-                comps.shape.material.lighting(light, comps.point, comps.eyeV, comps.normalV, shadowed)
+                comps.shape.material.lighting(light,
+                    comps.overPoint, comps.eyeV, comps.normalV,
+                    isShadowed(comps.overPoint, light))
             }.reduce { c1, c2 -> c1 + c2}
 
     // Determine if a point is in shadow with respect to a light source.
