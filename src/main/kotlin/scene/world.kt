@@ -18,8 +18,30 @@ data class World(val shapes: List<Shape>, val lights: List<Light>) {
         if (lights.isEmpty())
             Color.BLACK
         else
-            lights.map { comps.shape.material.lighting(it, comps.point, comps.eyeV, comps.normalV) }
-                .reduce { c1, c2 -> c1 + c2}
+            lights.map { light ->
+                val shadowed = isShadowed(comps.point, light)
+                comps.shape.material.lighting(light, comps.point, comps.eyeV, comps.normalV, shadowed)
+            }.reduce { c1, c2 -> c1 + c2}
+
+    // Determine if a point is in shadow with respect to a light source.
+    // Note this is different from the book since it takes the light source as a parameter
+    // since we are supporting multiple light sources.
+    fun isShadowed(point: Tuple, light: Light): Boolean {
+        if (!point.isPoint())
+            throw IllegalArgumentException("World::isShadowed expects point: $point")
+
+        // Create a shadow ray from each point of intersection towards the light source.
+        // If something intersects that sho ray, then the point is in shadow.
+        val vector = light.position - point
+        val distance = vector.magnitude
+        val direction = vector.normalized
+
+        val ray = Ray(point, direction)
+        val xs = intersect(ray)
+        val hit = xs.hit()
+
+        return hit != null && hit.t < distance
+    }
 
     // This should be the entry point into World.
     // It connects the other functions together, which would be private if not for test cases.
@@ -38,4 +60,12 @@ data class World(val shapes: List<Shape>, val lights: List<Light>) {
             return@lazy World(listOf(s1, s2), light1)
         }
     }
+}
+
+fun main() {
+    //val r = Ray(Tuple.point(0, 0, -5), Tuple.VZ)
+    val r = Ray(Tuple.point(0, 0, -5), Tuple.VZ)
+    val c = World.DefaultWorld.colorAt(r)
+    println(Color(0.38066, 0.47583, 0.2855))
+    println(c)
 }
