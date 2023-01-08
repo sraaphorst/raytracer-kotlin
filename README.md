@@ -1,5 +1,5 @@
-# The Raytracer Challenge
+# The Ray Tracer Challenge
 
-This is an implementation of [The Raytracer Challenge](http://raytracerchallenge.com/) in Kotlin.
+This is an implementation of [The Ray Tracer Challenge](http://raytracerchallenge.com/) in Kotlin.
 
 *Status:* _In progress._
