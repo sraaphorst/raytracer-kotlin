@@ -18,4 +18,8 @@ data class Computations(val t: Double,
         if (!normalV.isVector())
             throw IllegalArgumentException("Computations normal is not vector: $normalV.")
     }
+
+    // Adjust point slightly in the direction of normal before testing for shadows.
+    // This bumps it above the surface and prevents self-shadowing / acne effect.
+    val overPoint = point + normalV * DEFAULT_PRECISION
 }

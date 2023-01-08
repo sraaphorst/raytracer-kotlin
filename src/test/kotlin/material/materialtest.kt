@@ -29,7 +29,7 @@ class MaterialTest {
         val eyeV = -Tuple.VZ
         val normalV = -Tuple.VZ
         val light = PointLight(Tuple.point(0, 0, -10))
-        val result = m.lighting(light, position, eyeV, normalV)
+        val result = m.lighting(light, position, eyeV, normalV, false)
         assertAlmostEquals(result, Color(1.9, 1.9, 1.9))
     }
 
@@ -38,7 +38,7 @@ class MaterialTest {
         val eyeV = Tuple.vector(0, sqrt2by2, -sqrt2by2)
         val normalV = -Tuple.VZ
         val light = PointLight(Tuple.point(0, 0, -10))
-        val result = m.lighting(light, position, eyeV, normalV)
+        val result = m.lighting(light, position, eyeV, normalV, false)
         assertAlmostEquals(Color.WHITE, result)
     }
 
@@ -47,7 +47,7 @@ class MaterialTest {
         val eyeV = -Tuple.VZ
         val normalV = -Tuple.VZ
         val light = PointLight(Tuple.point(0, 10, -10))
-        val result = m.lighting(light, position, eyeV, normalV)
+        val result = m.lighting(light, position, eyeV, normalV, false)
         assertAlmostEquals(Color(0.7364, 0.7364, 0.7364), result)
     }
 
@@ -56,7 +56,16 @@ class MaterialTest {
         val eyeV = Tuple.vector(0, -sqrt2by2, -sqrt2by2)
         val normalV = -Tuple.VZ
         val light = PointLight(Tuple.point(0, 0, 10))
-        val result = m.lighting(light, position, eyeV, normalV)
+        val result = m.lighting(light, position, eyeV, normalV, false)
         assertAlmostEquals(Color(0.1, 0.1, 0.1), result)
+    }
+
+    @Test
+    fun `Lighting with the surface in shadow`() {
+        val eyeV = Tuple.vector(0, 0, -1)
+        val normalV = Tuple.vector(0, 0, -1)
+        val light = PointLight(Tuple.point(0, 0, -10))
+        val color = m.lighting(light, position, eyeV, normalV, true)
+        assertAlmostEquals(Color(0.1, 0.1, 0.1), color)
     }
 }

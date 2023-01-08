@@ -14,15 +14,18 @@ data class Material(val color: Color = Color.WHITE,
                     val specular: Double = 0.9,
                     val shininess: Double = 200.0) {
 
-    fun lighting(light: Light, point: Tuple, eyeV: Tuple, normalV: Tuple): Color {
+    fun lighting(light: Light, point: Tuple, eyeV: Tuple, normalV: Tuple, inShadow: Boolean): Color {
         // Combine surface color with light's color / intensity.
         val effectiveColor = color * light.intensity
 
+        // Compute ambient contribution.
+        // If the point is in shadow, we only want the ambient component.
+        val ambient = effectiveColor * ambient
+        if (inShadow)
+            return ambient
+
         // Find direction to the light source.
         val lightV = (light.position - point).normalized
-
-        // Compute ambient contribution.
-        val ambient = effectiveColor * ambient
 
         // lightDotNormal represents cosine of the angle between lightV and normalV.
         // A negative number means the light is on the other side of the surface.

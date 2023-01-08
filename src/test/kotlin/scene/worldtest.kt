@@ -8,6 +8,7 @@ import math.*
 import org.junit.jupiter.api.Test
 import shapes.Sphere
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class WorldTest {
@@ -75,5 +76,48 @@ class WorldTest {
         val r = Ray(Tuple.point(0, 0, 0.75), Tuple.vector(0, 0, -1))
         val c = w.colorAt(r)
         assertAlmostEquals(m2.color, c)
+    }
+
+    @Test
+    fun `No shadow when nothing is collinear with point and light`() {
+        val w = World.DefaultWorld
+        val p = Tuple.point(0, 10, 0)
+        assertFalse(w.isShadowed(p, w.lights.first()))
+    }
+
+    @Test
+    fun `Shadow when an object is between point and light`() {
+        val w = World.DefaultWorld
+        val p = Tuple.point(10, -10, 10)
+        assertTrue(w.isShadowed(p, w.lights.first()))
+    }
+
+    @Test
+    fun `No shadow when object behind light`() {
+        val w = World.DefaultWorld
+        val p = Tuple.point(-20, 20, -20)
+        assertFalse(w.isShadowed(p, w.lights.first()))
+    }
+
+    @Test
+    fun `No shadow when object is behind the point`() {
+        val w = World.DefaultWorld
+        val p = Tuple.point(-2, 2, -2)
+        assertFalse(w.isShadowed(p, w.lights.first()))
+    }
+
+    @Test
+    fun `shadeHit is given intersection in shadow`() {
+        val light = PointLight(Tuple.point(0, 0, -10))
+        val s1 = Sphere()
+        val s2 = Sphere(Matrix.translate(0, 0, 10))
+        val w = World(listOf(s1, s2), light)
+
+        val r = Ray(Tuple.point(0, 0, 5), Tuple.VZ)
+        val x = Intersection(4, s2)
+        val comps = x.computations(r)
+        val c = w.shadeHit(comps)
+
+        assertAlmostEquals(Color(0.1, 0.1, 0.1), c)
     }
 }

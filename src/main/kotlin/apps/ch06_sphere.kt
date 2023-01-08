@@ -56,7 +56,7 @@ fun main() {
                 val point = ray.position(hit.t)
                 val normal = hit.shape.normalAt(point)
                 val eye = -ray.direction
-                val color = hit.shape.material.lighting(light, point, eye, normal)
+                val color = hit.shape.material.lighting(light, point, eye, normal, false)
                 canvas[x, y] = color
             }
         }

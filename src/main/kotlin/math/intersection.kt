@@ -39,6 +39,6 @@ data class Intersection(val t: Double, val shape: Shape) {
 fun intersections(vararg xs: Intersection): List<Intersection> =
     xs.toList()
 
-// The hit is the intersection with the lowest non-negative t value.
+// The hit is the intersection with the smallest positive t value.
 fun List<Intersection>.hit(): Intersection? =
-    this.filter { it.t >= 0 }.minByOrNull { it.t }
+    this.filter { it.t > 0 }.minByOrNull { it.t }
