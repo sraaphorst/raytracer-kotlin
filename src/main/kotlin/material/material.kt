@@ -6,17 +6,33 @@ import light.Light
 import math.Color
 import math.Tuple
 import math.almostEquals
+import pattern.Pattern
+import pattern.SolidPattern
+import shapes.Shape
 import kotlin.math.pow
 
-data class Material(val color: Color = Color.WHITE,
-                    val ambient: Double = 0.1,
-                    val diffuse: Double = 0.9,
-                    val specular: Double = 0.9,
-                    val shininess: Double = 200.0) {
+data class Material(val pattern: Pattern = SolidPattern(Color.WHITE),
+                    val ambient: Double = DEFAULT_AMBIENT,
+                    val diffuse: Double = DEFAULT_DIFFUSE,
+                    val specular: Double = DEFAULT_SPECULAR,
+                    val shininess: Double = DEFAULT_SHININESS) {
 
-    fun lighting(light: Light, point: Tuple, eyeV: Tuple, normalV: Tuple, inShadow: Boolean): Color {
+    // Convenience constructor to create a material with a solid pattern.
+    constructor(color: Color,
+                ambient: Double = DEFAULT_AMBIENT,
+                diffuse: Double = DEFAULT_DIFFUSE,
+                specular: Double = DEFAULT_SPECULAR,
+                shininess: Double = DEFAULT_SHININESS):
+            this(SolidPattern(color), ambient, diffuse, specular, shininess)
+
+    fun lighting(shape: Shape,
+                 light: Light,
+                 point: Tuple,
+                 eyeV: Tuple,
+                 normalV: Tuple,
+                 inShadow: Boolean): Color {
         // Combine surface color with light's color / intensity.
-        val effectiveColor = color * light.intensity
+        val effectiveColor = pattern.colorAtShape(shape, point) * light.intensity
 
         // Compute ambient contribution.
         // If the point is in shadow, we only want the ambient component.
@@ -44,7 +60,7 @@ data class Material(val color: Color = Color.WHITE,
         if (this === other) return true
         if (other !is Material) return false
 
-        if (!almostEquals(color, other.color)) return false
+        if (pattern != other.pattern) return false
         if (!almostEquals(ambient, other.ambient)) return false
         if (!almostEquals(diffuse, other.diffuse)) return false
         if (!almostEquals(specular, other.specular)) return false
@@ -54,6 +70,13 @@ data class Material(val color: Color = Color.WHITE,
     }
 
     override fun hashCode(): Int =
-        31 * (31 * (31 * (31 * color.hashCode() + ambient.hashCode()) +
+        31 * (31 * (31 * (31 * pattern.hashCode() + ambient.hashCode()) +
                 diffuse.hashCode()) + specular.hashCode()) + shininess.hashCode()
+
+    companion object {
+        const val DEFAULT_AMBIENT = 0.1
+        const val DEFAULT_DIFFUSE = 0.9
+        const val DEFAULT_SPECULAR = 0.9
+        const val DEFAULT_SHININESS = 200.0
+    }
 }

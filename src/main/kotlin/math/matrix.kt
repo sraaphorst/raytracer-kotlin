@@ -20,6 +20,9 @@ data class Matrix(val values: List<List<Double>>, val m: Int = 4, val n: Int = 4
             )
     }
 
+    fun isTransformation(): Boolean =
+        m == 4 && n == 4
+
     operator fun get(i: Int, j: Int): Double =
         values[i][j]
 

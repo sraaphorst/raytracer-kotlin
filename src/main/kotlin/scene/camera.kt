@@ -9,10 +9,10 @@ import output.Canvas
 import kotlin.math.tan
 
 // Map a 3D scene onto a 2D canvas.
-data class Camera(val hSize: Int, val vSize: Int, val fov: Double, val transform: Matrix = Matrix.I) {
+data class Camera(val hSize: Int, val vSize: Int, val fov: Double, val transformation: Matrix = Matrix.I) {
     init {
-        if (transform.m != 4 || transform.n != 4)
-            throw IllegalArgumentException("Illegal camera transformation:\n${transform.show()}")
+        if (!transformation.isTransformation())
+            throw IllegalArgumentException("Illegal camera transformation:\n${transformation.show()}")
     }
 
     private val halfView = tan(fov / 2.0)
@@ -34,8 +34,8 @@ data class Camera(val hSize: Int, val vSize: Int, val fov: Double, val transform
         // Using the camera matrix, transform the canvas point and origin,
         // and then compute the ray's direction vector.
         // Remember that the canvas is at z = -1.
-        val pixel = transform.inverse * Tuple.point(worldX, worldY, -1)
-        val origin = transform.inverse * Tuple.PZERO
+        val pixel = transformation.inverse * Tuple.point(worldX, worldY, -1)
+        val origin = transformation.inverse * Tuple.PZERO
         val direction = (pixel - origin).normalized
 
         return Ray(origin, direction)

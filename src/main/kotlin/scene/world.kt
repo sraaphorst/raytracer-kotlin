@@ -19,7 +19,7 @@ data class World(val shapes: List<Shape>, val lights: List<Light>) {
             Color.BLACK
         else
             lights.map { light ->
-                comps.shape.material.lighting(light,
+                comps.shape.material.lighting(comps.shape, light,
                     comps.overPoint, comps.eyeV, comps.normalV,
                     isShadowed(comps.overPoint, light))
             }.reduce { c1, c2 -> c1 + c2}

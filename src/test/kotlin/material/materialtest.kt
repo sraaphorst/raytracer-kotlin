@@ -7,7 +7,11 @@ import math.Color
 import math.Tuple
 import math.assertAlmostEquals
 import org.junit.jupiter.api.Test
+import pattern.SolidPattern
+import pattern.StripedPattern
+import shapes.Sphere
 import kotlin.math.sqrt
+import kotlin.test.assertEquals
 
 class MaterialTest {
     companion object {
@@ -17,7 +21,7 @@ class MaterialTest {
     }
     @Test
     fun `Default material`() {
-        assertAlmostEquals(m.color, Color.WHITE)
+        assertEquals(m.pattern, SolidPattern(Color.WHITE))
         assertAlmostEquals(m.ambient, 0.1)
         assertAlmostEquals(m.diffuse, 0.9)
         assertAlmostEquals(m.specular, 0.9)
@@ -29,7 +33,7 @@ class MaterialTest {
         val eyeV = -Tuple.VZ
         val normalV = -Tuple.VZ
         val light = PointLight(Tuple.point(0, 0, -10))
-        val result = m.lighting(light, position, eyeV, normalV, false)
+        val result = m.lighting(Sphere(), light, position, eyeV, normalV, false)
         assertAlmostEquals(result, Color(1.9, 1.9, 1.9))
     }
 
@@ -38,7 +42,7 @@ class MaterialTest {
         val eyeV = Tuple.vector(0, sqrt2by2, -sqrt2by2)
         val normalV = -Tuple.VZ
         val light = PointLight(Tuple.point(0, 0, -10))
-        val result = m.lighting(light, position, eyeV, normalV, false)
+        val result = m.lighting(Sphere(), light, position, eyeV, normalV, false)
         assertAlmostEquals(Color.WHITE, result)
     }
 
@@ -47,7 +51,7 @@ class MaterialTest {
         val eyeV = -Tuple.VZ
         val normalV = -Tuple.VZ
         val light = PointLight(Tuple.point(0, 10, -10))
-        val result = m.lighting(light, position, eyeV, normalV, false)
+        val result = m.lighting(Sphere(), light, position, eyeV, normalV, false)
         assertAlmostEquals(Color(0.7364, 0.7364, 0.7364), result)
     }
 
@@ -56,7 +60,7 @@ class MaterialTest {
         val eyeV = Tuple.vector(0, -sqrt2by2, -sqrt2by2)
         val normalV = -Tuple.VZ
         val light = PointLight(Tuple.point(0, 0, 10))
-        val result = m.lighting(light, position, eyeV, normalV, false)
+        val result = m.lighting(Sphere(), light, position, eyeV, normalV, false)
         assertAlmostEquals(Color(0.1, 0.1, 0.1), result)
     }
 
@@ -65,7 +69,20 @@ class MaterialTest {
         val eyeV = Tuple.vector(0, 0, -1)
         val normalV = Tuple.vector(0, 0, -1)
         val light = PointLight(Tuple.point(0, 0, -10))
-        val color = m.lighting(light, position, eyeV, normalV, true)
+        val color = m.lighting(Sphere(), light, position, eyeV, normalV, true)
         assertAlmostEquals(Color(0.1, 0.1, 0.1), color)
+    }
+
+    @Test
+    fun `Lighting with striped pattern applied`() {
+        val m = Material(StripedPattern(Color.WHITE, Color.BLACK), 1.0, 0.0, 0.0)
+        val eyeV = Tuple.vector(0, 0, -1)
+        val normalV = Tuple.vector(0, 0, -1)
+        val light = PointLight(Tuple.point(0, 0, -10))
+        val s = Sphere()
+        val c1 = m.lighting(s, light, Tuple.point(0.9, 0, 0), eyeV, normalV, false)
+        val c2 = m.lighting(s, light, Tuple.point(1.1, 0, 0), eyeV, normalV, false)
+        assertAlmostEquals(Color.WHITE, c1)
+        assertAlmostEquals(Color.BLACK, c2)
     }
 }
