@@ -1,5 +1,5 @@
 package output
 
 interface Show {
-    fun show(): String
+    fun show(): String = this.toString()
 }

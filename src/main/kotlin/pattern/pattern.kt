@@ -12,6 +12,7 @@ abstract class Pattern(val transformation: Matrix) {
         if (!transformation.isTransformation())
             throw IllegalArgumentException("${javaClass.name} requires a transformation:\n${transformation.show()}")
     }
+
     // Retrieves the color in world space.
     abstract fun colorAt(worldPoint: Tuple): Color
 

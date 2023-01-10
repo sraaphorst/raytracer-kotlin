@@ -5,12 +5,30 @@ package pattern
 import math.Color
 import math.Matrix
 import math.Tuple
+import kotlin.math.floor
 import kotlin.math.sqrt
 
-class RingPattern(val colors: List<Color>, transformation: Matrix = Matrix.I): Pattern(transformation) {
+class RingPattern(val patterns: List<Pattern>, transformation: Matrix = Matrix.I): Pattern(transformation) {
     constructor(color1: Color, color2: Color, transformation: Matrix = Matrix.I):
-            this(listOf(color1, color2), transformation)
+            this(listOf(SolidPattern(color1), SolidPattern(color2)), transformation)
 
-    override fun colorAt(worldPoint: Tuple): Color =
-        colors[sqrt(worldPoint.x * worldPoint.x + worldPoint.z * worldPoint.z).toInt() % colors.size]
+    constructor(pattern1: Pattern, pattern2: Pattern, transformation: Matrix = Matrix.I):
+            this(listOf(pattern1, pattern2), transformation)
+
+    constructor(transformation: Matrix = Matrix.I, vararg color: Color):
+            this(color.map(::SolidPattern), transformation)
+
+    constructor(transformation: Matrix = Matrix.I, vararg pattern: Pattern):
+            this(pattern.toList(), transformation)
+
+//    override fun colorAt(worldPoint: Tuple): Color =
+//        patterns[sqrt(worldPoint.x * worldPoint.x + worldPoint.z * worldPoint.z).toInt() % patterns.size]
+//            .colorAt(worldPoint)
+
+    // Color at the pattern point.
+    override fun colorAt(worldPoint: Tuple): Color {
+        val idx = floor(sqrt(worldPoint.x * worldPoint.x + worldPoint.z * worldPoint.z)).toInt()
+        val p = patterns[((idx % patterns.size) + patterns.size) % patterns.size]
+        return p.colorAt(p.transformation.inverse * worldPoint)
+    }
 }

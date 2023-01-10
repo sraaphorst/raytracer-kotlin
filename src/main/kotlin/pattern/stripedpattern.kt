@@ -5,23 +5,27 @@ package pattern
 import math.Color
 import math.Matrix
 import math.Tuple
+import math.posmod
+import kotlin.math.floor
 
-class StripedPattern(val colors: List<Color>, transformation: Matrix = Matrix.I): Pattern(transformation) {
-    constructor(vararg colors: Color): this(colors.toList())
-    constructor(transformation: Matrix, vararg colors: Color): this(colors.toList(), transformation)
+class StripedPattern(val patterns: List<Pattern>, transformation: Matrix = Matrix.I): Pattern(transformation) {
+    constructor(color1: Color, color2: Color, transformation: Matrix = Matrix.I):
+            this(SolidPattern(color1), SolidPattern(color2), transformation)
 
-    override fun colorAt(worldPoint: Tuple): Color =
-        colors[(worldPoint.x.toInt() % colors.size)]
+    constructor(vararg colors: Color): this(colors.map(::SolidPattern))
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is StripedPattern) return false
+    constructor(transformation: Matrix, vararg colors: Color):
+            this(colors.map(::SolidPattern), transformation)
 
-        if (colors != other.colors) return false
+    constructor(pattern1: Pattern, pattern2: Pattern, transformation: Matrix = Matrix.I):
+            this(listOf(pattern1, pattern2), transformation)
 
-        return true
+    constructor(vararg patterns: Pattern): this(patterns.toList())
+
+    constructor(transformation: Matrix, vararg patterns: Pattern):
+            this(patterns.toList(), transformation)
+
+    override fun colorAt(worldPoint: Tuple): Color {
+        return patterns[(floor(worldPoint.x).toInt() posmod patterns.size)].colorAt(worldPoint)
     }
-
-    override fun hashCode(): Int =
-        colors.hashCode()
 }

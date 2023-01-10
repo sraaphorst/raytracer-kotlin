@@ -101,8 +101,6 @@ data class Tuple(val x: Double, val y: Double, val z: Double, val w: Double): Ca
                 Matrix.translate(-(this.x), -(this.y), -(this.z))
     }
 
-    override fun show(): String = toString()
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

@@ -26,7 +26,11 @@ data class Color(val r: Double, val g: Double, val b: Double): CanBeList<Double>
     operator fun times(scalar: Number): Color =
         this * scalar.toDouble()
 
-    override fun show(): String = toString()
+    operator fun div(scalar: Double): Color =
+        Color(r / scalar, g / scalar, b / scalar)
+
+    operator fun div(scalar: Number): Color =
+        this / scalar.toDouble()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
