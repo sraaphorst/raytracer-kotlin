@@ -21,10 +21,6 @@ class RingPattern(val patterns: List<Pattern>, transformation: Matrix = Matrix.I
     constructor(transformation: Matrix = Matrix.I, vararg pattern: Pattern):
             this(pattern.toList(), transformation)
 
-//    override fun colorAt(worldPoint: Tuple): Color =
-//        patterns[sqrt(worldPoint.x * worldPoint.x + worldPoint.z * worldPoint.z).toInt() % patterns.size]
-//            .colorAt(worldPoint)
-
     // Color at the pattern point.
     override fun colorAt(worldPoint: Tuple): Color {
         val idx = floor(sqrt(worldPoint.x * worldPoint.x + worldPoint.z * worldPoint.z)).toInt()

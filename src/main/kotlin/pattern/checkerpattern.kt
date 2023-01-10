@@ -3,6 +3,7 @@ package pattern
 // By Sebastian Raaphorst, 2023.
 
 import math.Color
+import math.DEFAULT_PRECISION
 import math.Matrix
 import math.Tuple
 import kotlin.math.floor
@@ -13,8 +14,10 @@ class CheckerPattern(val pattern1: Pattern, val pattern2: Pattern, transformatio
             this(SolidPattern(color1), SolidPattern(color2), transformation)
 
     override fun colorAt(worldPoint: Tuple): Color =
-        if ((floor(worldPoint.x) + floor(worldPoint.y) + floor(worldPoint.z)).toInt() % 2 == 0)
-            pattern1.colorAt(worldPoint)
+        if ((floor(worldPoint.x) +
+                    floor(worldPoint.y) +
+                    floor(worldPoint.z)).toInt() % 2 == 0)
+            pattern1.colorAt(pattern1.transformation.inverse * worldPoint)
         else
-            pattern2.colorAt(worldPoint)
+            pattern2.colorAt(pattern2.transformation.inverse * worldPoint)
 }

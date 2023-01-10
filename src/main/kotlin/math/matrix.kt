@@ -70,7 +70,9 @@ data class Matrix(val values: List<List<Double>>, val m: Int = 4, val n: Int = 4
         other * this
 
     val transpose: Matrix by lazy {
-        return@lazy Matrix((0 until n).map { j ->
+        // Transpose of identity is identity.
+        return@lazy if (this === I) I
+        else Matrix((0 until n).map { j ->
             (0 until m).map { i ->
                 this[i, j]
             }
@@ -91,7 +93,10 @@ data class Matrix(val values: List<List<Double>>, val m: Int = 4, val n: Int = 4
     val determinant: Double by lazy {
         if (m != n)
             throw ArithmeticException("Cannot calculate determinant of non-square matrix:\n${show()}")
-        return@lazy when(m) {
+
+        // Determinant of the identity is the identity.
+        return@lazy if (this === I) 1.0
+        else when(m) {
             1 -> this[0,0]
             else -> (0 until m).sumOf { this[0,it] * cofactor(0, it ) }
         }
@@ -100,7 +105,9 @@ data class Matrix(val values: List<List<Double>>, val m: Int = 4, val n: Int = 4
     val inverse: Matrix by lazy {
         if (almostEquals(0, determinant))
             throw ArithmeticException("Matrix has determinant 0 and cannot be inverted:\n${show()}")
-        return@lazy Matrix(
+        // We don't want to invert the identity matrix.
+        return@lazy if (this === I) I
+        else Matrix(
             (0 until m).map { x ->
                 (0 until n).map { y ->
                     cofactor(y, x) / determinant

@@ -26,6 +26,8 @@ class StripedPattern(val patterns: List<Pattern>, transformation: Matrix = Matri
             this(patterns.toList(), transformation)
 
     override fun colorAt(worldPoint: Tuple): Color {
-        return patterns[(floor(worldPoint.x).toInt() posmod patterns.size)].colorAt(worldPoint)
+        val idx = floor(worldPoint.x).toInt() posmod patterns.size
+        val p = patterns[idx]
+        return p.colorAt(p.transformation.inverse * worldPoint)
     }
 }
