@@ -13,14 +13,14 @@ abstract class Shape(val transformation: Matrix,
                      val material: Material,
                      private val id: UUID = UUID.randomUUID()) {
     init {
-        if (transformation.m != 4 || transformation.n != 4)
+        if (!transformation.isTransformation())
             throw IllegalArgumentException("Shapes must have 4x4 transformation matrices:\n" +
-                    "\tShape: $javaClass\nTransformation:\n${transformation.show()}")
+                    "\tShape: ${javaClass.name}\nTransformation:\n${transformation.show()}")
     }
 
     // Convert a point from world space to object space.
     // Later on, we use parent here.
-    private fun worldToLocal(tuple: Tuple): Tuple =
+    fun worldToLocal(tuple: Tuple): Tuple =
         transformation.inverse * tuple
 
     // Convert a normal vector from object space to world space.

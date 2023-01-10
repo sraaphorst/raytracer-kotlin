@@ -75,7 +75,9 @@ class WorldTest {
         val w = World(listOf(s1, s2), light)
         val r = Ray(Tuple.point(0, 0, 0.75), Tuple.vector(0, 0, -1))
         val c = w.colorAt(r)
-        assertAlmostEquals(m2.color, c)
+
+        // m2 should have a SolidColor pattern with white.
+        assertAlmostEquals(Color.WHITE, c)
     }
 
     @Test
