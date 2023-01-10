@@ -47,8 +47,8 @@ fun main() {
 
         // Middle sphere is a unit sphere, translated upward and slightly green.
         val middleSphere = run {
-            val t = Matrix.translate(-0.5, 1, 0.5) * Matrix.rotationY(-PI/3) * Matrix.rotationZ(PI/3)
-            val r1 = RingPattern(Color(0.25, 0.25, 0.8), Color(0.5, 0.5, 1), Matrix.scale(0.1, 1.0, 0.1))
+            val t = Matrix.translate(-0.5, 1, 0.5) * Matrix.rotationY(-PI/3) * Matrix.rotationZ(-PI/6)
+            val r1 = StripedPattern(Color(0.25, 0.25, 0.8), Color(0.5, 0.5, 1), Matrix.scale(0.15, 1, 1))
             // val m = Material(r1, diffuse = 0.7, specular = 0.3)
             val m = Material(r1, diffuse = 0.7, specular = 0.3)
             Sphere(t, m)
@@ -81,7 +81,7 @@ fun main() {
         val to = Tuple.PY
         val up = Tuple.VY
         val t = from.viewTransformationFrom(to, up)
-        Camera(5000, 2500, PI /3, t)
+        Camera(1000, 500, PI /3, t)
     }
 
     val canvas = camera.render(world)
