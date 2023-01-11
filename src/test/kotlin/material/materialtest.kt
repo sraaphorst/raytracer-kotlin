@@ -22,10 +22,11 @@ class MaterialTest {
     @Test
     fun `Default material`() {
         assertEquals(m.pattern, SolidPattern(Color.WHITE))
-        assertAlmostEquals(m.ambient, 0.1)
-        assertAlmostEquals(m.diffuse, 0.9)
-        assertAlmostEquals(m.specular, 0.9)
-        assertAlmostEquals(m.shininess, 200.0)
+        assertAlmostEquals(m.ambient, Material.DEFAULT_AMBIENT)
+        assertAlmostEquals(m.diffuse, Material.DEFAULT_DIFFUSE)
+        assertAlmostEquals(m.specular, Material.DEFAULT_SPECULAR)
+        assertAlmostEquals(m.shininess, Material.DEFAULT_SHININESS)
+        assertAlmostEquals(m.reflectivity, Material.DEFAULT_REFLECTIVITY)
     }
 
     @Test

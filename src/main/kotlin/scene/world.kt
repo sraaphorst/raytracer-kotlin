@@ -14,15 +14,18 @@ data class World(val shapes: List<Shape>, val lights: List<Light>) {
     operator fun contains(shape: Shape): Boolean =
         shape in shapes
 
-    fun shadeHit(comps: Computations): Color =
+    fun shadeHit(comps: Computations, remaining: Int = DEFAULT_REMAINING): Color =
         if (lights.isEmpty())
             Color.BLACK
-        else
+        else {
             lights.map { light ->
-                comps.shape.material.lighting(comps.shape, light,
+                comps.shape.material.lighting(
+                    comps.shape, light,
                     comps.overPoint, comps.eyeV, comps.normalV,
-                    isShadowed(comps.overPoint, light))
-            }.reduce { c1, c2 -> c1 + c2}
+                    isShadowed(comps.overPoint, light)
+                )
+            }.reduce { c1, c2 -> c1 + c2 } + reflectedColor(comps, remaining)
+        }
 
     // Determine if a point is in shadow with respect to a light source.
     // Note this is different from the book since it takes the light source as a parameter
@@ -46,19 +49,30 @@ data class World(val shapes: List<Shape>, val lights: List<Light>) {
 
     // This should be the entry point into World.
     // It connects the other functions together, which would be private if not for test cases.
-    fun colorAt(r: Ray): Color =
-        intersect(r).hit()?.computations(r)?.let { shadeHit(it) } ?: Color.BLACK
+    fun colorAt(r: Ray, remaining: Int = DEFAULT_REMAINING): Color =
+        intersect(r).hit()?.computations(r)?.let { shadeHit(it, remaining) } ?: Color.BLACK
 
     fun intersect(ray: Ray): List<Intersection> =
         shapes.flatMap { it.intersect(ray) }.sortedBy { it.t }
 
+    // Calculate the reflected color in a Computations object.
+    fun reflectedColor(comps: Computations, remaining: Int = DEFAULT_REMAINING): Color =
+        if (remaining <= 0 || comps.shape.material.reflectivity == 0.0)
+            Color.BLACK
+        else {
+            val reflectRay = Ray(comps.overPoint, comps.reflectV)
+            comps.shape.material.reflectivity * colorAt(reflectRay, remaining - 1)
+        }
+
     companion object {
         val DefaultWorld: World by lazy {
-            val light1 = PointLight(Tuple.point(-10, 10, -10))
+            val light = PointLight(Tuple.point(-10, 10, -10))
             val m1 = Material(Color(0.8, 1.0, 0.6), diffuse = 0.7, specular = 0.2)
             val s1 = Sphere(material = m1)
             val s2 = Sphere(Matrix.scale(0.5, 0.5, 0.5))
-            return@lazy World(listOf(s1, s2), light1)
+            return@lazy World(listOf(s1, s2), light)
         }
+
+        const val DEFAULT_REMAINING = 5
     }
 }

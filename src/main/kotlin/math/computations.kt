@@ -9,6 +9,7 @@ data class Computations(val t: Double,
                         val point: Tuple,
                         val eyeV: Tuple,
                         val normalV: Tuple,
+                        val reflectV: Tuple,
                         val inside: Boolean) {
     init {
         if (!point.isPoint())
@@ -16,7 +17,9 @@ data class Computations(val t: Double,
         if (!eyeV.isVector())
             throw IllegalArgumentException("Computations eyeV is not vector: $eyeV.")
         if (!normalV.isVector())
-            throw IllegalArgumentException("Computations normal is not vector: $normalV.")
+            throw IllegalArgumentException("Computations normalV is not vector: $normalV.")
+        if (!reflectV.isVector())
+            throw IllegalArgumentException("Computations reflectV is not vector: $reflectV.")
     }
 
     // Adjust point slightly in the direction of normal before testing for shadows.

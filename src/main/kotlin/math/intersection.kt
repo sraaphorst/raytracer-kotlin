@@ -12,10 +12,10 @@ data class Intersection(val t: Double, val shape: Shape) {
         val point = ray.position(t)
         val eyeV = -ray.direction
         val normalV = shape.normalAt(point)
-        return if (normalV.dot(eyeV) < 0)
-            Computations(t, shape, point, eyeV, -normalV, true)
-        else
-            Computations(t, shape, point, eyeV, normalV, false)
+        val inside = normalV.dot(eyeV) < 0
+        val adjNormalV = if (inside) -normalV else normalV
+        val reflectV = ray.direction.reflect(adjNormalV)
+        return Computations(t, shape, point, eyeV, adjNormalV, reflectV, inside)
     }
 
     override fun equals(other: Any?): Boolean {

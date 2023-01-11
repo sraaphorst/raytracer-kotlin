@@ -3,7 +3,9 @@ package math
 // By Sebastian Raaphorst, 2023.
 
 import org.junit.jupiter.api.Test
+import shapes.Plane
 import shapes.Sphere
+import kotlin.math.sqrt
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -92,5 +94,15 @@ class IntersectionTest {
         val comps = x.computations(r)
         assertTrue(comps.overPoint.z < -DEFAULT_PRECISION/2)
         assertTrue(comps.point.z > comps.overPoint.z)
+    }
+
+    @Test
+    fun `Compute reflection vector`() {
+        val s = Plane()
+        val sqrt2by2 = sqrt(2.0) / 2
+        val r = Ray(Tuple.point(0, 1, -1), Tuple.vector(0, -sqrt2by2, sqrt2by2))
+        val x = Intersection(sqrt(2.0), s)
+        val comps = x.computations(r)
+        assertAlmostEquals(Tuple.vector(0, sqrt2by2, sqrt2by2), comps.reflectV)
     }
 }

@@ -6,7 +6,10 @@ import light.PointLight
 import material.Material
 import math.*
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import shapes.Plane
 import shapes.Sphere
+import kotlin.math.sqrt
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -121,5 +124,75 @@ class WorldTest {
         val c = w.shadeHit(comps)
 
         assertAlmostEquals(Color(0.1, 0.1, 0.1), c)
+    }
+
+    @Test
+    fun `Reflected color for non-reflective material`() {
+        val light = PointLight(Tuple.point(-10, 10, -10))
+        val m1 = Material(Color(0.8, 1.0, 0.6), diffuse = 0.7, specular = 0.2)
+        val s1 = Sphere(material = m1)
+        val m2 = Material(ambient = 1.0)
+        val s2 = Sphere(Matrix.scale(0.5, 0.5, 0.5), m2)
+        val w = World(listOf(s1, s2), light)
+
+        val r = Ray(Tuple.PZERO, Tuple.VZ)
+        val x = Intersection(1, s2)
+        val comps = x.computations(r)
+        val c = w.reflectedColor(comps)
+
+        assertAlmostEquals(Color.BLACK, c)
+    }
+
+    @Test
+    fun `Reflected color and shadeHit for reflective material`() {
+        val light = PointLight(Tuple.point(-10, 10, -10))
+        val m1 = Material(Color(0.8, 1.0, 0.6), diffuse = 0.7, specular = 0.2)
+        val s1 = Sphere(material = m1)
+        val m2 = Material(ambient = 1.0)
+        val s2 = Sphere(Matrix.scale(0.5, 0.5, 0.5), m2)
+        val m3 = Material(reflectivity = 0.5)
+        val s3 = Plane(Matrix.translate(0, -1, 0), m3)
+        val w = World(listOf(s1, s2, s3), light)
+
+        val sqrt2by2 = sqrt(2.0) / 2
+        val r = Ray(Tuple.point(0, 0, -3), Tuple.vector(0, -sqrt2by2, sqrt2by2))
+        val x = Intersection(sqrt(2.0), s3)
+        val comps = x.computations(r)
+
+        val c1 = w.reflectedColor(comps)
+        assertAlmostEquals(Color(0.19033, 0.23791, 0.14274), c1)
+
+        val c2 = w.shadeHit(comps)
+        assertAlmostEquals(Color(0.87675, 0.92434, 0.82917), c2)
+    }
+
+    @Test
+    fun `colorAt with mutually reflective surfaces`() {
+        val light = PointLight(Tuple.PZERO)
+        val lower = Plane(Matrix.translate(0, -1,0), Material(reflectivity = 1.0))
+        val upper = Plane(Matrix.translate(0, 1, 0), Material(reflectivity = 1.0))
+        val w = World(listOf(lower, upper), light)
+
+        val r = Ray(Tuple.PZERO, Tuple.VY)
+        assertDoesNotThrow { w.colorAt(r) }
+    }
+
+    @Test
+    fun `Reflected color at maximum recursive depth`() {
+        val light = PointLight(Tuple.point(-10, 10, -10))
+        val m1 = Material(Color(0.8, 1.0, 0.6), diffuse = 0.7, specular = 0.2)
+        val s1 = Sphere(material = m1)
+        val m2 = Material(ambient = 1.0)
+        val s2 = Sphere(Matrix.scale(0.5, 0.5, 0.5), m2)
+        val m3 = Material(reflectivity = 0.5)
+        val s3 = Plane(Matrix.translate(0, -1, 0), m3)
+        val w = World(listOf(s1, s2, s3), light)
+
+        val sqrt2by2 = sqrt(2.0) / 2
+        val r = Ray(Tuple.point(0, 0, -3), Tuple.vector(0, -sqrt2by2, sqrt2by2))
+        val x = Intersection(sqrt(2.0), s3)
+        val comps = x.computations(r)
+        val c = w.reflectedColor(comps, 0)
+        assertEquals(Color.BLACK, c)
     }
 }

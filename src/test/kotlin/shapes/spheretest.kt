@@ -4,11 +4,9 @@ package shapes
 
 import math.assertAlmostEquals
 import math.Intersection
-import math.Matrix
 import math.Ray
 import math.Tuple
 import org.junit.jupiter.api.Test
-import kotlin.math.PI
 import kotlin.math.sqrt
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
