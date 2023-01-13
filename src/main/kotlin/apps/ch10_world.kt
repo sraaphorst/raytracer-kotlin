@@ -47,7 +47,7 @@ fun main() {
                     Matrix.scale(0.15, 0.15, 0.15)
             val p1 = RingPattern(Color(1, 0.5, 0), Color(0.5, 1, 1),
                 Matrix.translate(25, 0, 15))
-            val p = SimplexNoisePattern(p1)
+            val p = SimplexNoisePattern(SimplexNoisePattern(p1))
             val m = Material(p, specular = 0.0)
             Plane(t, m)
         }

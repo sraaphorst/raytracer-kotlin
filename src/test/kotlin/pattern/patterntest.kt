@@ -11,8 +11,8 @@ import shapes.Sphere
 
 class PatternTest {
     private class TestPattern(transformation: Matrix = Matrix.I): Pattern(transformation) {
-        override fun colorAt(worldPoint: Tuple): Color =
-            Color(worldPoint.x, worldPoint.y, worldPoint.z)
+        override fun patternAt(patternPoint: Tuple): Color =
+            Color(patternPoint.x, patternPoint.y, patternPoint.z)
     }
 
     @Test

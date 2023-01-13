@@ -8,7 +8,7 @@ import math.Tuple
 import kotlin.math.floor
 import kotlin.math.sqrt
 
-class RingPattern(val patterns: List<Pattern>, transformation: Matrix = Matrix.I): Pattern(transformation) {
+class RingPattern(private val patterns: List<Pattern>, transformation: Matrix = Matrix.I): Pattern(transformation) {
     constructor(color1: Color, color2: Color, transformation: Matrix = Matrix.I):
             this(listOf(SolidPattern(color1), SolidPattern(color2)), transformation)
 
@@ -22,9 +22,9 @@ class RingPattern(val patterns: List<Pattern>, transformation: Matrix = Matrix.I
             this(pattern.toList(), transformation)
 
     // Color at the pattern point.
-    override fun colorAt(worldPoint: Tuple): Color {
-        val idx = floor(sqrt(worldPoint.x * worldPoint.x + worldPoint.z * worldPoint.z)).toInt()
+    override fun patternAt(patternPoint: Tuple): Color {
+        val idx = floor(sqrt(patternPoint.x * patternPoint.x + patternPoint.z * patternPoint.z)).toInt()
         val p = patterns[((idx % patterns.size) + patterns.size) % patterns.size]
-        return p.colorAt(p.transformation.inverse * worldPoint)
+        return p.patternAt(p.transformation.inverse * patternPoint)
     }
 }

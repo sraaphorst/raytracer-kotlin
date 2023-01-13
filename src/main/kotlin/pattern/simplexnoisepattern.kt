@@ -4,26 +4,25 @@ package pattern
 // Converted to Kotlin from https://github.com/SRombauts/SimplexNoise
 
 import math.Color
-import math.Matrix
 import math.Tuple
 import kotlin.math.floor
 
-class SimplexNoisePattern(val pattern: Pattern, transformation: Matrix = Matrix.I): Pattern(transformation) {
-    override fun colorAt(worldPoint: Tuple): Color {
+class SimplexNoisePattern(val pattern: Pattern): Pattern() {
+    override fun patternAt(patternPoint: Tuple): Color {
         val scale = 0.3
         val pscale = 0.7
-        val (x, y, z, _) = worldPoint
+        val (x, y, z, _) = patternPoint
 
         val nx = x * pscale + noise(x, y, z + 0) * scale
         val ny = y * pscale + noise(x, y, z + 1) * scale
         val nz = z * pscale + noise(x, y, z + 2) * scale
-
-        return pattern.colorAt(pattern.transformation.inverse * Tuple.point(nx, ny, nz))
+        val noisyPoint = Tuple.point(nx, ny, nz)
+        return pattern.patternAt(pattern.transformation.inverse * noisyPoint)
     }
 
     companion object {
-        private val F = 1.0 / 3.0
-        private val G = 1.0 / 6.0
+        private const val F = 1.0 / 3.0
+        private const val G = 1.0 / 6.0
 
         private val permutation = listOf(151, 160, 137, 91, 90, 15,
             131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23,

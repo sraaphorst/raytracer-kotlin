@@ -5,17 +5,16 @@ package pattern
 import math.Color
 import math.Matrix
 import math.Tuple
-import kotlin.math.PI
 
-class BlendedPattern(val patterns: List<Pattern>,
-                     val blender: (List<Color>) -> Color = AVERAGE,
+class BlendedPattern(private val patterns: List<Pattern>,
+                     private val blender: (List<Color>) -> Color = AVERAGE,
                      transformation: Matrix = Matrix.I) : Pattern(transformation) {
     constructor(pattern1: Pattern, pattern2: Pattern,
                 blender: (List<Color>) -> Color = AVERAGE,
                 transformation: Matrix = Matrix.I): this(listOf(pattern1, pattern2), blender, transformation)
 
-    override fun colorAt(worldPoint: Tuple): Color =
-        blender(patterns.map { it.colorAt(it.transformation.inverse * worldPoint) } )
+    override fun patternAt(patternPoint: Tuple): Color =
+        blender(patterns.map { it.patternAt(it.transformation.inverse * patternPoint) } )
 
     companion object {
         val AVERAGE: (List<Color>) -> Color = { it.reduce { c1, c2 -> c1 + c2 } / it.size }

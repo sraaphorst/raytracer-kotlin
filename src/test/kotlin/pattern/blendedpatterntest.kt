@@ -33,21 +33,21 @@ class BlendedPatternTest {
 
     @Test
     fun `BlueWhite patch at (x=0, z=0)`() {
-        assertAlmostEquals(Color(0.5, 0.5, 1.0), p.colorAt(Tuple.PZERO))
+        assertAlmostEquals(Color(0.5, 0.5, 1.0), p.patternAt(Tuple.PZERO))
     }
 
     @Test
     fun `WhiteWhite patch at (x=0, z=1)`() {
-        assertAlmostEquals(Color.WHITE, p.colorAt(Tuple.PZ))
+        assertAlmostEquals(Color.WHITE, p.patternAt(Tuple.PZ))
     }
 
     @Test
     fun `WhiteGreen patch at (x=1, z=1)`() {
-        assertAlmostEquals(Color(0.5, 1.0, 0.5), p.colorAt(Tuple.point(1, 0, 1)))
+        assertAlmostEquals(Color(0.5, 1.0, 0.5), p.patternAt(Tuple.point(1, 0, 1)))
     }
 
     @Test
     fun `BlueGreen patch at (x=1, z=0)`() {
-        assertAlmostEquals(Color(0.0, 0.5, 0.5), p.colorAt(Tuple.PX))
+        assertAlmostEquals(Color(0.0, 0.5, 0.5), p.patternAt(Tuple.PX))
     }
 }

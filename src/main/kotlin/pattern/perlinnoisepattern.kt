@@ -1,21 +1,20 @@
 package pattern
 
 import math.Color
-import math.Matrix
 import math.Tuple
 import kotlin.math.floor
 
-class PerlinNoisePattern(val pattern: Pattern, transformation: Matrix = Matrix.I): Pattern(transformation) {
-    override fun colorAt(worldPoint: Tuple): Color {
+class PerlinNoisePattern(val pattern: Pattern): Pattern() {
+    override fun patternAt(patternPoint: Tuple): Color {
         val scale = 0.3
         val pscale = 0.7
-        val (x, y, z, _) = worldPoint
+        val (x, y, z, _) = patternPoint
 
         val nx = x * pscale + noise(x, y, z + 0) * scale
         val ny = y * pscale + noise(x, y, z + 1) * scale
         val nz = z * pscale + noise(x, y, z + 2) * scale
-
-        return pattern.colorAt(pattern.transformation.inverse * Tuple.point(nx, ny, nz))
+        val noisyPoint = Tuple.point(nx, ny, nz)
+        return pattern.patternAt(pattern.transformation.inverse * noisyPoint)
     }
 
     companion object {
