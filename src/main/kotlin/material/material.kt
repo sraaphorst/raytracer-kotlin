@@ -16,7 +16,9 @@ data class Material(val pattern: Pattern = SolidPattern(Color.WHITE),
                     val diffuse: Double = DEFAULT_DIFFUSE,
                     val specular: Double = DEFAULT_SPECULAR,
                     val shininess: Double = DEFAULT_SHININESS,
-                    val reflectivity: Double = DEFAULT_REFLECTIVITY) {
+                    val reflectivity: Double = DEFAULT_REFLECTIVITY,
+                    val transparency: Double = DEFAULT_TRANSPARENCY,
+                    val refractiveIndex: Double = DEFAULT_REFRACTIVE_INDEX) {
 
     // Convenience constructor to create a material with a solid pattern.
     constructor(color: Color,
@@ -80,5 +82,7 @@ data class Material(val pattern: Pattern = SolidPattern(Color.WHITE),
         const val DEFAULT_SPECULAR = 0.9
         const val DEFAULT_SHININESS = 200.0
         const val DEFAULT_REFLECTIVITY = 0.0
+        const val DEFAULT_TRANSPARENCY = 0.0
+        const val DEFAULT_REFRACTIVE_INDEX = 1.0
     }
 }

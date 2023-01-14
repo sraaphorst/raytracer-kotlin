@@ -49,8 +49,10 @@ data class World(val shapes: List<Shape>, val lights: List<Light>) {
 
     // This should be the entry point into World.
     // It connects the other functions together, which would be private if not for test cases.
-    fun colorAt(r: Ray, remaining: Int = DEFAULT_REMAINING): Color =
-        intersect(r).hit()?.computations(r)?.let { shadeHit(it, remaining) } ?: Color.BLACK
+    fun colorAt(r: Ray, remaining: Int = DEFAULT_REMAINING): Color {
+        val xs = intersect(r)
+        return xs.hit()?.computations(r, xs)?.let { shadeHit(it, remaining) } ?: Color.BLACK
+    }
 
     fun intersect(ray: Ray): List<Intersection> =
         shapes.flatMap { it.intersect(ray) }.sortedBy { it.t }

@@ -10,7 +10,9 @@ data class Computations(val t: Double,
                         val eyeV: Tuple,
                         val normalV: Tuple,
                         val reflectV: Tuple,
-                        val inside: Boolean) {
+                        val inside: Boolean,
+                        val n1: Double,
+                        val n2: Double) {
     init {
         if (!point.isPoint())
             throw IllegalArgumentException("Computations point is not point: $point,")

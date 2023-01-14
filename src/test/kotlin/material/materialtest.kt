@@ -21,12 +21,14 @@ class MaterialTest {
     }
     @Test
     fun `Default material`() {
-        assertEquals(m.pattern, SolidPattern(Color.WHITE))
-        assertAlmostEquals(m.ambient, Material.DEFAULT_AMBIENT)
-        assertAlmostEquals(m.diffuse, Material.DEFAULT_DIFFUSE)
-        assertAlmostEquals(m.specular, Material.DEFAULT_SPECULAR)
-        assertAlmostEquals(m.shininess, Material.DEFAULT_SHININESS)
-        assertAlmostEquals(m.reflectivity, Material.DEFAULT_REFLECTIVITY)
+        assertEquals(SolidPattern(Color.WHITE), m.pattern)
+        assertAlmostEquals(Material.DEFAULT_AMBIENT, m.ambient)
+        assertAlmostEquals(Material.DEFAULT_DIFFUSE, m.diffuse)
+        assertAlmostEquals(Material.DEFAULT_SPECULAR, m.specular)
+        assertAlmostEquals(Material.DEFAULT_SHININESS, m.shininess)
+        assertAlmostEquals(Material.DEFAULT_REFLECTIVITY, m.reflectivity)
+        assertAlmostEquals(Material.DEFAULT_TRANSPARENCY, m.transparency)
+        assertAlmostEquals(Material.DEFAULT_REFRACTIVE_INDEX, m.refractiveIndex)
     }
 
     @Test
@@ -35,7 +37,7 @@ class MaterialTest {
         val normalV = -Tuple.VZ
         val light = PointLight(Tuple.point(0, 0, -10))
         val result = m.lighting(Sphere(), light, position, eyeV, normalV, false)
-        assertAlmostEquals(result, Color(1.9, 1.9, 1.9))
+        assertAlmostEquals(Color(1.9, 1.9, 1.9), result)
     }
 
     @Test

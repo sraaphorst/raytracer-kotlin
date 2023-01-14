@@ -2,10 +2,8 @@ package shapes
 
 // By Sebastian Raaphorst, 2023.
 
-import math.assertAlmostEquals
-import math.Intersection
-import math.Ray
-import math.Tuple
+import material.Material
+import math.*
 import org.junit.jupiter.api.Test
 import kotlin.math.sqrt
 import kotlin.test.assertEquals

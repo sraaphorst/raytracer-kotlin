@@ -105,4 +105,30 @@ class IntersectionTest {
         val comps = x.computations(r)
         assertAlmostEquals(Tuple.vector(0, sqrt2by2, sqrt2by2), comps.reflectV)
     }
+
+    @Test
+    fun `Compute n1 and n2 at various intersections`() {
+        val s1 = Sphere.glass_sphere(Matrix.scale(2, 2, 2), refractiveIndex = 1.5)
+        val s2 = Sphere.glass_sphere(Matrix.translate(0, 0, -0.25), refractiveIndex = 2.0)
+        val s3 = Sphere.glass_sphere(Matrix.translate(0, 0, 2.5), refractiveIndex = 2.5)
+
+        val r = Ray(Tuple.point(0, 0, -4), Tuple.VZ)
+        val xs = listOf(
+            Intersection(2, s1),
+            Intersection(2.75, s2),
+            Intersection(3.25, s3),
+            Intersection(4.75, s2),
+            Intersection(5.25, s3),
+            Intersection(6, s1))
+
+        val n1s = listOf(1.0, 1.5, 2.0, 2.5, 2.5, 1.5)
+        val n2s = listOf(1.5, 2.0, 2.5, 2.5, 1.5, 1.0)
+
+        xs.zip(n1s.zip(n2s)).forEach { (x, ns) ->
+            val (n1, n2) = ns
+            val comps = x.computations(r, xs)
+            assertAlmostEquals(n1, comps.n1)
+            assertAlmostEquals(n2, comps.n2)
+        }
+    }
 }
