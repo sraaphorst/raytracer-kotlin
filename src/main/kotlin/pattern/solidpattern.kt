@@ -6,7 +6,7 @@ import math.Color
 import math.Matrix
 import math.Tuple
 
-class SolidPattern(val color: Color): Pattern(Matrix.I) {
-    override fun colorAt(worldPoint: Tuple): Color =
+class SolidPattern(val color: Color): Pattern() {
+    override fun patternAt(patternPoint: Tuple): Color =
         color
 }

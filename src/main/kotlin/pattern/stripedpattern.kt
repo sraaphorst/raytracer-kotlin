@@ -8,7 +8,7 @@ import math.Tuple
 import math.posmod
 import kotlin.math.floor
 
-class StripedPattern(val patterns: List<Pattern>, transformation: Matrix = Matrix.I): Pattern(transformation) {
+class StripedPattern(private val patterns: List<Pattern>, transformation: Matrix = Matrix.I): Pattern(transformation) {
     constructor(color1: Color, color2: Color, transformation: Matrix = Matrix.I):
             this(SolidPattern(color1), SolidPattern(color2), transformation)
 
@@ -25,9 +25,9 @@ class StripedPattern(val patterns: List<Pattern>, transformation: Matrix = Matri
     constructor(transformation: Matrix, vararg patterns: Pattern):
             this(patterns.toList(), transformation)
 
-    override fun colorAt(worldPoint: Tuple): Color {
-        val idx = floor(worldPoint.x).toInt() posmod patterns.size
+    override fun patternAt(patternPoint: Tuple): Color {
+        val idx = floor(patternPoint.x).toInt() posmod patterns.size
         val p = patterns[idx]
-        return p.colorAt(p.transformation.inverse * worldPoint)
+        return p.patternAt(p.transformation.inverse * patternPoint)
     }
 }

@@ -11,9 +11,9 @@ class RingPatternTest {
     @Test
     fun `A ring should extend in both x and z`() {
         val p = RingPattern(Color.WHITE, Color.BLACK)
-        assertAlmostEquals(p.colorAt(Tuple.PZERO), Color.WHITE)
-        assertAlmostEquals(p.colorAt(Tuple.PX), Color.BLACK)
-        assertAlmostEquals(p.colorAt(Tuple.PZ), Color.BLACK)
-        assertAlmostEquals(p.colorAt(Tuple.point(0.708, 0, 0.708)), Color.BLACK)
+        assertAlmostEquals(p.patternAt(Tuple.PZERO), Color.WHITE)
+        assertAlmostEquals(p.patternAt(Tuple.PX), Color.BLACK)
+        assertAlmostEquals(p.patternAt(Tuple.PZ), Color.BLACK)
+        assertAlmostEquals(p.patternAt(Tuple.point(0.708, 0, 0.708)), Color.BLACK)
     }
 }

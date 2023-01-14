@@ -62,11 +62,3 @@ data class World(val shapes: List<Shape>, val lights: List<Light>) {
         }
     }
 }
-
-fun main() {
-    //val r = Ray(Tuple.point(0, 0, -5), Tuple.VZ)
-    val r = Ray(Tuple.point(0, 0, -5), Tuple.VZ)
-    val c = World.DefaultWorld.colorAt(r)
-    println(Color(0.38066, 0.47583, 0.2855))
-    println(c)
-}
