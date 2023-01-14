@@ -27,4 +27,7 @@ data class Computations(val t: Double,
     // Adjust point slightly in the direction of normal before testing for shadows.
     // This bumps it above the surface and prevents self-shadowing / acne effect.
     val overPoint = point + normalV * DEFAULT_PRECISION
+
+    // Adjust point slightly in the direction opposite of normal to bump it below the surface.
+    val underPoint = point - normalV * DEFAULT_PRECISION
 }

@@ -108,9 +108,9 @@ class IntersectionTest {
 
     @Test
     fun `Compute n1 and n2 at various intersections`() {
-        val s1 = Sphere.glass_sphere(Matrix.scale(2, 2, 2), refractiveIndex = 1.5)
-        val s2 = Sphere.glass_sphere(Matrix.translate(0, 0, -0.25), refractiveIndex = 2.0)
-        val s3 = Sphere.glass_sphere(Matrix.translate(0, 0, 2.5), refractiveIndex = 2.5)
+        val s1 = Sphere.glassSphere(Matrix.scale(2, 2, 2), refractiveIndex = 1.5)
+        val s2 = Sphere.glassSphere(Matrix.translate(0, 0, -0.25), refractiveIndex = 2.0)
+        val s3 = Sphere.glassSphere(Matrix.translate(0, 0, 2.5), refractiveIndex = 2.5)
 
         val r = Ray(Tuple.point(0, 0, -4), Tuple.VZ)
         val xs = listOf(
@@ -130,5 +130,16 @@ class IntersectionTest {
             assertAlmostEquals(n1, comps.n1)
             assertAlmostEquals(n2, comps.n2)
         }
+    }
+
+    @Test
+    fun `underPoint is offset below the surface`() {
+        val r = Ray(Tuple.point(0, 0, -5), Tuple.VZ)
+        val s = Sphere.glassSphere(Matrix.translate(0, 0, 1))
+        val x = Intersection(5, s)
+        val xs = intersections(x)
+        val comps = x.computations(r, xs)
+        assertTrue(comps.underPoint.z > DEFAULT_PRECISION/2)
+        assertTrue(comps.point.z < comps.underPoint.z)
     }
 }
