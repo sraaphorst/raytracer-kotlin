@@ -34,7 +34,7 @@ class Sphere(transformation: Matrix = Matrix.I, material: Material = Material())
     companion object {
         fun glassSphere(transformation: Matrix = Matrix.I,
                         transparency: Double = 1.0,
-                        refractiveIndex: Double = 1.0) = run {
+                        refractiveIndex: Double = 1.5) = run {
             val m = Material(transparency = transparency, refractiveIndex = refractiveIndex)
             Sphere(transformation, m)
         }

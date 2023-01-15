@@ -25,8 +25,11 @@ data class Material(val pattern: Pattern = SolidPattern(Color.WHITE),
                 ambient: Double = DEFAULT_AMBIENT,
                 diffuse: Double = DEFAULT_DIFFUSE,
                 specular: Double = DEFAULT_SPECULAR,
-                shininess: Double = DEFAULT_SHININESS):
-            this(SolidPattern(color), ambient, diffuse, specular, shininess)
+                shininess: Double = DEFAULT_SHININESS,
+                reflectivity: Double = DEFAULT_REFLECTIVITY,
+                transparency: Double = DEFAULT_TRANSPARENCY,
+                refractiveIndex: Double = DEFAULT_REFRACTIVE_INDEX):
+            this(SolidPattern(color), ambient, diffuse, specular, shininess, reflectivity, transparency, refractiveIndex)
 
     fun lighting(shape: Shape,
                  light: Light,

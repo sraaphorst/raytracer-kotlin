@@ -66,6 +66,11 @@ data class World(val shapes: List<Shape>, val lights: List<Light>) {
             comps.shape.material.reflectivity * colorAt(reflectRay, remaining - 1)
         }
 
+    fun refractedColor(comps: Computations, remaining: Int = DEFAULT_REMAINING): Color =
+        if (remaining == 0 || almostEquals(0.0, comps.shape.material.transparency))
+            Color.BLACK
+        else Color.WHITE
+
     companion object {
         val DefaultWorld: World by lazy {
             val light = PointLight(Tuple.point(-10, 10, -10))

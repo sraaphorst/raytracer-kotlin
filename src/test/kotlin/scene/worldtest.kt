@@ -195,4 +195,30 @@ class WorldTest {
         val c = w.reflectedColor(comps, 0)
         assertEquals(Color.BLACK, c)
     }
+
+    @Test
+    fun `Refracted color with an opaque surface`() {
+        val w = World.DefaultWorld
+        val s = w.shapes.first()
+        val r = Ray(Tuple.point(0, 0, -5), Tuple.VZ)
+        val xs = intersections(Intersection(4, s), Intersection(6, s))
+        val comps = xs[0].computations(r, xs)
+        val c = w.refractedColor(comps, 5)
+        assertEquals(Color.BLACK, c)
+    }
+
+    @Test
+    fun `Refracted color at maximum recursive depth`() {
+        val light = PointLight(Tuple.point(-10, 10, -10))
+        val m1 = Material(Color(0.8, 1.0, 0.6),
+            diffuse = 0.7, specular = 0.2, transparency = 1.0, refractiveIndex = 1.5)
+        val s1 = Sphere(material = m1)
+        val s2 = Sphere(Matrix.scale(0.5, 0.5, 0.5))
+        val w = World(listOf(s1, s2), light)
+        val r = Ray(Tuple.point(0, 0, -5), Tuple.VZ)
+        val xs = intersections(Intersection(4, s1), Intersection(6, s1))
+        val comps = xs[0].computations(r, xs)
+        val c = w.refractedColor(comps, 0)
+        assertEquals(Color.BLACK, c)
+    }
 }
