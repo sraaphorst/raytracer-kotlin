@@ -4,8 +4,11 @@ import light.Light
 import light.PointLight
 import material.Material
 import math.*
+import pattern.Pattern
+import shapes.Plane
 import shapes.Shape
 import shapes.Sphere
+import kotlin.math.sqrt
 
 data class World(val shapes: List<Shape>, val lights: List<Light>) {
     constructor(shapes: List<Shape>, light: Light):
@@ -24,7 +27,7 @@ data class World(val shapes: List<Shape>, val lights: List<Light>) {
                     comps.overPoint, comps.eyeV, comps.normalV,
                     isShadowed(comps.overPoint, light)
                 )
-            }.reduce { c1, c2 -> c1 + c2 } + reflectedColor(comps, remaining)
+            }.reduce { c1, c2 -> c1 + c2 } + reflectedColor(comps, remaining) + refractedColor(comps, remaining)
         }
 
     // Determine if a point is in shadow with respect to a light source.
@@ -66,13 +69,35 @@ data class World(val shapes: List<Shape>, val lights: List<Light>) {
             comps.shape.material.reflectivity * colorAt(reflectRay, remaining - 1)
         }
 
-    fun refractedColor(comps: Computations, remaining: Int = DEFAULT_REMAINING): Color =
+    internal fun refractedColor(comps: Computations, remaining: Int = DEFAULT_REMAINING): Color =
         if (remaining == 0 || almostEquals(0.0, comps.shape.material.transparency))
             Color.BLACK
-        else Color.WHITE
+        else {
+            // Find the ratio of first index of refraction to second.
+            // Comes from inverted definition of Snell's Law: sin A_i / sin A_t = n_2 / n_1.
+            val nRatio = comps.n1 / comps.n2
+
+            // cos(A_i) is same as dot product of the two vectors:
+            val cosI = comps.eyeV.dot(comps.normalV)
+
+            // Find sin(A_t)^2 via trigonometric identity.
+            val sin2T = nRatio * nRatio * (1 - cosI * cosI)
+
+            if (sin2T > 1) Color.BLACK
+            else {
+                val cosT = sqrt(1.0 - sin2T)
+                val direction = comps.normalV * (nRatio * cosI - cosT) - nRatio * comps.eyeV
+
+                // Create refracted ray.
+                val refractRay = Ray(comps.underPoint, direction)
+
+                // Find color of refracted ray. Multiplly by transparency to account for opacity.
+                comps.shape.material.transparency * colorAt(refractRay, remaining - 1)
+            }
+        }
 
     companion object {
-        val DefaultWorld: World by lazy {
+        internal val DefaultWorld: World by lazy {
             val light = PointLight(Tuple.point(-10, 10, -10))
             val m1 = Material(Color(0.8, 1.0, 0.6), diffuse = 0.7, specular = 0.2)
             val s1 = Sphere(material = m1)
@@ -80,6 +105,6 @@ data class World(val shapes: List<Shape>, val lights: List<Light>) {
             return@lazy World(listOf(s1, s2), light)
         }
 
-        const val DEFAULT_REMAINING = 5
+        internal const val DEFAULT_REMAINING = 5
     }
 }

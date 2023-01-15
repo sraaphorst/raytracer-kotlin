@@ -6,7 +6,6 @@ import material.Material
 import math.*
 import org.junit.jupiter.api.Test
 import kotlin.math.PI
-import kotlin.math.sqrt
 
 class ShapeTest {
     class TestShape(transformation: Matrix = Matrix.I,
@@ -55,7 +54,6 @@ class ShapeTest {
     fun `Normal on transformed shape`() {
         val t = Matrix.scale(1, 0.5, 1) * Matrix.rotationZ(PI/5)
         val s = TestShape(t)
-        val sqrt2by2 = sqrt(2.0) / 2
         val n = s.normalAt(Tuple.point(0, sqrt2by2, -sqrt2by2))
         assertAlmostEquals(Tuple.vector(0, 0.97014, -0.24254), n)
     }

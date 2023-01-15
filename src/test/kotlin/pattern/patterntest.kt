@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 import shapes.Sphere
 
 class PatternTest {
-    private class TestPattern(transformation: Matrix = Matrix.I): Pattern(transformation) {
+    internal class TestPattern(transformation: Matrix = Matrix.I): Pattern(transformation) {
         override fun patternAt(patternPoint: Tuple): Color =
             Color(patternPoint.x, patternPoint.y, patternPoint.z)
     }

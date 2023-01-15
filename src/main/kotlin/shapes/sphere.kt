@@ -32,7 +32,7 @@ class Sphere(transformation: Matrix = Matrix.I, material: Material = Material())
         localPoint - Tuple.PZERO
 
     companion object {
-        fun glassSphere(transformation: Matrix = Matrix.I,
+        internal fun glassSphere(transformation: Matrix = Matrix.I,
                         transparency: Double = 1.0,
                         refractiveIndex: Double = 1.5) = run {
             val m = Material(transparency = transparency, refractiveIndex = refractiveIndex)
