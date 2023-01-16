@@ -11,6 +11,7 @@ import java.util.UUID
 
 abstract class Shape(val transformation: Matrix,
                      val material: Material,
+                     val castsShadow: Boolean = true,
                      private val id: UUID = UUID.randomUUID()) {
     init {
         if (!transformation.isTransformation())
@@ -31,16 +32,16 @@ abstract class Shape(val transformation: Matrix,
     // The intersect method transforms the ray to object space and then passes
     // it to localNormalAt, which should comprise the concrete implementation of
     // calculating the intersections with the Shape.
-    fun intersect(rayWorld: Ray): List<Intersection> =
+    internal fun intersect(rayWorld: Ray): List<Intersection> =
         // Transform the ray into object space.
         localIntersect(rayWorld.transform(transformation.inverse))
 
-    abstract fun localIntersect(rayLocal: Ray): List<Intersection>
+    internal abstract fun localIntersect(rayLocal: Ray): List<Intersection>
 
     // normalAt transforms the point to object space and passes it to localNormalAt
     // which should comprise the concrete implementation of calculating the normal vector
     // at the point for the Shape. Then normalAt transforms it back into world space.
-    fun normalAt(worldPoint: Tuple): Tuple {
+    internal fun normalAt(worldPoint: Tuple): Tuple {
         if (!worldPoint.isPoint())
             throw IllegalArgumentException("Shape::normalAt requires a point: $worldPoint")
 
@@ -51,7 +52,7 @@ abstract class Shape(val transformation: Matrix,
         // Convert back to world space.
         return normalToWorld(localNormal)
     }
-    abstract fun localNormalAt(localPoint: Tuple): Tuple
+    internal abstract fun localNormalAt(localPoint: Tuple): Tuple
 
 
     // We want shapes to be considered only equal if they represent exactly the same shape.

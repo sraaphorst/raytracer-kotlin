@@ -2,13 +2,9 @@ package scene
 
 // By Sebastian Raaphorst, 2023.
 
-import math.Color
-import math.Matrix
-import math.Tuple
-import math.assertAlmostEquals
+import math.*
 import org.junit.jupiter.api.Test
 import kotlin.math.PI
-import kotlin.math.sqrt
 
 class CameraTest {
     @Test
@@ -44,7 +40,6 @@ class CameraTest {
         val c = Camera(201, 101, PI/2,
             Matrix.rotationY(PI/4) * Matrix.translate(0, -2, 5))
         val r = c.rayForPixel(100, 50)
-        val sqrt2by2 = sqrt(2.0) / 2
         assertAlmostEquals(Tuple.point(0, 2, -5), r.origin)
         assertAlmostEquals(Tuple.vector(sqrt2by2, 0, -sqrt2by2), r.direction)
     }

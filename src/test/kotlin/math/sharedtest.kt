@@ -5,9 +5,13 @@ package math
 import org.junit.jupiter.api.Test
 import kotlin.math.PI
 import kotlin.math.absoluteValue
+import kotlin.math.sqrt
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+
+val sqrt2 = sqrt(2.0)
+val sqrt2by2 = sqrt2 / 2.0
 
 fun almostEquals(x: Number, y: Number, precision: Double = DEFAULT_PRECISION): Boolean =
     (x.toDouble() - y.toDouble()).absoluteValue < precision

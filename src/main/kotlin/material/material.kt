@@ -15,22 +15,28 @@ data class Material(val pattern: Pattern = SolidPattern(Color.WHITE),
                     val ambient: Double = DEFAULT_AMBIENT,
                     val diffuse: Double = DEFAULT_DIFFUSE,
                     val specular: Double = DEFAULT_SPECULAR,
-                    val shininess: Double = DEFAULT_SHININESS) {
+                    val shininess: Double = DEFAULT_SHININESS,
+                    val reflectivity: Double = DEFAULT_REFLECTIVITY,
+                    val transparency: Double = DEFAULT_TRANSPARENCY,
+                    val refractiveIndex: Double = DEFAULT_REFRACTIVE_INDEX) {
 
     // Convenience constructor to create a material with a solid pattern.
     constructor(color: Color,
                 ambient: Double = DEFAULT_AMBIENT,
                 diffuse: Double = DEFAULT_DIFFUSE,
                 specular: Double = DEFAULT_SPECULAR,
-                shininess: Double = DEFAULT_SHININESS):
-            this(SolidPattern(color), ambient, diffuse, specular, shininess)
+                shininess: Double = DEFAULT_SHININESS,
+                reflectivity: Double = DEFAULT_REFLECTIVITY,
+                transparency: Double = DEFAULT_TRANSPARENCY,
+                refractiveIndex: Double = DEFAULT_REFRACTIVE_INDEX):
+            this(SolidPattern(color), ambient, diffuse, specular, shininess, reflectivity, transparency, refractiveIndex)
 
-    fun lighting(shape: Shape,
-                 light: Light,
-                 point: Tuple,
-                 eyeV: Tuple,
-                 normalV: Tuple,
-                 inShadow: Boolean): Color {
+    internal fun lighting(shape: Shape,
+                          light: Light,
+                          point: Tuple,
+                          eyeV: Tuple,
+                          normalV: Tuple,
+                          inShadow: Boolean): Color {
         // Combine surface color with light's color / intensity.
         val effectiveColor = pattern.colorAtShape(shape, point) * light.intensity
 
@@ -78,5 +84,8 @@ data class Material(val pattern: Pattern = SolidPattern(Color.WHITE),
         const val DEFAULT_DIFFUSE = 0.9
         const val DEFAULT_SPECULAR = 0.9
         const val DEFAULT_SHININESS = 200.0
+        const val DEFAULT_REFLECTIVITY = 0.0
+        const val DEFAULT_TRANSPARENCY = 0.0
+        const val DEFAULT_REFRACTIVE_INDEX = 1.0
     }
 }

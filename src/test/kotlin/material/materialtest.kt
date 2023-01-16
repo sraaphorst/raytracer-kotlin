@@ -6,26 +6,25 @@ import light.PointLight
 import math.Color
 import math.Tuple
 import math.assertAlmostEquals
+import math.sqrt2by2
 import org.junit.jupiter.api.Test
 import pattern.SolidPattern
 import pattern.StripedPattern
 import shapes.Sphere
-import kotlin.math.sqrt
 import kotlin.test.assertEquals
 
 class MaterialTest {
-    companion object {
-        val m = Material()
-        val position = Tuple.PZERO
-        val sqrt2by2 = sqrt(2.0) / 2
-    }
     @Test
     fun `Default material`() {
-        assertEquals(m.pattern, SolidPattern(Color.WHITE))
-        assertAlmostEquals(m.ambient, 0.1)
-        assertAlmostEquals(m.diffuse, 0.9)
-        assertAlmostEquals(m.specular, 0.9)
-        assertAlmostEquals(m.shininess, 200.0)
+        val m = Material()
+        assertEquals(SolidPattern(Color.WHITE), m.pattern)
+        assertAlmostEquals(Material.DEFAULT_AMBIENT, m.ambient)
+        assertAlmostEquals(Material.DEFAULT_DIFFUSE, m.diffuse)
+        assertAlmostEquals(Material.DEFAULT_SPECULAR, m.specular)
+        assertAlmostEquals(Material.DEFAULT_SHININESS, m.shininess)
+        assertAlmostEquals(Material.DEFAULT_REFLECTIVITY, m.reflectivity)
+        assertAlmostEquals(Material.DEFAULT_TRANSPARENCY, m.transparency)
+        assertAlmostEquals(Material.DEFAULT_REFRACTIVE_INDEX, m.refractiveIndex)
     }
 
     @Test
@@ -33,8 +32,9 @@ class MaterialTest {
         val eyeV = -Tuple.VZ
         val normalV = -Tuple.VZ
         val light = PointLight(Tuple.point(0, 0, -10))
-        val result = m.lighting(Sphere(), light, position, eyeV, normalV, false)
-        assertAlmostEquals(result, Color(1.9, 1.9, 1.9))
+        val m = Material()
+        val result = m.lighting(Sphere(), light, Tuple.PZERO, eyeV, normalV, false)
+        assertAlmostEquals(Color(1.9, 1.9, 1.9), result)
     }
 
     @Test
@@ -42,7 +42,8 @@ class MaterialTest {
         val eyeV = Tuple.vector(0, sqrt2by2, -sqrt2by2)
         val normalV = -Tuple.VZ
         val light = PointLight(Tuple.point(0, 0, -10))
-        val result = m.lighting(Sphere(), light, position, eyeV, normalV, false)
+        val m = Material()
+        val result = m.lighting(Sphere(), light, Tuple.PZERO, eyeV, normalV, false)
         assertAlmostEquals(Color.WHITE, result)
     }
 
@@ -51,7 +52,8 @@ class MaterialTest {
         val eyeV = -Tuple.VZ
         val normalV = -Tuple.VZ
         val light = PointLight(Tuple.point(0, 10, -10))
-        val result = m.lighting(Sphere(), light, position, eyeV, normalV, false)
+        val m = Material()
+        val result = m.lighting(Sphere(), light, Tuple.PZERO, eyeV, normalV, false)
         assertAlmostEquals(Color(0.7364, 0.7364, 0.7364), result)
     }
 
@@ -60,7 +62,8 @@ class MaterialTest {
         val eyeV = Tuple.vector(0, -sqrt2by2, -sqrt2by2)
         val normalV = -Tuple.VZ
         val light = PointLight(Tuple.point(0, 0, 10))
-        val result = m.lighting(Sphere(), light, position, eyeV, normalV, false)
+        val m = Material()
+        val result = m.lighting(Sphere(), light, Tuple.PZERO, eyeV, normalV, false)
         assertAlmostEquals(Color(0.1, 0.1, 0.1), result)
     }
 
@@ -69,7 +72,8 @@ class MaterialTest {
         val eyeV = Tuple.vector(0, 0, -1)
         val normalV = Tuple.vector(0, 0, -1)
         val light = PointLight(Tuple.point(0, 0, -10))
-        val color = m.lighting(Sphere(), light, position, eyeV, normalV, true)
+        val m = Material()
+        val color = m.lighting(Sphere(), light, Tuple.PZERO, eyeV, normalV, true)
         assertAlmostEquals(Color(0.1, 0.1, 0.1), color)
     }
 

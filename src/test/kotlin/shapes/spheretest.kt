@@ -2,13 +2,8 @@ package shapes
 
 // By Sebastian Raaphorst, 2023.
 
-import math.assertAlmostEquals
-import math.Intersection
-import math.Matrix
-import math.Ray
-import math.Tuple
+import math.*
 import org.junit.jupiter.api.Test
-import kotlin.math.PI
 import kotlin.math.sqrt
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -108,16 +103,16 @@ class SphereTest {
     @Test
     fun `Normal on sphere at non-axial point`() {
         val s = Sphere()
-        val rt3by3 = sqrt(3.0) / 3
-        val nv = s.normalAt(Tuple.point(rt3by3, rt3by3, rt3by3))
-        assertAlmostEquals(Tuple.vector(rt3by3, rt3by3, rt3by3), nv)
+        val sqrt3by3 = sqrt(3.0) / 3
+        val nv = s.normalAt(Tuple.point(sqrt3by3, sqrt3by3, sqrt3by3))
+        assertAlmostEquals(Tuple.vector(sqrt3by3, sqrt3by3, sqrt3by3), nv)
     }
 
     @Test
     fun `Normal is a normalized vector`() {
         val s = Sphere()
-        val rt3by3 = sqrt(3.0) / 3
-        val nv = s.normalAt(Tuple.point(rt3by3, rt3by3, rt3by3))
+        val sqrt3by3 = sqrt(3.0) / 3
+        val nv = s.normalAt(Tuple.point(sqrt3by3, sqrt3by3, sqrt3by3))
         assertAlmostEquals(nv.normalized, nv)
     }
 }

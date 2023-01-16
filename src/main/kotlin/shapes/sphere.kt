@@ -9,7 +9,8 @@ import math.Ray
 import math.Tuple
 import kotlin.math.sqrt
 
-class Sphere(transformation: Matrix = Matrix.I, material: Material = Material()): Shape(transformation, material) {
+class Sphere(transformation: Matrix = Matrix.I, material: Material = Material(), castsShadow: Boolean = true)
+    : Shape(transformation, material, castsShadow) {
     override fun localIntersect(rayLocal: Ray): List<Intersection> {
         val sphereToRay = rayLocal.origin - Tuple.PZERO
 
@@ -30,4 +31,13 @@ class Sphere(transformation: Matrix = Matrix.I, material: Material = Material())
 
     override fun localNormalAt(localPoint: Tuple): Tuple =
         localPoint - Tuple.PZERO
+
+    companion object {
+        internal fun glassSphere(transformation: Matrix = Matrix.I,
+                        transparency: Double = 1.0,
+                        refractiveIndex: Double = 1.5) = run {
+            val m = Material(transparency = transparency, refractiveIndex = refractiveIndex)
+            Sphere(transformation, m)
+        }
+    }
 }

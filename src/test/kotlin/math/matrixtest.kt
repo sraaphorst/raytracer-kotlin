@@ -6,14 +6,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.lang.ArithmeticException
 import kotlin.math.PI
-import kotlin.math.sqrt
 import kotlin.test.assertEquals
 
 class MatrixTest {
-    companion object {
-        val sqrt2by2 = sqrt(2.0) / 2.0
-    }
-
     @Test
     fun `Construct 3x4 matrix`() {
         val m1 = Matrix.fromVar(3, 4, 1, 2, 3, 4, 5.5, 6.5, 7.5, 8.5, 9, 10, 11, 12)

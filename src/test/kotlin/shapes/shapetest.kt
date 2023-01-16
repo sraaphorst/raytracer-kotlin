@@ -6,16 +6,15 @@ import material.Material
 import math.*
 import org.junit.jupiter.api.Test
 import kotlin.math.PI
-import kotlin.math.sqrt
 
 class ShapeTest {
     class TestShape(transformation: Matrix = Matrix.I,
                     material: Material = Material()): Shape(transformation, material) {
         // We need to use a var here to store a ray.
-        var saved_ray = Ray(Tuple.PZERO, Tuple.VZERO)
+        var savedRay = Ray(Tuple.PZERO, Tuple.VZERO)
 
         override fun localIntersect(rayLocal: Ray): List<Intersection> {
-            saved_ray = rayLocal
+            savedRay = rayLocal
             return emptyList()
         }
 
@@ -29,8 +28,8 @@ class ShapeTest {
         val t = Matrix.scale(2, 2, 2)
         val s = TestShape(t)
         s.intersect(r)
-        assertAlmostEquals(Tuple.point(0, 0, -2.5), s.saved_ray.origin)
-        assertAlmostEquals(Tuple.vector(0, 0, 0.5), s.saved_ray.direction)
+        assertAlmostEquals(Tuple.point(0, 0, -2.5), s.savedRay.origin)
+        assertAlmostEquals(Tuple.vector(0, 0, 0.5), s.savedRay.direction)
     }
 
     @Test
@@ -39,8 +38,8 @@ class ShapeTest {
         val t = Matrix.translate(5, 0, 0)
         val s = TestShape(t)
         s.intersect(r)
-        assertAlmostEquals(Tuple.point(-5, 0, -5), s.saved_ray.origin)
-        assertAlmostEquals(Tuple.VZ, s.saved_ray.direction)
+        assertAlmostEquals(Tuple.point(-5, 0, -5), s.savedRay.origin)
+        assertAlmostEquals(Tuple.VZ, s.savedRay.direction)
     }
 
     @Test
@@ -55,7 +54,6 @@ class ShapeTest {
     fun `Normal on transformed shape`() {
         val t = Matrix.scale(1, 0.5, 1) * Matrix.rotationZ(PI/5)
         val s = TestShape(t)
-        val sqrt2by2 = sqrt(2.0) / 2
         val n = s.normalAt(Tuple.point(0, sqrt2by2, -sqrt2by2))
         assertAlmostEquals(Tuple.vector(0, 0.97014, -0.24254), n)
     }
