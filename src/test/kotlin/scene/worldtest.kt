@@ -277,4 +277,22 @@ class WorldTest {
         val c = w.shadeHit(comps)
         assertAlmostEquals(Color(0.93642, 0.68642, 0.68642), c)
     }
+
+    @Test
+    fun `shadeHit with a reflective transparent material`() {
+        val light = PointLight(Tuple.point(-10, 10, -10))
+        val m1 = Material(Color(0.8, 1.0, 0.6), diffuse = 0.7, specular = 0.2)
+        val s1 = Sphere(material = m1)
+        val s2 = Sphere(Matrix.scale(0.5, 0.5, 0.5))
+        val plane = Plane(Matrix.translate(0, -1, 0),
+            Material(reflectivity = 0.5, transparency = 0.5, refractiveIndex = 1.5))
+        val ball = Sphere(Matrix.translate(0, -3.5, -0.5), Material(Color(1, 0, 0), ambient = 0.5))
+        val w = World(listOf(s1, s2, plane, ball), light)
+
+        val r = Ray(Tuple.point(0, 0, -3), Tuple.vector(0, -sqrt2by2, sqrt2by2))
+        val xs = intersections(Intersection(sqrt2, plane))
+        val comps = xs[0].computations(r, xs)
+        val c = w.shadeHit(comps)
+        assertAlmostEquals(Color(0.93391, 0.69643, 0.69243), c)
+    }
 }

@@ -79,7 +79,7 @@ data class Matrix(val values: List<List<Double>>, val m: Int = 4, val n: Int = 4
         }, n, m)
     }
 
-    fun submatrix(x: Int, y: Int): Matrix =
+    internal fun submatrix(x: Int, y: Int): Matrix =
         Matrix((0 until m-1).map { i -> (0 until n-1).map { j ->
             this[if (i < x) i else i + 1, if (j < y) j else j + 1]
         } }, m-1, n-1)

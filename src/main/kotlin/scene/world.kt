@@ -17,23 +17,31 @@ data class World(val shapes: List<Shape>, val lights: List<Light>) {
     operator fun contains(shape: Shape): Boolean =
         shape in shapes
 
-    fun shadeHit(comps: Computations, remaining: Int = DEFAULT_REMAINING): Color =
+    internal fun shadeHit(comps: Computations, remaining: Int = DEFAULT_REMAINING): Color =
         if (lights.isEmpty())
             Color.BLACK
         else {
-            lights.map { light ->
+            val surface =lights.map { light ->
                 comps.shape.material.lighting(
                     comps.shape, light,
                     comps.overPoint, comps.eyeV, comps.normalV,
                     isShadowed(comps.overPoint, light)
                 )
-            }.reduce { c1, c2 -> c1 + c2 } + reflectedColor(comps, remaining) + refractedColor(comps, remaining)
+            }.reduce { c1, c2 -> c1 + c2 }
+            val reflected = reflectedColor(comps, remaining)
+            val refracted = refractedColor(comps, remaining)
+
+            if (comps.shape.material.reflectivity > 0 && comps.shape.material.transparency > 0) {
+                val reflectance = comps.schlick
+                surface + reflected * reflectance + refracted * (1 - reflectance)
+            } else
+                surface + reflected + refracted
         }
 
     // Determine if a point is in shadow with respect to a light source.
     // Note this is different from the book since it takes the light source as a parameter
     // since we are supporting multiple light sources.
-    fun isShadowed(point: Tuple, light: Light): Boolean {
+    internal fun isShadowed(point: Tuple, light: Light): Boolean {
         if (!point.isPoint())
             throw IllegalArgumentException("World::isShadowed expects point: $point")
 
@@ -52,16 +60,16 @@ data class World(val shapes: List<Shape>, val lights: List<Light>) {
 
     // This should be the entry point into World.
     // It connects the other functions together, which would be private if not for test cases.
-    fun colorAt(r: Ray, remaining: Int = DEFAULT_REMAINING): Color {
+    internal fun colorAt(r: Ray, remaining: Int = DEFAULT_REMAINING): Color {
         val xs = intersect(r)
         return xs.hit()?.computations(r, xs)?.let { shadeHit(it, remaining) } ?: Color.BLACK
     }
 
-    fun intersect(ray: Ray): List<Intersection> =
+    internal fun intersect(ray: Ray): List<Intersection> =
         shapes.flatMap { it.intersect(ray) }.sortedBy { it.t }
 
     // Calculate the reflected color in a Computations object.
-    fun reflectedColor(comps: Computations, remaining: Int = DEFAULT_REMAINING): Color =
+    internal fun reflectedColor(comps: Computations, remaining: Int = DEFAULT_REMAINING): Color =
         if (remaining <= 0 || comps.shape.material.reflectivity == 0.0)
             Color.BLACK
         else {
@@ -105,6 +113,6 @@ data class World(val shapes: List<Shape>, val lights: List<Light>) {
             return@lazy World(listOf(s1, s2), light)
         }
 
-        internal const val DEFAULT_REMAINING = 5
+        const val DEFAULT_REMAINING = 5
     }
 }

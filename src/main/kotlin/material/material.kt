@@ -31,12 +31,12 @@ data class Material(val pattern: Pattern = SolidPattern(Color.WHITE),
                 refractiveIndex: Double = DEFAULT_REFRACTIVE_INDEX):
             this(SolidPattern(color), ambient, diffuse, specular, shininess, reflectivity, transparency, refractiveIndex)
 
-    fun lighting(shape: Shape,
-                 light: Light,
-                 point: Tuple,
-                 eyeV: Tuple,
-                 normalV: Tuple,
-                 inShadow: Boolean): Color {
+    internal fun lighting(shape: Shape,
+                          light: Light,
+                          point: Tuple,
+                          eyeV: Tuple,
+                          normalV: Tuple,
+                          inShadow: Boolean): Color {
         // Combine surface color with light's color / intensity.
         val effectiveColor = pattern.colorAtShape(shape, point) * light.intensity
 

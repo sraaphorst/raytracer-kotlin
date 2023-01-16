@@ -142,4 +142,34 @@ class IntersectionTest {
         assertTrue(comps.underPoint.z > DEFAULT_PRECISION/2)
         assertTrue(comps.point.z < comps.underPoint.z)
     }
+
+    @Test
+    fun `Schlick approximation under total internal reflection`() {
+        val s = Sphere.glassSphere()
+        val r = Ray(Tuple.point(0, 0, sqrt2by2), Tuple.VY)
+        val xs = intersections(Intersection(-sqrt2by2, s), Intersection(sqrt2by2, s))
+        val comps = xs[1].computations(r, xs)
+        val reflectance = comps.schlick
+        assertEquals(1.0, reflectance)
+    }
+
+    @Test
+    fun `Reflectance of a perpendicular ray`() {
+        val s = Sphere.glassSphere()
+        val r = Ray(Tuple.PZERO, Tuple.VY)
+        val xs = intersections(Intersection(-1, s), Intersection(1, s))
+        val comps = xs[1].computations(r, xs)
+        val reflectance = comps.schlick
+        assertAlmostEquals(0.04, reflectance)
+    }
+
+    @Test
+    fun `Schlick approximation with small angle and n2 larger than n1`() {
+        val s = Sphere.glassSphere()
+        val r = Ray(Tuple.point(0, 0.99, -2), Tuple.VZ)
+        val xs = intersections(Intersection(1.8589, s))
+        val comps = xs[0].computations(r, xs)
+        val reflectance = comps.schlick
+        assertAlmostEquals(0.48873, reflectance)
+    }
 }

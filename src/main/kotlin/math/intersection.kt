@@ -3,9 +3,8 @@ package math
 // By Sebastian Raaphorst, 2023.
 
 import shapes.Shape
-import shapes.Sphere
 
-data class Intersection(val t: Double, val shape: Shape) {
+internal data class Intersection(val t: Double, val shape: Shape) {
     constructor(t: Number, shape: Shape):
             this(t.toDouble(), shape)
 
@@ -77,9 +76,9 @@ data class Intersection(val t: Double, val shape: Shape) {
 }
 
 // Combine variable number of intersections into a list.
-fun intersections(vararg xs: Intersection): List<Intersection> =
+internal fun intersections(vararg xs: Intersection): List<Intersection> =
     xs.toList()
 
 // The hit is the intersection with the smallest positive t value.
-fun List<Intersection>.hit(): Intersection? =
+internal fun List<Intersection>.hit(): Intersection? =
     this.filter { it.t > 0 }.minByOrNull { it.t }
