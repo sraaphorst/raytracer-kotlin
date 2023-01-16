@@ -55,7 +55,7 @@ data class World(val shapes: List<Shape>, val lights: List<Light>) {
         val xs = intersect(ray)
         val hit = xs.hit()
 
-        return hit != null && hit.t < distance
+        return hit != null && hit.t < distance && hit.shape.castsShadow
     }
 
     // This should be the entry point into World.

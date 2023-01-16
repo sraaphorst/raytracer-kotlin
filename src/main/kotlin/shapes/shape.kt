@@ -11,6 +11,7 @@ import java.util.UUID
 
 abstract class Shape(val transformation: Matrix,
                      val material: Material,
+                     val castsShadow: Boolean = true,
                      private val id: UUID = UUID.randomUUID()) {
     init {
         if (!transformation.isTransformation())
