@@ -84,9 +84,9 @@ fun main() {
         val to = Tuple.PY
         val up = Tuple.VY
         val t = from.viewTransformationFrom(to, up)
-        Camera(1000, 500, PI/3, t)
+        Camera(1000, 500, PI / 3, t)
     }
 
     val canvas = camera.render(world)
-    canvas.toPPMFile(File("ch07_world.ppm"))
+    canvas.toPPMFile(File("output/ch07_world.ppm"))
 }

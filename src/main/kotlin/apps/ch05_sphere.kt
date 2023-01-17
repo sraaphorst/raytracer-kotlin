@@ -51,5 +51,5 @@ fun main() {
         }
     }
 
-    canvas.toPPMFile(File("ch05_sphere.ppm"))
+    canvas.toPPMFile(File("output/ch05_sphere.ppm"))
 }
