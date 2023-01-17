@@ -40,7 +40,7 @@ class CylinderTest {
         val t0s = listOf(5, 4, 6.80798)
         val t1s = listOf(5, 6, 7.08872)
 
-        origins.zip(directions).withIndex().forEach {(idx, rayInfo) ->
+        origins.zip(directions).withIndex().forEach { (idx, rayInfo) ->
             val (origin, direction) = rayInfo
             val r = Ray(origin, direction.normalized)
             val xs = c.localIntersect(r)

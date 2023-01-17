@@ -7,26 +7,34 @@ import math.*
 import math.Intersection
 import kotlin.math.sqrt
 
-class Cylinder(minimum: Number = Double.NEGATIVE_INFINITY,
-               maximum: Number = Double.POSITIVE_INFINITY,
-               val closed: Boolean = false,
-               transformation: Matrix = Matrix.I,
-               material: Material = Material(),
-               castsShadow: Boolean = true):
+class Cone(minimum: Number = Double.NEGATIVE_INFINITY,
+           maximum: Number = Double.POSITIVE_INFINITY,
+           val closed: Boolean = false,
+           transformation: Matrix = Matrix.I,
+           material: Material = Material(),
+           castsShadow: Boolean = true):
     Shape(transformation, material, castsShadow) {
 
     val minimum = minimum.toDouble()
     val maximum = maximum.toDouble()
 
     override fun localIntersect(rayLocal: Ray): List<Intersection> {
-        val a = rayLocal.direction.x * rayLocal.direction.x + rayLocal.direction.z * rayLocal.direction.z
+        val a = rayLocal.direction.x * rayLocal.direction.x -
+                rayLocal.direction.y * rayLocal.direction.y +
+                rayLocal.direction.z * rayLocal.direction.z
+        val b = 2 * rayLocal.origin.x * rayLocal.direction.x -
+                2 * rayLocal.origin.y * rayLocal.direction.y +
+                2 * rayLocal.origin.z * rayLocal.direction.z
+        val c = rayLocal.origin.x * rayLocal.origin.x -
+                rayLocal.origin.y * rayLocal.origin.y +
+                rayLocal.origin.z * rayLocal.origin.z
 
         // Only check for intersections with the body of the cylinder if a is not near 0.
-        val xs1 = if (almostEquals(0.0, a)) emptyList()
-            else {
-
-            val b = 2 * rayLocal.origin.x * rayLocal.direction.x + 2 * rayLocal.origin.z * rayLocal.direction.z
-            val c = rayLocal.origin.x * rayLocal.origin.x + rayLocal.origin.z * rayLocal.origin.z - 1
+        val xs1 = if (almostEquals(0.0, a)) {
+            if (almostEquals(0.0, b)) emptyList()
+            else listOf(Intersection(-c / (2 * b), this))
+        }
+        else {
             val disc = b * b - 4 * a * c
 
             if (disc < 0)
@@ -60,10 +68,10 @@ class Cylinder(minimum: Number = Double.NEGATIVE_INFINITY,
 
     // Helper function to check to see if intersection at t is within a radius of 1
     // (i.e. radius of cylinder) from the y-axis.
-    private fun checkCap(ray: Ray, t: Double): Boolean {
+    private fun checkCap(ray: Ray, t: Double, y: Double): Boolean {
         val x = ray.origin.x + t * ray.direction.x
         val z = ray.origin.z + t * ray.direction.z
-        return x * x + z * z <= 1
+        return x * x + z * z <= y * y
     }
 
     // Return any intersections with the caps of a closed cylinder.
@@ -73,7 +81,7 @@ class Cylinder(minimum: Number = Double.NEGATIVE_INFINITY,
 
         val tMin = (minimum - ray.origin.y) / ray.direction.y
         val tMax = (maximum - ray.origin.y) / ray.direction.y
-        return when(Pair(checkCap(ray, tMin), checkCap(ray, tMax))) {
+        return when(Pair(checkCap(ray, tMin, minimum), checkCap(ray, tMax, maximum))) {
             Pair(true, true) -> listOf(Intersection(tMin, this), Intersection(tMax, this))
             Pair(true, false) -> listOf(Intersection(tMin, this))
             Pair(false, true) -> listOf(Intersection(tMax, this))
@@ -89,7 +97,10 @@ class Cylinder(minimum: Number = Double.NEGATIVE_INFINITY,
             Tuple.VY
         else if (dist < 1.0 && localPoint.y <= minimum + DEFAULT_PRECISION)
             -Tuple.VY
-        else
-            Tuple.vector(localPoint.x, 0, localPoint.z)
+        else {
+            val y0 = sqrt(dist)
+            val y = if (localPoint.y > 0) -y0 else y0
+            return Tuple.vector(localPoint.x, y, localPoint.z)
+        }
     }
 }
