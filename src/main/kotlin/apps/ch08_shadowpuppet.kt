@@ -78,5 +78,5 @@ fun main() {
     }
 
     val canvas = camera.render(world)
-    canvas.toPPMFile(File("ch08_shadowpuppet.ppm"))
+    canvas.toPPMFile(File("output/ch08_shadowpuppet.ppm"))
 }

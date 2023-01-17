@@ -96,5 +96,5 @@ fun main() {
     }
 
     val canvas = camera.render(world)
-    canvas.toPPMFile(File("ch10_world.ppm"))
+    canvas.toPPMFile(File("output/ch10_world.ppm"))
 }
