@@ -46,11 +46,12 @@ data class World(val shapes: List<Shape>, val lights: List<Light>) {
             throw IllegalArgumentException("World::isShadowed expects point: $point")
 
         // Create a shadow ray from each point of intersection towards the light source.
-        // If something intersects that sho ray, then the point is in shadow.
+        // If something intersects that ray, then the point is in shadow.
         val vector = light.position - point
         val distance = vector.magnitude
         val direction = vector.normalized
 
+        // We tell the hit function that we only want shapes that cast a shadow.
         val ray = Ray(point, direction)
         val xs = intersect(ray)
         val hit = xs.hit(true)
