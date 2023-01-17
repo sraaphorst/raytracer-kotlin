@@ -19,9 +19,9 @@ fun main() {
     val world = run {
         val floor = run {
             val p1 = StripedPattern(Color.BLUE, Color.WHITE,
-                Matrix.rotationY(PI/4) * Matrix.scale(0.75, 0.75, 0.75))
+                Matrix.rotateY(PI/4) * Matrix.scale(0.75, 0.75, 0.75))
             val p2 = StripedPattern(Color.WHITE, Color.GREEN,
-                Matrix.rotationY(-PI/4) * Matrix.scale(0.75, 0.75, 0.75))
+                Matrix.rotateY(-PI/4) * Matrix.scale(0.75, 0.75, 0.75))
             val p = PerlinNoisePattern(BlendedPattern(p1, p2))
             val m = Material(p)
             Plane(Matrix.I, m)
@@ -29,12 +29,12 @@ fun main() {
 
         val leftWall = run {
             val t = Matrix.translate(0, 0, 10) *
-                    Matrix.rotationY(-PI / 4) *
-                    Matrix.rotationX(PI / 2)
+                    Matrix.rotateY(-PI / 4) *
+                    Matrix.rotateX(PI / 2)
             val p1 = StripedPattern(Color(1, 0, 0), Color(1, 0.5, 0.5),
-                Matrix.rotationY(PI/4) * Matrix.scale(0.1, 1, 1))
+                Matrix.rotateY(PI/4) * Matrix.scale(0.1, 1, 1))
             val p2 = StripedPattern(Color(0, 0, 1), Color(0.5, 0.5, 1),
-                Matrix.rotationY(-PI/4) * Matrix.scale(0.1, 1, 1))
+                Matrix.rotateY(-PI/4) * Matrix.scale(0.1, 1, 1))
             val p = CheckerPattern(p1, p2)
             val m = Material(p)
             Plane(t, m)
@@ -42,8 +42,8 @@ fun main() {
 
         val rightWall = run {
             val t = Matrix.translate(0, 5, 10) *
-                    Matrix.rotationY(PI / 4) *
-                    Matrix.rotationX(PI / 2) *
+                    Matrix.rotateY(PI / 4) *
+                    Matrix.rotateX(PI / 2) *
                     Matrix.scale(0.15, 0.15, 0.15)
             val p1 = RingPattern(Color(1, 0.5, 0), Color(0.5, 1, 1),
                 Matrix.translate(25, 0, 15))
@@ -54,7 +54,7 @@ fun main() {
 
         // Middle sphere is a unit sphere, translated upward and slightly green.
         val middleSphere = run {
-            val t = Matrix.translate(-0.25, 1, 1.5) * Matrix.rotationY(-PI/3) * Matrix.rotationZ(-PI/6)
+            val t = Matrix.translate(-0.25, 1, 1.5) * Matrix.rotateY(-PI/3) * Matrix.rotateZ(-PI/6)
             val p = StripedPattern(Color(0.25, 0.25, 0.8), Color(0.5, 0.5, 1),
                 Matrix.scale(0.15, 1, 1))
             val m = Material(p, diffuse = 0.7, specular = 0.3)
@@ -66,7 +66,7 @@ fun main() {
             val t = Matrix.translate(1.5, 0.5, -0.5) *
                     Matrix.scale(0.5, 0.5, 0.5) //* Matrix.rotationY(PI/2)
             val p = GradientPattern(Color(0.25, 0, 0.25), Color(1.0, 0.5, 1.0),
-                Matrix.rotationY(PI/4))
+                Matrix.rotateY(PI/4))
             val m = Material(p, diffuse = 0.7, specular = 0.3)
             Sphere(t, m)
         }

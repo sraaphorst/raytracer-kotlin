@@ -11,7 +11,7 @@ class BlendedPatternTest {
     companion object {
         // p1 is vertical patter, i.e. at x = 0
         // (B W B W...) with z increasing, so going up.
-        private val p1 = StripedPattern(Color.BLUE, Color.WHITE, Matrix.rotationY(PI/2))
+        private val p1 = StripedPattern(Color.BLUE, Color.WHITE, Matrix.rotateY(PI/2))
         // p2 is horizontal pattern, i.e. at z=0:
         // (W G W G...) with x increasing, so going right.
         private val p2 = StripedPattern(Color.WHITE, Color.GREEN)

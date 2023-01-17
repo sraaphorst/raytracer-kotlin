@@ -38,7 +38,7 @@ class CameraTest {
     @Test
     fun `Construct ray when camera is transformed`() {
         val c = Camera(201, 101, PI/2,
-            Matrix.rotationY(PI/4) * Matrix.translate(0, -2, 5))
+            Matrix.rotateY(PI/4) * Matrix.translate(0, -2, 5))
         val r = c.rayForPixel(100, 50)
         assertAlmostEquals(Tuple.point(0, 2, -5), r.origin)
         assertAlmostEquals(Tuple.vector(sqrt2by2, 0, -sqrt2by2), r.direction)

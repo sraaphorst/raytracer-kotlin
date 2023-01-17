@@ -19,7 +19,7 @@ import kotlin.math.PI
 
 fun main() {
     val wallMaterial = run {
-        val t = Matrix.rotationY(PI / 2) * Matrix.scale(0.25, 0.25, 0.25)
+        val t = Matrix.rotateY(PI / 2) * Matrix.scale(0.25, 0.25, 0.25)
         val p = StripedPattern(Color(0.45, 0.45, 0.45), Color(0.55, 0.55, 0.55), t)
         Material(p, ambient = 0.0, diffuse = 0.4, specular = 0.0, reflectivity = 0.3)
     }
@@ -27,7 +27,7 @@ fun main() {
     val floorBase = run {
         val p = CheckerPattern(Color(0.35, 0.35, 0.35), Color(0.65, 0.65, 0.65))
         val m = Material(p, specular = 0.0, reflectivity = 0.4)
-        Plane(Matrix.rotationY(PI / 10), m)
+        Plane(Matrix.rotateY(PI / 10), m)
     }
 
     val ceiling = run {
@@ -36,22 +36,22 @@ fun main() {
     }
 
     val leftWall = run {
-        val t = Matrix.translate(-5, 0, 0) * Matrix.rotationZ(PI / 2) * Matrix.rotationY(PI / 2)
+        val t = Matrix.translate(-5, 0, 0) * Matrix.rotateZ(PI / 2) * Matrix.rotateY(PI / 2)
         Plane(t, wallMaterial)
     }
 
     val rightWall = run {
-        val t = Matrix.translate(5, 0, 0) * Matrix.rotationZ(PI / 2) * Matrix.rotationY(PI / 2)
+        val t = Matrix.translate(5, 0, 0) * Matrix.rotateZ(PI / 2) * Matrix.rotateY(PI / 2)
         Plane(t, wallMaterial)
     }
 
     val frontWall = run {
-        val t = Matrix.translate(0, 0, 5) * Matrix.rotationX(PI / 2)
+        val t = Matrix.translate(0, 0, 5) * Matrix.rotateX(PI / 2)
         Plane(t, wallMaterial)
     }
 
     val backWall = run {
-        val t = Matrix.translate(0, 0, -5) * Matrix.rotationX(PI / 2)
+        val t = Matrix.translate(0, 0, -5) * Matrix.rotateX(PI / 2)
         Plane(t, wallMaterial)
     }
 

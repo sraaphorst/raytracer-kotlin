@@ -32,7 +32,7 @@ fun main() {
     // Draw the hour points of the clock.
     val p = Tuple.point(0, -1, 0)
     (0 until 12).forEach {
-        val newP = Matrix.rotationZ(it * hourAngle)
+        val newP = Matrix.rotateZ(it * hourAngle)
             .andThen(sc)
             .andThen(tr) * p
         canvas[newP.x, newP.y] = pointColor
@@ -45,7 +45,7 @@ fun main() {
 
     // Draw the hour hand.
     (-10 until sz - 20).forEach {
-        val newP = Matrix.rotationZ((hour + min / 60.0) * hourAngle)
+        val newP = Matrix.rotateZ((hour + min / 60.0) * hourAngle)
             .andThen(Matrix.scale(it, it, it))
             .andThen(tr) * p
         canvas[newP.x, newP.y] = hourColor
@@ -53,7 +53,7 @@ fun main() {
 
     // Draw the minute hand.
     (-10 until sz).forEach {
-        val newP = Matrix.rotationZ(min * minuteAngle)
+        val newP = Matrix.rotateZ(min * minuteAngle)
             .andThen(Matrix.scale(it, it, it))
             .andThen(tr) * p
         canvas[newP.x, newP.y] = minuteColor
