@@ -1,6 +1,7 @@
 package apps
 
 // By Sebastian Raaphorst, 2023.
+// From https://forum.raytracerchallenge.com/thread/4/reflection-refraction-scene-description
 
 import light.PointLight
 import material.Material
@@ -23,13 +24,13 @@ fun main() {
         Material(p, ambient = 0.0, diffuse = 0.4, specular = 0.0, reflectivity = 0.3)
     }
 
-    val floorWall = run {
+    val floorBase = run {
         val p = CheckerPattern(Color(0.35, 0.35, 0.35), Color(0.65, 0.65, 0.65))
         val m = Material(p, specular = 0.0, reflectivity = 0.4)
         Plane(Matrix.rotationY(PI / 10), m)
     }
 
-    val ceilingWall = run {
+    val ceiling = run {
         val m = Material(Color(0.8, 0.8, 0.8), ambient = 0.3, specular = 0.0)
         Plane(Matrix.translate(0, 5, 0), m)
     }
@@ -99,8 +100,8 @@ fun main() {
     }
 
     val world = run {
-        val light = PointLight(Tuple.point(-4.9, 4.9, 1))
-        World(listOf(floorWall, ceilingWall, leftWall, rightWall, backWall, frontWall,
+        val light = PointLight(Tuple.point(-4.9, 4.9, -1))
+        World(listOf(floorBase, ceiling, leftWall, rightWall, backWall, frontWall,
         backSphere1, backSphere2, backSphere3, backSphere4, redSphere, greenSphere, blueSphere
         ), light)
     }
@@ -109,7 +110,7 @@ fun main() {
         val from = Tuple.point(-2.6, 1.5, -3.9)
         val to = Tuple.point(-0.6, 1, -0.8)
         val t = from.viewTransformationFrom(to, Tuple.VY)
-        Camera(2400, 1200, PI / 3, t)
+        Camera(2400, 1200, 1.152, t)
     }
 
     val canvas = camera.render(world)
