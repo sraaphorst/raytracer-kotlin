@@ -25,8 +25,8 @@ fun main() {
 
         val leftWall = run {
             val t = Matrix.translate(0, 0, 5) *
-                    Matrix.rotationY(-PI / 4) *
-                    Matrix.rotationX(PI / 2) *
+                    Matrix.rotateY(-PI / 4) *
+                    Matrix.rotateX(PI / 2) *
                     Matrix.scale(10, 0.01, 10)
             val m = if (multipleLights) Material(Color.GREEN, specular = 0.0) else Material(specular = 0.0)
             Sphere(t, m)
@@ -34,8 +34,8 @@ fun main() {
 
         val rightWall = run {
             val t = Matrix.translate(0, 0, 5) *
-                    Matrix.rotationY(PI / 4) *
-                    Matrix.rotationX(PI / 2) *
+                    Matrix.rotateY(PI / 4) *
+                    Matrix.rotateX(PI / 2) *
                     Matrix.scale(10, 0.01, 10)
             val m = if (multipleLights) Material(Color.BLUE, specular = 0.0) else Material(specular = 0.0)
             Sphere(t, m)

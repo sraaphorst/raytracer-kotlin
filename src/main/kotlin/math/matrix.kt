@@ -179,21 +179,21 @@ data class Matrix(val values: List<List<Double>>, val m: Int = 4, val n: Int = 4
                 listOf(0.0, 0.0, z.toDouble(), 0.0),
                 listOf(0.0, 0.0, 0.0, 1.0)))
 
-        fun rotationX(rad: Number): Matrix =
+        fun rotateX(rad: Number): Matrix =
             Matrix(listOf(
                 listOf(1.0, 0.0, 0.0, 0.0),
                 listOf(0.0, cos(rad.toDouble()), -sin(rad.toDouble()), 0.0),
                 listOf(0.0, sin(rad.toDouble()), cos(rad.toDouble()), 0.0),
                 listOf(0.0, 0.0, 0.0, 1.0)))
 
-        fun rotationY(rad: Number): Matrix =
+        fun rotateY(rad: Number): Matrix =
             Matrix(listOf(
                 listOf(cos(rad.toDouble()), 0.0, sin(rad.toDouble()), 0.0),
                 listOf(0.0, 1.0, 0.0, 0.0),
                 listOf(-sin(rad.toDouble()), 0.0, cos(rad.toDouble()), 0.0),
                 listOf(0.0, 0.0, 0.0, 1.0)))
 
-        fun rotationZ(rad: Number): Matrix =
+        fun rotateZ(rad: Number): Matrix =
             Matrix(listOf(
                 listOf(cos(rad.toDouble()), -sin(rad.toDouble()), 0.0, 0.0),
                 listOf(sin(rad.toDouble()), cos(rad.toDouble()), 0.0, 0.0),

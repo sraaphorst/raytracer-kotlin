@@ -15,7 +15,7 @@ import kotlin.math.PI
 
 fun main() {
     val wrist = run {
-        val t = Matrix.rotationZ(PI/4) * Matrix.translate(-4, 0, -21) * Matrix.scale(3, 3, 3)
+        val t = Matrix.rotateZ(PI/4) * Matrix.translate(-4, 0, -21) * Matrix.scale(3, 3, 3)
         val m = Material(Color(0.1, 1, 1), 0.2, 0.8, 0.3)
         Sphere(t, m)
     }
@@ -51,7 +51,7 @@ fun main() {
     }
 
     val pinkyFinger = run {
-        val t = Matrix.translate(3, -1.5, -20) * Matrix.rotationZ(-PI/10) *
+        val t = Matrix.translate(3, -1.5, -20) * Matrix.rotateZ(-PI/10) *
                 Matrix.translate(1, 0, 0) * Matrix.scale(2.5, 0.6, 0.6)
         val m = Material(Color(0.1, 0.5, 1), 0.2, 0.8, 0.3)
         Sphere(t, m)

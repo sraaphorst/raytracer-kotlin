@@ -52,7 +52,7 @@ class ShapeTest {
 
     @Test
     fun `Normal on transformed shape`() {
-        val t = Matrix.scale(1, 0.5, 1) * Matrix.rotationZ(PI/5)
+        val t = Matrix.scale(1, 0.5, 1) * Matrix.rotateZ(PI/5)
         val s = TestShape(t)
         val n = s.normalAt(Tuple.point(0, sqrt2by2, -sqrt2by2))
         assertAlmostEquals(Tuple.vector(0, 0.97014, -0.24254), n)

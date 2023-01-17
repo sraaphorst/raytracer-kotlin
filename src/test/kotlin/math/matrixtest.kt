@@ -272,9 +272,9 @@ class MatrixTest {
 
     @Test
     fun `Rotate PY around x axis`() {
-        val m1 = Matrix.rotationX(PI / 4.0)
+        val m1 = Matrix.rotateX(PI / 4.0)
         val expected1 = Tuple.point(0, sqrt2by2, sqrt2by2)
-        val m2 = Matrix.rotationX(PI / 2.0)
+        val m2 = Matrix.rotateX(PI / 2.0)
         val expected2 = Tuple.point(0, 0, 1)
         assertAlmostEquals(expected1, m1 * Tuple.PY)
         assertAlmostEquals(expected2, m2 * Tuple.PY)
@@ -282,16 +282,16 @@ class MatrixTest {
 
     @Test
     fun `Rotate PY inversely around x axis`() {
-        val m = Matrix.rotationX(PI / 4.0).inverse
+        val m = Matrix.rotateX(PI / 4.0).inverse
         val expected = Tuple.point(0, sqrt2by2, -sqrt2by2)
         assertAlmostEquals(expected, m * Tuple.PY)
     }
 
     @Test
     fun `Rotate PZ around y axis`() {
-        val m1 = Matrix.rotationY(PI / 4.0)
+        val m1 = Matrix.rotateY(PI / 4.0)
         val expected1 = Tuple.point(sqrt2by2, 0, sqrt2by2)
-        val m2 = Matrix.rotationY(PI / 2.0)
+        val m2 = Matrix.rotateY(PI / 2.0)
         val expected2 = Tuple.point(1, 0, 0)
         assertAlmostEquals(expected1, m1 * Tuple.PZ)
         assertAlmostEquals(expected2, m2 * Tuple.PZ)
@@ -299,16 +299,16 @@ class MatrixTest {
 
     @Test
     fun `Rotate PZ inversely around y axis`() {
-        val m = Matrix.rotationY(PI / 4.0).inverse
+        val m = Matrix.rotateY(PI / 4.0).inverse
         val expected = Tuple.point(-sqrt2by2, 0, sqrt2by2)
         assertAlmostEquals(expected, m * Tuple.PZ)
     }
 
     @Test
     fun `Rotate PY around z axis`() {
-        val m1 = Matrix.rotationZ(PI / 4.0)
+        val m1 = Matrix.rotateZ(PI / 4.0)
         val expected1 = Tuple.point(-sqrt2by2, sqrt2by2, 0)
-        val m2 = Matrix.rotationZ(PI / 2.0)
+        val m2 = Matrix.rotateZ(PI / 2.0)
         val expected2 = Tuple.point(-1, 0, 0)
         assertAlmostEquals(expected1, m1 * Tuple.PY)
         assertAlmostEquals(expected2, m2 * Tuple.PY)
@@ -316,7 +316,7 @@ class MatrixTest {
 
     @Test
     fun `Rotate PY inversely around z axis`() {
-        val m = Matrix.rotationZ(PI / 4.0).inverse
+        val m = Matrix.rotateZ(PI / 4.0).inverse
         val expected = Tuple.point(sqrt2by2, sqrt2by2, 0)
         assertAlmostEquals(expected, m * Tuple.PY)
     }
@@ -372,7 +372,7 @@ class MatrixTest {
     @Test
     fun `Chaining translations`() {
         val p = Tuple.point(1, 0, 1)
-        val m1 = Matrix.rotationX(PI / 2)
+        val m1 = Matrix.rotateX(PI / 2)
         val m2 = Matrix.scale(5, 5, 5)
         val m3 = Matrix.translate(10, 5, 7)
         assertAlmostEquals(Tuple.point(1, -1, 0), m1 * p)
