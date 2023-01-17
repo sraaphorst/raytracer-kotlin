@@ -80,5 +80,8 @@ internal fun intersections(vararg xs: Intersection): List<Intersection> =
     xs.toList()
 
 // The hit is the intersection with the smallest positive t value.
-internal fun List<Intersection>.hit(): Intersection? =
-    this.filter { it.t > 0 }.minByOrNull { it.t }
+// In order to ignore objects that do not cast a shadow when looking for shadow hits,
+// the function accepts a boolean parameter to indicate whether we are looking for a
+// shadow hit: if so, shapes that do not cast a shadow are ignored.
+internal fun List<Intersection>.hit(shadow: Boolean = false): Intersection? =
+    this.filter { it.t > 0 && (!shadow || it.shape.castsShadow) }.minByOrNull { it.t }
