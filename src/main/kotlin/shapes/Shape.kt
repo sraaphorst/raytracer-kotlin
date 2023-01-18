@@ -8,8 +8,6 @@ import math.Matrix
 import math.Ray
 import math.Tuple
 import java.util.UUID
-import kotlin.math.PI
-import kotlin.math.sqrt
 
 abstract class Shape(val transformation: Matrix,
                      val material: Material,

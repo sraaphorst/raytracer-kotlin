@@ -6,7 +6,7 @@ import math.Color
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class TestCanvas {
+class CanvasTest {
     @Test
     fun `Create a Canvas`() {
         val c = Canvas(10, 20)

@@ -4,8 +4,6 @@ import light.Light
 import light.PointLight
 import material.Material
 import math.*
-import pattern.Pattern
-import shapes.Plane
 import shapes.Shape
 import shapes.Sphere
 import kotlin.math.sqrt

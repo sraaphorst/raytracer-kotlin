@@ -5,7 +5,6 @@ package material
 import light.Light
 import math.Color
 import math.Tuple
-import math.almostEquals
 import pattern.Pattern
 import pattern.SolidPattern
 import shapes.Shape
