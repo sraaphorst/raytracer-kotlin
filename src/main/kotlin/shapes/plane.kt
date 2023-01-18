@@ -6,8 +6,14 @@ import material.Material
 import math.*
 import kotlin.math.absoluteValue
 
-class Plane(transformation: Matrix = Matrix.I, material: Material = Material(), castsShadow: Boolean = true):
-    Shape(transformation, material, castsShadow) {
+class Plane(transformation: Matrix = Matrix.I,
+            material: Material = Material(),
+            castsShadow: Boolean = true,
+            parent: Shape? = null):
+    Shape(transformation, material, castsShadow, parent) {
+    override fun withParent(parent: Shape?): Shape =
+        Plane(transformation, material, castsShadow, parent)
+
     override fun localIntersect(rayLocal: Ray): List<Intersection> {
         if (rayLocal.direction.y.absoluteValue < DEFAULT_PRECISION)
             return emptyList()

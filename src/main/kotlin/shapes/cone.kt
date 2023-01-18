@@ -12,11 +12,15 @@ class Cone(minimum: Number = Double.NEGATIVE_INFINITY,
            val closed: Boolean = false,
            transformation: Matrix = Matrix.I,
            material: Material = Material(),
-           castsShadow: Boolean = true):
-    Shape(transformation, material, castsShadow) {
+           castsShadow: Boolean = true,
+           parent: Shape? = null):
+    Shape(transformation, material, castsShadow, parent) {
 
     val minimum = minimum.toDouble()
     val maximum = maximum.toDouble()
+
+    override fun withParent(parent: Shape?): Shape =
+        Cone(minimum, maximum, closed, transformation, material, castsShadow, parent)
 
     override fun localIntersect(rayLocal: Ray): List<Intersection> {
         val a = rayLocal.direction.x * rayLocal.direction.x -

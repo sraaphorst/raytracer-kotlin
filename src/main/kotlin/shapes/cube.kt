@@ -7,8 +7,14 @@ import math.*
 import math.Intersection
 import kotlin.math.absoluteValue
 
-class Cube(transformation: Matrix = Matrix.I, material: Material = Material(), castsShadow: Boolean = true):
-    Shape(transformation, material, castsShadow) {
+class Cube(transformation: Matrix = Matrix.I,
+           material: Material = Material(),
+           castsShadow: Boolean = true,
+           parent: Shape? = null):
+    Shape(transformation, material, castsShadow, parent) {
+    override fun withParent(parent: Shape?): Shape =
+        Cube(transformation, material, castsShadow, parent)
+
     override fun localIntersect(rayLocal: Ray): List<Intersection> {
         val (xtMin, xtMax) = checkAxis(rayLocal.origin.x, rayLocal.direction.x)
         val (ytMin, ytMax) = checkAxis(rayLocal.origin.y, rayLocal.direction.y)

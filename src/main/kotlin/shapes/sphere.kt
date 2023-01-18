@@ -9,8 +9,14 @@ import math.Ray
 import math.Tuple
 import kotlin.math.sqrt
 
-class Sphere(transformation: Matrix = Matrix.I, material: Material = Material(), castsShadow: Boolean = true):
-    Shape(transformation, material, castsShadow) {
+class Sphere(transformation: Matrix = Matrix.I,
+             material: Material = Material(),
+             castsShadow: Boolean = true,
+             parent: Shape? = null):
+    Shape(transformation, material, castsShadow, parent) {
+    override fun withParent(parent: Shape?): Shape =
+        Sphere(transformation, material, castsShadow, parent)
+
     override fun localIntersect(rayLocal: Ray): List<Intersection> {
         val sphereToRay = rayLocal.origin - Tuple.PZERO
 

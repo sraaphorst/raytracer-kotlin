@@ -6,12 +6,21 @@ import material.Material
 import math.*
 import org.junit.jupiter.api.Test
 import kotlin.math.PI
+import kotlin.math.sqrt
 
 class ShapeTest {
     class TestShape(transformation: Matrix = Matrix.I,
-                    material: Material = Material()): Shape(transformation, material) {
+                    material: Material = Material(),
+                    parent: Shape? = null):
+        Shape(transformation, material, true, parent) {
         // We need to use a var here to store a ray.
         var savedRay = Ray(Tuple.PZERO, Tuple.VZERO)
+
+        override fun withParent(parent: Shape?): Shape {
+            val s = TestShape(transformation, material, parent)
+            s.savedRay = savedRay
+            return s
+        }
 
         override fun localIntersect(rayLocal: Ray): List<Intersection> {
             savedRay = rayLocal
@@ -56,5 +65,30 @@ class ShapeTest {
         val s = TestShape(t)
         val n = s.normalAt(Tuple.point(0, sqrt2by2, -sqrt2by2))
         assertAlmostEquals(Tuple.vector(0, 0.97014, -0.24254), n)
+    }
+
+    @Test
+    fun `Point from world to local space`() {
+        val s = Sphere(Matrix.translate(5, 0, 0))
+        val g2 = Group(Matrix.scale(2, 2, 2), listOf(s))
+        val g1 = Group(Matrix.rotateY(PI / 2), listOf(g2))
+
+        // We have to get the new sphere to have the parent set.
+        val sNew = (g1.children[0] as Group).children[0]
+        val p = sNew.worldToLocal(Tuple.point(-2, 0, -10))
+        assertAlmostEquals(Tuple.point(0, 0, -1), p)
+    }
+
+    @Test
+    fun `Normal from local to world space`() {
+        val s = Sphere(Matrix.translate(5, 0, 0))
+        val g2 = Group(Matrix.scale(1, 2, 3), listOf(s))
+        val g1 = Group(Matrix.rotateY(PI / 2), listOf(g2))
+
+        // We have to get the new sphere to have the parent set.
+        val sNew = (g1.children[0] as Group).children[0]
+        val sqrt3by3 = sqrt(3.0) / 3
+        val n = sNew.normalToWorld(Tuple.vector(sqrt3by3, sqrt3by3, sqrt3by3))
+        assertAlmostEquals(Tuple.vector(0.28571, 0.42857, -0.85714), n)
     }
 }

@@ -8,10 +8,13 @@ import math.Matrix
 import math.Ray
 import math.Tuple
 import java.util.UUID
+import kotlin.math.PI
+import kotlin.math.sqrt
 
 abstract class Shape(val transformation: Matrix,
                      val material: Material,
-                     val castsShadow: Boolean = true,
+                     val castsShadow: Boolean,
+                     val parent: Shape?,
                      private val id: UUID = UUID.randomUUID()) {
     init {
         if (!transformation.isTransformation())
@@ -19,15 +22,19 @@ abstract class Shape(val transformation: Matrix,
                     "\tShape: ${javaClass.name}\nTransformation:\n${transformation.show()}")
     }
 
+    abstract fun withParent(parent: Shape? = null): Shape
+
     // Convert a point from world space to object space.
     // Later on, we use parent here.
-    fun worldToLocal(tuple: Tuple): Tuple =
-        transformation.inverse * tuple
+    internal fun worldToLocal(tuple: Tuple): Tuple =
+        transformation.inverse * (parent?.worldToLocal(tuple) ?: tuple)
 
     // Convert a normal vector from object space to world space.
     // Later on, we will use parent here.
-    private fun normalToWorld(localNormal: Tuple): Tuple =
-        (transformation.inverse.transpose * localNormal).toVector().normalized
+    internal fun normalToWorld(localNormal: Tuple): Tuple {
+        val normal = (transformation.inverse.transpose * localNormal).toVector().normalized
+        return parent?.normalToWorld(normal) ?: normal
+    }
 
     // The intersect method transforms the ray to object space and then passes
     // it to localNormalAt, which should comprise the concrete implementation of
@@ -52,21 +59,6 @@ abstract class Shape(val transformation: Matrix,
         // Convert back to world space.
         return normalToWorld(localNormal)
     }
+
     internal abstract fun localNormalAt(localPoint: Tuple): Tuple
-
-
-    // We want shapes to be considered only equal if they represent exactly the same shape.
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Shape) return false
-
-        if (id != other.id) return false
-        if (transformation != other.transformation) return false
-        if (material != other.material) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int =
-        31 * (31 * transformation.hashCode() + material.hashCode()) + id.hashCode()
 }
