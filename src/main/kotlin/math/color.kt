@@ -51,6 +51,9 @@ data class Color(val r: Double, val g: Double, val b: Double): CanBeList<Double>
         val RED = Color(1, 0, 0)
         val GREEN = Color(0, 1, 0)
         val BLUE = Color(0, 0, 1)
+        val YELLOW = Color(1, 1, 0)
+        val MAGENTA = Color(1, 0, 1)
+        val CYAN = Color(0, 1, 1)
         val WHITE = Color(1, 1, 1)
 
         fun fromHex(rgb: Int): Color {
