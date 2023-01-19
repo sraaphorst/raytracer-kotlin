@@ -14,6 +14,9 @@ class Plane(transformation: Matrix = Matrix.I,
     override fun withParent(parent: Shape?): Shape =
         Plane(transformation, material, castsShadow, parent)
 
+    override fun withMaterial(material: Material): Shape =
+        Plane(transformation, material, castsShadow, parent)
+
     override fun localIntersect(rayLocal: Ray): List<Intersection> {
         if (rayLocal.direction.y.absoluteValue < DEFAULT_PRECISION)
             return emptyList()

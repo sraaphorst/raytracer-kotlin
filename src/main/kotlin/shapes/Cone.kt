@@ -24,6 +24,9 @@ class Cone(minimum: Number = Double.NEGATIVE_INFINITY,
     override fun withParent(parent: Shape?): Shape =
         Cone(minimum, maximum, closed, transformation, material, castsShadow, parent)
 
+    override fun withMaterial(material: Material): Shape =
+        Cone(minimum, maximum, closed, transformation, material, castsShadow, parent)
+
     override fun localIntersect(rayLocal: Ray): List<Intersection> {
         val a = rayLocal.direction.x * rayLocal.direction.x -
                 rayLocal.direction.y * rayLocal.direction.y +

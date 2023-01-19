@@ -15,6 +15,9 @@ class Cube(transformation: Matrix = Matrix.I,
     override fun withParent(parent: Shape?): Shape =
         Cube(transformation, material, castsShadow, parent)
 
+    override fun withMaterial(material: Material): Shape =
+        Cube(transformation, material, castsShadow, parent)
+
     override fun localIntersect(rayLocal: Ray): List<Intersection> =
         bounds.intersects(rayLocal).map { Intersection(it, this) }
 

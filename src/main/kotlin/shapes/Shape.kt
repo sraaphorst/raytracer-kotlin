@@ -22,6 +22,9 @@ abstract class Shape(val transformation: Matrix,
     // This method should only be invoked by Groups containing the object.
     internal abstract fun withParent(parent: Shape? = null): Shape
 
+    // This method creates a copy of the object with the specified material.
+    abstract fun withMaterial(material: Material): Shape
+
     // Convert a point from world space to object space.
     // Later on, we use parent here.
     internal fun worldToLocal(tuple: Tuple): Tuple =

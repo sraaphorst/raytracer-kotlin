@@ -22,6 +22,12 @@ class ShapeTest {
             return s
         }
 
+        override fun withMaterial(material: Material): Shape {
+            val s = TestShape(transformation, material, parent)
+            s.savedRay = savedRay
+            return s
+        }
+
         override fun localIntersect(rayLocal: Ray): List<Intersection> {
             savedRay = rayLocal
             return emptyList()

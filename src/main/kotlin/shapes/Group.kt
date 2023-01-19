@@ -29,6 +29,16 @@ class Group(transformation: Matrix = Matrix.I,
     override fun withParent(parent: Shape?): Shape =
         Group(transformation, children, castsShadow, parent)
 
+    fun withTransformation(transformation: Matrix): Shape {
+        if (!transformation.isTransformation())
+            throw IllegalArgumentException("Shapes must have 4x4 transformation matrices:\n" +
+                    "\tShape: ${javaClass.name}\nTransformation:\n${transformation.show()}")
+        return Group(transformation, children, castsShadow, parent)
+    }
+
+    override fun withMaterial(material: Material): Shape =
+        Group(transformation, children.map { it.withMaterial(material) }, castsShadow, parent)
+
     // Only process children if the ray intersects the bounding box for this group.
     override fun localIntersect(rayLocal: Ray): List<Intersection> =
         if (bounds.intersects(rayLocal).isNotEmpty())
