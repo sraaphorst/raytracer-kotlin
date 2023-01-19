@@ -15,25 +15,8 @@ class Cube(transformation: Matrix = Matrix.I,
     override fun withParent(parent: Shape?): Shape =
         Cube(transformation, material, castsShadow, parent)
 
-    override fun localIntersect(rayLocal: Ray): List<Intersection> {
-        val (xtMin, xtMax) = checkAxis(rayLocal.origin.x, rayLocal.direction.x)
-        val (ytMin, ytMax) = checkAxis(rayLocal.origin.y, rayLocal.direction.y)
-        val (ztMin, ztMax) = checkAxis(rayLocal.origin.z, rayLocal.direction.z)
-
-        val tMin = maxOf(xtMin, ytMin, ztMin)
-        val tMax = minOf(xtMax, ytMax, ztMax)
-
-        return if (tMin <= tMax)
-            listOf(Intersection(tMin, this), Intersection(tMax, this))
-        else
-            emptyList()
-    }
-
-    private fun checkAxis(origin: Double, direction: Double): Pair<Double, Double> {
-        val tMin = (-1 - origin) / direction
-        val tMax = (1 - origin) / direction
-        return if (tMin > tMax) Pair(tMax, tMin) else Pair(tMin, tMax)
-    }
+    override fun localIntersect(rayLocal: Ray): List<Intersection> =
+        bounds.intersects(rayLocal).map { Intersection(it, this) }
 
     override fun localNormalAt(localPoint: Tuple): Tuple {
         val posX = localPoint.x.absoluteValue
@@ -44,5 +27,9 @@ class Cube(transformation: Matrix = Matrix.I,
             posY -> Tuple.vector(0, localPoint.y, 0)
             else -> Tuple.vector(0, 0, localPoint.z)
         }
+    }
+
+    override val bounds: BoundingBox by lazy {
+        BoundingBox(Tuple.point(-1, -1, -1), Tuple.point(1, 1, 1))
     }
 }

@@ -96,4 +96,8 @@ class Cylinder(minimum: Number = Double.NEGATIVE_INFINITY,
         else
             Tuple.vector(localPoint.x, 0, localPoint.z)
     }
+
+    override val bounds: BoundingBox by lazy {
+        BoundingBox(Tuple.point(-1, minimum, -1), Tuple.point(1, maximum, 1))
+    }
 }

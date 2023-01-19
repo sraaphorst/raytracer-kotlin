@@ -14,6 +14,7 @@ import scene.Camera
 import scene.World
 import shapes.Cube
 import java.io.File
+import kotlin.system.measureTimeMillis
 
 fun main() {
     val floorCeiling = run {
@@ -152,6 +153,10 @@ fun main() {
         Camera(2400, 1200, 0.7805, t)
     }
 
-    val canvas = camera.render(world)
-    canvas.toPPMFile(File("output/ch12_world.ppm"))
+    val elapsed = measureTimeMillis {
+        val canvas = camera.render(world)
+        canvas.toPPMFile(File("output/ch12_world.ppm"))
+    }
+    println("Time elapsed: ${elapsed / 1000.0} s")
 }
+

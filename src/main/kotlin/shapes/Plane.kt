@@ -23,4 +23,11 @@ class Plane(transformation: Matrix = Matrix.I,
 
     override fun localNormalAt(localPoint: Tuple): Tuple =
         Tuple.VY
+
+    override val bounds: BoundingBox by lazy {
+        BoundingBox(
+            Tuple.point(Double.NEGATIVE_INFINITY, 0, Double.NEGATIVE_INFINITY),
+            Tuple.point(Double.POSITIVE_INFINITY, 0, Double.POSITIVE_INFINITY)
+        )
+    }
 }

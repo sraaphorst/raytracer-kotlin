@@ -3,10 +3,8 @@ package shapes
 // By Sebastian Raaphorst, 2023.
 
 import material.Material
+import math.*
 import math.Intersection
-import math.Matrix
-import math.Ray
-import math.Tuple
 import kotlin.math.sqrt
 
 class Sphere(transformation: Matrix = Matrix.I,
@@ -37,6 +35,10 @@ class Sphere(transformation: Matrix = Matrix.I,
 
     override fun localNormalAt(localPoint: Tuple): Tuple =
         localPoint - Tuple.PZERO
+
+    override val bounds: BoundingBox by lazy {
+        BoundingBox(Tuple.point(-1, -1, -1), Tuple.point(1, 1, 1))
+    }
 
     companion object {
         internal fun glassSphere(transformation: Matrix = Matrix.I,

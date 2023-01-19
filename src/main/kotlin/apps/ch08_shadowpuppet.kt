@@ -12,6 +12,7 @@ import scene.World
 import shapes.Sphere
 import java.io.File
 import kotlin.math.PI
+import kotlin.system.measureTimeMillis
 
 fun main() {
     val wrist = run {
@@ -77,6 +78,9 @@ fun main() {
         Camera(1200, 600, PI/6, t)
     }
 
-    val canvas = camera.render(world)
-    canvas.toPPMFile(File("output/ch08_shadowpuppet.ppm"))
+    val elapsed = measureTimeMillis {
+        val canvas = camera.render(world)
+        canvas.toPPMFile(File("output/ch08_shadowpuppet.ppm"))
+    }
+    println("Time elapsed: ${elapsed / 1000.0} s")
 }

@@ -13,6 +13,7 @@ import shapes.Plane
 import shapes.Sphere
 import java.io.File
 import kotlin.math.PI
+import kotlin.system.measureTimeMillis
 
 fun main() {
     val multipleLights = false
@@ -88,6 +89,9 @@ fun main() {
         Camera(1000, 500, PI / 3, t)
     }
 
-    val canvas = camera.render(world)
-    canvas.toPPMFile(File("output/ch09_world.ppm"))
+    val elapsed = measureTimeMillis {
+        val canvas = camera.render(world)
+        canvas.toPPMFile(File("output/ch09_world.ppm"))
+    }
+    println("Time elapsed: ${elapsed / 1000.0} s")
 }

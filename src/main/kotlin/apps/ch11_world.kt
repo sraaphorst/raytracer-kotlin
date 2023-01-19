@@ -16,6 +16,7 @@ import shapes.Plane
 import shapes.Sphere
 import java.io.File
 import kotlin.math.PI
+import kotlin.system.measureTimeMillis
 
 fun main() {
     val wallMaterial = run {
@@ -113,6 +114,9 @@ fun main() {
         Camera(2400, 1200, 1.152, t)
     }
 
-    val canvas = camera.render(world)
-    canvas.toPPMFile(File("output/ch11_world.ppm"))
+    val elapsed = measureTimeMillis {
+        val canvas = camera.render(world)
+        canvas.toPPMFile(File("output/ch11_world.ppm"))
+    }
+    println("Time elapsed: ${elapsed / 1000.0} s")
 }

@@ -29,6 +29,13 @@ class ShapeTest {
 
         override fun localNormalAt(localPoint: Tuple): Tuple =
             localPoint - Tuple.PZERO
+
+        override val bounds: BoundingBox by lazy {
+            BoundingBox(
+                Tuple.point(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY),
+                Tuple.point(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY)
+            )
+        }
     }
 
     @Test
@@ -90,5 +97,16 @@ class ShapeTest {
         val sqrt3by3 = sqrt(3.0) / 3
         val n = sNew.normalToWorld(Tuple.vector(sqrt3by3, sqrt3by3, sqrt3by3))
         assertAlmostEquals(Tuple.vector(0.28571, 0.42857, -0.85714), n)
+    }
+
+    @Test
+    fun `Normal on an object in group`() {
+        val s = Sphere(Matrix.translate(5, 0, 0))
+        val g2 = Group(Matrix.scale(1, 2, 3), listOf(s))
+        val g1 = Group(Matrix.rotateY(PI / 2), listOf(g2))
+
+        val sp = (g1.children[0] as Group).children[0]
+        val n = sp.normalAt(Tuple.point(1.7321, 1.1547, -5.5774))
+        assertAlmostEquals(Tuple.vector(0.28570, 0.42854, -0.85716), n)
     }
 }

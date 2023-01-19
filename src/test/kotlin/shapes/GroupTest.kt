@@ -5,7 +5,9 @@ package shapes
 import math.Matrix
 import math.Ray
 import math.Tuple
+import math.assertAlmostEquals
 import org.junit.jupiter.api.Test
+import kotlin.math.PI
 import kotlin.test.*
 
 class GroupTest {
@@ -13,15 +15,15 @@ class GroupTest {
     fun `New group`() {
         val g = Group()
         assertEquals(Matrix.I, g.transformation)
-        assertTrue(g.children.isEmpty())
+        assertTrue(g.isEmpty)
     }
 
     @Test
     fun `New group with test shape`() {
         val s = ShapeTest.TestShape()
         val g = Group(children = listOf(s))
-        assertEquals(1, g.children.size)
-        val sp = g.children[0]
+        assertEquals(1, g.size)
+        val sp = g[0]
 
         // Check that s has changed and been assigned the group as a parent.
         assertNotSame(s, sp)
@@ -50,8 +52,8 @@ class GroupTest {
         val r = Ray(Tuple.point(0, 0, -5), Tuple.VZ)
         val xs = g.localIntersect(r)
         assertEquals(4, xs.size)
-        val sp1 = g.children[0]
-        val sp2 = g.children[1]
+        val sp1 = g[0]
+        val sp2 = g[1]
         assertSame(sp2, xs[0].shape)
         assertSame(sp2, xs[1].shape)
         assertSame(sp1, xs[2].shape)

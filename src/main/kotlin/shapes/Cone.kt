@@ -5,6 +5,8 @@ package shapes
 import material.Material
 import math.*
 import math.Intersection
+import kotlin.math.absoluteValue
+import kotlin.math.max
 import kotlin.math.sqrt
 
 class Cone(minimum: Number = Double.NEGATIVE_INFINITY,
@@ -106,5 +108,10 @@ class Cone(minimum: Number = Double.NEGATIVE_INFINITY,
             val y = if (localPoint.y > 0) -y0 else y0
             return Tuple.vector(localPoint.x, y, localPoint.z)
         }
+    }
+
+    override val bounds: BoundingBox by lazy {
+        val r = max(this.minimum.absoluteValue, this.maximum.absoluteValue)
+        BoundingBox(Tuple.point(-r, minimum, -r), Tuple.point(r, maximum, r))
     }
 }

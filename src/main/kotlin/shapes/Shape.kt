@@ -3,11 +3,10 @@ package shapes
 // By Sebastian Raaphorst, 2023.
 
 import material.Material
+import math.*
 import math.Intersection
-import math.Matrix
-import math.Ray
-import math.Tuple
 import java.util.UUID
+import kotlin.math.PI
 
 abstract class Shape(val transformation: Matrix,
                      val material: Material,
@@ -20,7 +19,8 @@ abstract class Shape(val transformation: Matrix,
                     "\tShape: ${javaClass.name}\nTransformation:\n${transformation.show()}")
     }
 
-    abstract fun withParent(parent: Shape? = null): Shape
+    // This method should only be invoked by Groups containing the object.
+    internal abstract fun withParent(parent: Shape? = null): Shape
 
     // Convert a point from world space to object space.
     // Later on, we use parent here.
@@ -43,7 +43,7 @@ abstract class Shape(val transformation: Matrix,
 
     internal abstract fun localIntersect(rayLocal: Ray): List<Intersection>
 
-    // normalAt transforms the point to object space and passes it to localNormalAt
+    // normalAt transforms the point from world to object (local) space and passes it to localNormalAt
     // which should comprise the concrete implementation of calculating the normal vector
     // at the point for the Shape. Then normalAt transforms it back into world space.
     internal fun normalAt(worldPoint: Tuple): Tuple {
@@ -58,5 +58,14 @@ abstract class Shape(val transformation: Matrix,
         return normalToWorld(localNormal)
     }
 
+    // Normal at a point in object (local) space.
+    // Normal should be returned in local space, and normalAt handles transforming it back to world space.
     internal abstract fun localNormalAt(localPoint: Tuple): Tuple
+
+    // Untransformed bounds for each Shape type.
+    internal abstract val bounds: BoundingBox
+
+    internal val parentBounds: BoundingBox by lazy {
+        bounds.transform(transformation)
+    }
 }
