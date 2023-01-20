@@ -83,8 +83,8 @@ class ShapeTest {
     @Test
     fun `Point from world to local space`() {
         val s = Sphere(Matrix.translate(5, 0, 0))
-        val g2 = Group(Matrix.scale(2, 2, 2), listOf(s))
-        val g1 = Group(Matrix.rotateY(PI / 2), listOf(g2))
+        val g2 = Group(Matrix.scale(2, 2, 2), children = listOf(s))
+        val g1 = Group(Matrix.rotateY(PI / 2), children = listOf(g2))
 
         // We have to get the new sphere to have the parent set.
         val sNew = (g1.children[0] as Group).children[0]
@@ -95,8 +95,8 @@ class ShapeTest {
     @Test
     fun `Normal from local to world space`() {
         val s = Sphere(Matrix.translate(5, 0, 0))
-        val g2 = Group(Matrix.scale(1, 2, 3), listOf(s))
-        val g1 = Group(Matrix.rotateY(PI / 2), listOf(g2))
+        val g2 = Group(Matrix.scale(1, 2, 3), children = listOf(s))
+        val g1 = Group(Matrix.rotateY(PI / 2), children = listOf(g2))
 
         // We have to get the new sphere to have the parent set.
         val sNew = (g1.children[0] as Group).children[0]
@@ -108,8 +108,8 @@ class ShapeTest {
     @Test
     fun `Normal on an object in group`() {
         val s = Sphere(Matrix.translate(5, 0, 0))
-        val g2 = Group(Matrix.scale(1, 2, 3), listOf(s))
-        val g1 = Group(Matrix.rotateY(PI / 2), listOf(g2))
+        val g2 = Group(Matrix.scale(1, 2, 3), children = listOf(s))
+        val g1 = Group(Matrix.rotateY(PI / 2), children = listOf(g2))
 
         val sp = (g1.children[0] as Group).children[0]
         val n = sp.normalAt(Tuple.point(1.7321, 1.1547, -5.5774))
