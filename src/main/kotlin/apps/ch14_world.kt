@@ -19,14 +19,6 @@ fun main() {
     val transforms = listOf(0, PI / 3, 2 * PI / 3, PI, 4 * PI / 3, 5 * PI / 3)
         .map(Matrix::rotateY)
 
-    val leg = run {
-        val sphere = Sphere(Matrix.translate(0, 0, -1) * Matrix.scale(0.25, 0.25, 0.25))
-        val cylinder = Cylinder(0, 1, false,
-            Matrix.translate(0, 0, -1) * Matrix.rotateY(-PI / 6) *
-            Matrix.rotateZ(-PI / 2) * Matrix.scale(0.25, 1, 0.25))
-        Group(children = listOf(sphere, cylinder))
-    }
-
     val cap = run {
         val trans = Matrix.rotateX(-PI / 4 ) * Matrix.scale(0.24606, 1.37002, 0.24606)
         val cones = transforms.map {
@@ -36,7 +28,7 @@ fun main() {
     }
 
     val wacky = run {
-        val legs = transforms.map(leg::withTransformation)
+        val legs = transforms.map(side::withTransformation)
         val cap1 = cap.withTransformation(Matrix.translate(0, 1, 0))
         val cap2 = cap.withTransformation(Matrix.rotateX(PI) * Matrix.translate(0, 1, 0))
         Group(children = legs + listOf(cap1, cap2))
