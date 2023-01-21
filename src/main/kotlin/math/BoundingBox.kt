@@ -33,6 +33,8 @@ data class BoundingBox(val minPoint: Tuple = MaxPoint, val maxPoint: Tuple = Min
         add(box.minPoint).add(box.maxPoint)
 
     fun transform(transformation: Matrix): BoundingBox {
+        if (!transformation.isTransformation())
+            throw IllegalArgumentException("Cannot transform a bounding box by a non-transform matrix.")
         val corners = listOf(
             minPoint,
             Tuple.point(maxPoint.x, minPoint.y, minPoint.z),
