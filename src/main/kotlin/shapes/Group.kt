@@ -6,12 +6,12 @@ import material.Material
 import math.*
 import math.Intersection
 
-class Group(transformation: Matrix = Matrix.I,
-            material: Material? = null,
-            children: List<Shape> = emptyList(),
-            castsShadow: Boolean = true,
-            parent: Shape? = null):
-    Shape(transformation, material, castsShadow, parent) {
+class Group(
+    children: List<Shape> = emptyList(),
+    transformation: Matrix = Matrix.I,
+    material: Material? = null,
+    castsShadow: Boolean = true,
+    parent: Shape? = null): Shape(transformation, material, castsShadow, parent) {
 
     // Make copies of all the children to backreference this as their parent.
     val children = run { children.map { it.withParent(this) } }
@@ -27,14 +27,17 @@ class Group(transformation: Matrix = Matrix.I,
 
     // Note due to Kotlin semantics, we have to use objMaterial here.
     override fun withParent(parent: Shape?): Shape =
-        Group(transformation, objMaterial, children, castsShadow, parent)
+        Group(children, transformation, objMaterial, castsShadow, parent)
 
     fun withTransformation(transformation: Matrix): Shape {
         if (!transformation.isTransformation())
             throw IllegalArgumentException("Shapes must have 4x4 transformation matrices:\n" +
                     "\tShape: ${javaClass.name}\nTransformation:\n${transformation.show()}")
-        return Group(transformation, material, children, castsShadow, parent)
+        return Group(children, transformation, material, castsShadow, parent)
     }
+
+    override fun withMaterial(material: Material): Shape =
+        Group(children.map { it.withMaterial(material) }, transformation, material, castsShadow, parent)
 
     fun forEach(f: (Shape) -> Unit) {
         children.forEach(f)
@@ -60,9 +63,6 @@ class Group(transformation: Matrix = Matrix.I,
 
     fun withIndex(group: Group): Iterable<IndexedValue<Shape>> =
         children.withIndex()
-
-    override fun withMaterial(material: Material): Shape =
-        Group(transformation, material, children.map { it.withMaterial(material) }, castsShadow, parent)
 
     // Only process children if the ray intersects the bounding box for this group.
     override fun localIntersect(rayLocal: Ray): List<Intersection> =

@@ -1,0 +1,4 @@
+package shapes
+
+class TriangleTest {
+}
