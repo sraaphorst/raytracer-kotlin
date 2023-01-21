@@ -4,8 +4,6 @@ package shapes
 
 import material.Material
 import math.*
-import math.BoundingBox.Companion.MaxPoint
-import math.BoundingBox.Companion.MinPoint
 import math.Intersection
 
 class Group(transformation: Matrix = Matrix.I,
@@ -77,9 +75,10 @@ class Group(transformation: Matrix = Matrix.I,
         throw NotImplementedError("Groups do not have local normals.")
 
     override val bounds: BoundingBox by lazy {
-//        children.fold(BoundingBox(MaxPoint, MinPoint)) { curr, shape ->
-//            curr.merge(shape.parentBounds)
-//        }
-        BoundingBox(MinPoint, MaxPoint)
+        // At first, the bounds are a completely empty box, with:
+        // 1. minPoint at INF, INF, INF
+        // 2. maxPoint at -INF, -INF, -INF.
+        // We make the space larger from the children.
+        children.fold(BoundingBox.Empty) { curr, shape -> curr.merge(shape.parentBounds) }
     }
 }

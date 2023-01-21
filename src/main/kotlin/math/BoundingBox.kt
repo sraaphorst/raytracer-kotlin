@@ -5,6 +5,9 @@ package math
 import kotlin.math.max
 import kotlin.math.min
 
+// Unless otherwise stated, a bounding box is empty, as indicated by setting the
+// 1. minPoint to INF, INF, INF
+// 2. maxPoint to -INF, -INF, -INF
 data class BoundingBox(val minPoint: Tuple = MaxPoint, val maxPoint: Tuple = MinPoint) {
     init {
         if (!minPoint.isPoint())
@@ -20,12 +23,12 @@ data class BoundingBox(val minPoint: Tuple = MaxPoint, val maxPoint: Tuple = Min
         !isEmpty
     }
 
-    fun add(point: Tuple): BoundingBox {
+    private fun add(point: Tuple): BoundingBox {
         if (!point.isPoint())
             throw IllegalArgumentException("Tried to add vector to BoundingBox: $point.")
         return BoundingBox(
             Tuple.point(min(minPoint.x, point.x), min(minPoint.y, point.y), min(minPoint.z, point.z)),
-            Tuple.point(max(maxPoint.x, point.x), min(maxPoint.y, point.y), min(maxPoint.z, point.z))
+            Tuple.point(max(maxPoint.x, point.x), max(maxPoint.y, point.y), max(maxPoint.z, point.z))
         )
     }
 
@@ -102,5 +105,7 @@ data class BoundingBox(val minPoint: Tuple = MaxPoint, val maxPoint: Tuple = Min
             Double.NEGATIVE_INFINITY,
             Double.NEGATIVE_INFINITY
         )
+
+        internal val Empty = BoundingBox(MaxPoint, MinPoint)
     }
 }
