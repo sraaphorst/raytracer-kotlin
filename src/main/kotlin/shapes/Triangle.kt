@@ -59,6 +59,13 @@ class Triangle(
     override fun localNormalAt(localPoint: Tuple): Tuple =
         normal
 
-    override val bounds: BoundingBox
-        get() = TODO("Not yet implemented")
+    override val bounds: BoundingBox by lazy {
+        val xMin = minOf(p1.x, p2.x, p3.x)
+        val yMin = minOf(p1.y, p2.y, p3.y)
+        val zMin = minOf(p1.z, p2.z, p3.z)
+        val xMax = maxOf(p1.x, p2.x, p3.x)
+        val yMax = maxOf(p1.y, p2.y, p3.y)
+        val zMax = maxOf(p1.z, p2.z, p3.z)
+        BoundingBox(Tuple.point(xMin, yMin, zMin), Tuple.point(xMax, yMax, zMax))
+    }
 }

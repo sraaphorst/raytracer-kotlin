@@ -61,7 +61,7 @@ class Group(
     fun zip(group: Group): Iterable<Pair<Shape, Shape>> =
         children.zip(group.children)
 
-    fun withIndex(group: Group): Iterable<IndexedValue<Shape>> =
+    fun withIndex(): Iterable<IndexedValue<Shape>> =
         children.withIndex()
 
     // Only process children if the ray intersects the bounding box for this group.
