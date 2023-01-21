@@ -9,12 +9,12 @@ import kotlin.math.PI
 import kotlin.math.sqrt
 
 class ShapeTest {
-    class TestShape(transformation: Matrix = Matrix.I,
+    internal class TestShape(transformation: Matrix = Matrix.I,
                     material: Material = Material(),
                     parent: Shape? = null):
         Shape(transformation, material, true, parent) {
         // We need to use a var here to store a ray.
-        var savedRay = Ray(Tuple.PZERO, Tuple.VZERO)
+        internal var savedRay = Ray(Tuple.PZERO, Tuple.VZERO)
 
         override fun withParent(parent: Shape?): Shape {
             val s = TestShape(transformation, material, parent)

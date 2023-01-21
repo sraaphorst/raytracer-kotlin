@@ -5,6 +5,7 @@ package shapes
 import material.Material
 import math.*
 import math.Intersection
+import kotlin.math.absoluteValue
 
 class Triangle(
     internal val p1: Tuple,
@@ -33,7 +34,25 @@ class Triangle(
         Triangle(p1, p2, p3, transformation, material, castsShadow, parent)
 
     override fun localIntersect(rayLocal: Ray): List<Intersection> {
-        TODO("Not yet implemented")
+        val dirCrossE2 = rayLocal.direction.cross(e2)
+        val det = e1.dot(dirCrossE2)
+        if (almostEquals(0, det))
+            return emptyList()
+
+        val f = 1.0 / det
+
+        val p1ToOrigin = rayLocal.origin - p1
+        val u = f * p1ToOrigin.dot(dirCrossE2)
+        if (u < 0 || u > 1)
+            return emptyList()
+
+        val originCrossE1 = p1ToOrigin.cross(e1)
+        val v = f * rayLocal.direction.dot(originCrossE1)
+        if (v < 0 || u + v > 1)
+            return emptyList()
+
+        val t = f * e2.dot(originCrossE1)
+        return listOf(Intersection(t, this))
     }
 
     // Note that this will still return a normal if the point is not on the triangle.
