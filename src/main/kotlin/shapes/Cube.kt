@@ -8,12 +8,14 @@ import math.Intersection
 import kotlin.math.absoluteValue
 
 class Cube(transformation: Matrix = Matrix.I,
-           material: Material = Material(),
+           material: Material? = null,
            castsShadow: Boolean = true,
            parent: Shape? = null):
     Shape(transformation, material, castsShadow, parent) {
+
+    // Note due to Kotlin semantics, we have to use objMaterial here.
     override fun withParent(parent: Shape?): Shape =
-        Cube(transformation, material, castsShadow, parent)
+        Cube(transformation, objMaterial, castsShadow, parent)
 
     override fun withMaterial(material: Material): Shape =
         Cube(transformation, material, castsShadow, parent)

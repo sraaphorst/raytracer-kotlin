@@ -58,7 +58,7 @@ fun main() {
             Cylinder(0, 0.5, true, t)
         }
 
-        Group(gt, m, listOf(concentricCylinder1, concentricCylinder2, concentricCylinder3, concentricCylinder4))
+        Group(gt, m, children=listOf(concentricCylinder1, concentricCylinder2, concentricCylinder3, concentricCylinder4))
     }
 
     val decorativeCylinder1 = run {

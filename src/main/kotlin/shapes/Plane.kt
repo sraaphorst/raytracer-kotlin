@@ -7,12 +7,14 @@ import math.*
 import kotlin.math.absoluteValue
 
 class Plane(transformation: Matrix = Matrix.I,
-            material: Material = Material(),
+            material: Material? = null,
             castsShadow: Boolean = true,
             parent: Shape? = null):
     Shape(transformation, material, castsShadow, parent) {
+
+    // Note due to Kotlin semantics, we have to use objMaterial here.
     override fun withParent(parent: Shape?): Shape =
-        Plane(transformation, material, castsShadow, parent)
+        Plane(transformation, objMaterial, castsShadow, parent)
 
     override fun withMaterial(material: Material): Shape =
         Plane(transformation, material, castsShadow, parent)

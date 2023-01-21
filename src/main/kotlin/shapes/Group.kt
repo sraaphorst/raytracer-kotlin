@@ -7,17 +7,16 @@ import math.*
 import math.BoundingBox.Companion.MaxPoint
 import math.BoundingBox.Companion.MinPoint
 import math.Intersection
-import kotlin.math.PI
 
 class Group(transformation: Matrix = Matrix.I,
-            material: Material = Material(),
+            material: Material? = null,
             children: List<Shape> = emptyList(),
             castsShadow: Boolean = true,
             parent: Shape? = null):
     Shape(transformation, material, castsShadow, parent) {
 
     // Make copies of all the children to backreference this as their parent.
-    val children = children.map { it.withParent(this) }
+    val children = run { children.map { it.withParent(this) } }
     val size = children.size
     val isEmpty = children.isEmpty()
     val isNotEmpty = children.isNotEmpty()
@@ -28,8 +27,9 @@ class Group(transformation: Matrix = Matrix.I,
     operator fun contains(s: Shape): Boolean =
         s in children
 
+    // Note due to Kotlin semantics, we have to use objMaterial here.
     override fun withParent(parent: Shape?): Shape =
-        Group(transformation, material, children, castsShadow, parent)
+        Group(transformation, objMaterial, children, castsShadow, parent)
 
     fun withTransformation(transformation: Matrix): Shape {
         if (!transformation.isTransformation())
@@ -38,7 +38,7 @@ class Group(transformation: Matrix = Matrix.I,
         return Group(transformation, material, children, castsShadow, parent)
     }
 
-    fun forEach(f: (Shape) -> Unit): Unit {
+    fun forEach(f: (Shape) -> Unit) {
         children.forEach(f)
     }
 

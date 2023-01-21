@@ -8,12 +8,14 @@ import math.Intersection
 import kotlin.math.sqrt
 
 class Sphere(transformation: Matrix = Matrix.I,
-             material: Material = Material(),
+             material: Material? = null,
              castsShadow: Boolean = true,
              parent: Shape? = null):
     Shape(transformation, material, castsShadow, parent) {
+
+    // Note due to Kotlin semantics, we have to use objMaterial here.
     override fun withParent(parent: Shape?): Shape =
-        Sphere(transformation, material, castsShadow, parent)
+        Sphere(transformation, objMaterial, castsShadow, parent)
 
     override fun withMaterial(material: Material): Shape =
         Sphere(transformation, material, castsShadow, parent)

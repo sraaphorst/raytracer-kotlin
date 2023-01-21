@@ -9,7 +9,7 @@ import java.util.UUID
 import kotlin.math.PI
 
 abstract class Shape(val transformation: Matrix,
-                     val material: Material,
+                     material: Material? = null,
                      val castsShadow: Boolean,
                      val parent: Shape?,
                      private val id: UUID = UUID.randomUUID()) {
@@ -18,6 +18,14 @@ abstract class Shape(val transformation: Matrix,
             throw IllegalArgumentException("Shapes must have 4x4 transformation matrices:\n" +
                     "\tShape: ${javaClass.name}\nTransformation:\n${transformation.show()}")
     }
+
+    // We need to store the parameter passed in for material here in order to propagate it correctly.
+    // We will access it below: if an object does not have a material, it will try to see if it has a parent
+    // with a material.
+    protected val objMaterial = material
+
+    val material: Material
+        get() = objMaterial ?: (parent?.objMaterial ?: DefaultMaterial)
 
     // This method should only be invoked by Groups containing the object.
     internal abstract fun withParent(parent: Shape? = null): Shape
@@ -70,5 +78,9 @@ abstract class Shape(val transformation: Matrix,
 
     internal val parentBounds: BoundingBox by lazy {
         bounds.transform(transformation)
+    }
+
+    companion object {
+        private val DefaultMaterial = Material()
     }
 }

@@ -11,7 +11,7 @@ class Cylinder(minimum: Number = Double.NEGATIVE_INFINITY,
                maximum: Number = Double.POSITIVE_INFINITY,
                val closed: Boolean = false,
                transformation: Matrix = Matrix.I,
-               material: Material = Material(),
+               material: Material? = null,
                castsShadow: Boolean = true,
                parent: Shape? = null):
     Shape(transformation, material, castsShadow, parent) {
@@ -19,8 +19,9 @@ class Cylinder(minimum: Number = Double.NEGATIVE_INFINITY,
     val minimum = minimum.toDouble()
     val maximum = maximum.toDouble()
 
+    // Note due to Kotlin semantics, we have to use objMaterial here.
     override fun withParent(parent: Shape?): Shape =
-        Cylinder(minimum, maximum, closed, transformation, material, castsShadow, parent)
+        Cylinder(minimum, maximum, closed, transformation, objMaterial, castsShadow, parent)
 
     override fun withMaterial(material: Material): Shape =
         Cylinder(minimum, maximum, closed, transformation, material, castsShadow, parent)
