@@ -73,14 +73,14 @@ class GroupTest {
         val g1 = run {
             val s1 = Sphere(transformation = Matrix.translate(-1, -1, -1) * Matrix.scale(0.5, 0.5, 0.5))
             val c1 = Cylinder(transformation = Matrix.rotateY(PI / 2) * Matrix.scale(0.33, 0.33, 0.33))
-            Group(children = listOf(s1, c1))
+            Group(listOf(s1, c1))
         }
 
         // g1 is no longer relevant:
         // 1. The children of g1g should have g1g as their parent.
         // 2. The parent of g1g should be g2.
         // 3. The transformations of g1 and g1g should still be the same.
-        val g2 = Group(Matrix.scale(0.1, 0.1, 0.1), children = listOf(g1))
+        val g2 = Group(listOf(g1), Matrix.scale(0.1, 0.1, 0.1))
         val g1g = g2.children[0] as Group
 
         assertSame(g2, g1g.parent)
