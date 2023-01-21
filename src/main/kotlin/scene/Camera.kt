@@ -9,13 +9,16 @@ import output.Canvas
 import kotlin.math.tan
 
 // Map a 3D scene onto a 2D canvas.
-data class Camera(val hSize: Int, val vSize: Int, val fov: Double, val transformation: Matrix = Matrix.I) {
+class Camera(private val hSize: Int,
+             private val vSize: Int,
+             fov: Number,
+             internal val transformation: Matrix = Matrix.I) {
     init {
         if (!transformation.isTransformation())
             throw IllegalArgumentException("Illegal camera transformation:\n${transformation.show()}")
     }
 
-    private val halfView = tan(fov / 2.0)
+    private val halfView = tan(fov.toDouble() / 2.0)
     private val aspect = hSize.toDouble() / vSize.toDouble()
     private val halfWidth = if (aspect >= 1) halfView else halfView * aspect
     private val halfHeight = if (aspect >= 1) halfView / aspect else halfView

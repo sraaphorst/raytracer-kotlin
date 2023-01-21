@@ -58,8 +58,7 @@ class CubeTest {
             Tuple.vector(0.5345, 0.8018, 0.2673),
             -Tuple.VZ, -Tuple.VY, -Tuple.VX)
 
-        origins.zip(directions).withIndex().forEach { (idx, rayInfo) ->
-            val (origin, direction) = rayInfo
+        origins.zip(directions).forEach { (origin, direction) ->
             val r = Ray(origin, direction)
             val xs = c.localIntersect(r)
             assertEquals(0, xs.size)

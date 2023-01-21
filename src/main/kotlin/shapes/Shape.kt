@@ -3,15 +3,15 @@ package shapes
 // By Sebastian Raaphorst, 2023.
 
 import material.Material
+import math.*
 import math.Intersection
-import math.Matrix
-import math.Ray
-import math.Tuple
 import java.util.UUID
+import kotlin.math.PI
 
 abstract class Shape(val transformation: Matrix,
-                     val material: Material,
-                     val castsShadow: Boolean = true,
+                     material: Material? = null,
+                     val castsShadow: Boolean,
+                     val parent: Shape?,
                      private val id: UUID = UUID.randomUUID()) {
     init {
         if (!transformation.isTransformation())
@@ -19,15 +19,31 @@ abstract class Shape(val transformation: Matrix,
                     "\tShape: ${javaClass.name}\nTransformation:\n${transformation.show()}")
     }
 
+    // We need to store the parameter passed in for material here in order to propagate it correctly.
+    // We will access it below: if an object does not have a material, it will try to see if it has a parent
+    // with a material.
+    protected val objMaterial = material
+
+    val material: Material
+        get() = objMaterial ?: (parent?.objMaterial ?: DefaultMaterial)
+
+    // This method should only be invoked by Groups containing the object.
+    internal abstract fun withParent(parent: Shape? = null): Shape
+
+    // This method creates a copy of the object with the specified material.
+    abstract fun withMaterial(material: Material): Shape
+
     // Convert a point from world space to object space.
     // Later on, we use parent here.
-    fun worldToLocal(tuple: Tuple): Tuple =
-        transformation.inverse * tuple
+    internal fun worldToLocal(tuple: Tuple): Tuple =
+        transformation.inverse * (parent?.worldToLocal(tuple) ?: tuple)
 
     // Convert a normal vector from object space to world space.
     // Later on, we will use parent here.
-    private fun normalToWorld(localNormal: Tuple): Tuple =
-        (transformation.inverse.transpose * localNormal).toVector().normalized
+    internal fun normalToWorld(localNormal: Tuple): Tuple {
+        val normal = (transformation.inverse.transpose * localNormal).toVector().normalized
+        return parent?.normalToWorld(normal) ?: normal
+    }
 
     // The intersect method transforms the ray to object space and then passes
     // it to localNormalAt, which should comprise the concrete implementation of
@@ -38,7 +54,7 @@ abstract class Shape(val transformation: Matrix,
 
     internal abstract fun localIntersect(rayLocal: Ray): List<Intersection>
 
-    // normalAt transforms the point to object space and passes it to localNormalAt
+    // normalAt transforms the point from world to object (local) space and passes it to localNormalAt
     // which should comprise the concrete implementation of calculating the normal vector
     // at the point for the Shape. Then normalAt transforms it back into world space.
     internal fun normalAt(worldPoint: Tuple): Tuple {
@@ -52,21 +68,19 @@ abstract class Shape(val transformation: Matrix,
         // Convert back to world space.
         return normalToWorld(localNormal)
     }
+
+    // Normal at a point in object (local) space.
+    // Normal should be returned in local space, and normalAt handles transforming it back to world space.
     internal abstract fun localNormalAt(localPoint: Tuple): Tuple
 
+    // Untransformed bounds for each Shape type.
+    internal abstract val bounds: BoundingBox
 
-    // We want shapes to be considered only equal if they represent exactly the same shape.
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Shape) return false
-
-        if (id != other.id) return false
-        if (transformation != other.transformation) return false
-        if (material != other.material) return false
-
-        return true
+    internal val parentBounds: BoundingBox by lazy {
+        bounds.transform(transformation)
     }
 
-    override fun hashCode(): Int =
-        31 * (31 * transformation.hashCode() + material.hashCode()) + id.hashCode()
+    companion object {
+        private val DefaultMaterial = Material()
+    }
 }

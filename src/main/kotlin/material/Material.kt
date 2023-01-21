@@ -5,31 +5,39 @@ package material
 import light.Light
 import math.Color
 import math.Tuple
-import math.almostEquals
 import pattern.Pattern
 import pattern.SolidPattern
 import shapes.Shape
 import kotlin.math.pow
 
-data class Material(val pattern: Pattern = SolidPattern(Color.WHITE),
-                    val ambient: Double = DEFAULT_AMBIENT,
-                    val diffuse: Double = DEFAULT_DIFFUSE,
-                    val specular: Double = DEFAULT_SPECULAR,
-                    val shininess: Double = DEFAULT_SHININESS,
-                    val reflectivity: Double = DEFAULT_REFLECTIVITY,
-                    val transparency: Double = DEFAULT_TRANSPARENCY,
-                    val refractiveIndex: Double = DEFAULT_REFRACTIVE_INDEX) {
+class Material(val pattern: Pattern = SolidPattern(Color.WHITE),
+               ambient: Number = DEFAULT_AMBIENT,
+               diffuse: Number = DEFAULT_DIFFUSE,
+               specular: Number = DEFAULT_SPECULAR,
+               shininess: Number = DEFAULT_SHININESS,
+               reflectivity: Number = DEFAULT_REFLECTIVITY,
+               transparency: Number = DEFAULT_TRANSPARENCY,
+               refractiveIndex: Number = DEFAULT_REFRACTIVE_INDEX) {
+
+    val ambient = ambient.toDouble()
+    val diffuse = diffuse.toDouble()
+    val specular = specular.toDouble()
+    val shininess = shininess.toDouble()
+    val reflectivity = reflectivity.toDouble()
+    val transparency = transparency.toDouble()
+    val refractiveIndex = refractiveIndex.toDouble()
 
     // Convenience constructor to create a material with a solid pattern.
     constructor(color: Color,
-                ambient: Double = DEFAULT_AMBIENT,
-                diffuse: Double = DEFAULT_DIFFUSE,
-                specular: Double = DEFAULT_SPECULAR,
-                shininess: Double = DEFAULT_SHININESS,
-                reflectivity: Double = DEFAULT_REFLECTIVITY,
-                transparency: Double = DEFAULT_TRANSPARENCY,
-                refractiveIndex: Double = DEFAULT_REFRACTIVE_INDEX):
-            this(SolidPattern(color), ambient, diffuse, specular, shininess, reflectivity, transparency, refractiveIndex)
+                ambient: Number = DEFAULT_AMBIENT,
+                diffuse: Number = DEFAULT_DIFFUSE,
+                specular: Number = DEFAULT_SPECULAR,
+                shininess: Number = DEFAULT_SHININESS,
+                reflectivity: Number = DEFAULT_REFLECTIVITY,
+                transparency: Number = DEFAULT_TRANSPARENCY,
+                refractiveIndex: Number = DEFAULT_REFRACTIVE_INDEX):
+            this(SolidPattern(color),
+                ambient, diffuse, specular, shininess, reflectivity, transparency, refractiveIndex)
 
     internal fun lighting(shape: Shape,
                           light: Light,
@@ -61,23 +69,6 @@ data class Material(val pattern: Pattern = SolidPattern(Color.WHITE),
 
         return ambient + diffuse + specular
     }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Material) return false
-
-        if (pattern != other.pattern) return false
-        if (!almostEquals(ambient, other.ambient)) return false
-        if (!almostEquals(diffuse, other.diffuse)) return false
-        if (!almostEquals(specular, other.specular)) return false
-        if (!almostEquals(shininess, other.shininess)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int =
-        31 * (31 * (31 * (31 * pattern.hashCode() + ambient.hashCode()) +
-                diffuse.hashCode()) + specular.hashCode()) + shininess.hashCode()
 
     companion object {
         const val DEFAULT_AMBIENT = 0.1

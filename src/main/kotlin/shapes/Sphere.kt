@@ -3,14 +3,23 @@ package shapes
 // By Sebastian Raaphorst, 2023.
 
 import material.Material
+import math.*
 import math.Intersection
-import math.Matrix
-import math.Ray
-import math.Tuple
 import kotlin.math.sqrt
 
-class Sphere(transformation: Matrix = Matrix.I, material: Material = Material(), castsShadow: Boolean = true):
-    Shape(transformation, material, castsShadow) {
+class Sphere(transformation: Matrix = Matrix.I,
+             material: Material? = null,
+             castsShadow: Boolean = true,
+             parent: Shape? = null):
+    Shape(transformation, material, castsShadow, parent) {
+
+    // Note due to Kotlin semantics, we have to use objMaterial here.
+    override fun withParent(parent: Shape?): Shape =
+        Sphere(transformation, objMaterial, castsShadow, parent)
+
+    override fun withMaterial(material: Material): Shape =
+        Sphere(transformation, material, castsShadow, parent)
+
     override fun localIntersect(rayLocal: Ray): List<Intersection> {
         val sphereToRay = rayLocal.origin - Tuple.PZERO
 
@@ -31,6 +40,10 @@ class Sphere(transformation: Matrix = Matrix.I, material: Material = Material(),
 
     override fun localNormalAt(localPoint: Tuple): Tuple =
         localPoint - Tuple.PZERO
+
+    override val bounds: BoundingBox by lazy {
+        BoundingBox(Tuple.point(-1, -1, -1), Tuple.point(1, 1, 1))
+    }
 
     companion object {
         internal fun glassSphere(transformation: Matrix = Matrix.I,
