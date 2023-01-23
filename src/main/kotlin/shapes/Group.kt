@@ -103,3 +103,11 @@ class Group(
         else null
     }
 }
+
+fun main() {
+    val g = Group()
+    val r = Ray(Tuple.PZERO, Tuple.VZ)
+    val xs = g.localIntersect(r)
+    print(xs)
+    print(xs.isEmpty())
+}
