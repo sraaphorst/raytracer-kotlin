@@ -27,6 +27,12 @@ class Triangle(
     internal val e2 = p3 - p1
     internal val normal = e2.cross(e1).normalized
 
+    // Center of the triangle: just the average of the three points.
+    // Since we are adding three points and dividing by 3, the last coordinate should be 1.
+    internal val center: Tuple by lazy {
+        (p1 + p2 + p3) / 3
+    }
+
     override fun withParent(parent: Shape?): Shape =
         Triangle(p1, p2, p3, transformation, material, castsShadow, parent)
 
