@@ -17,7 +17,7 @@ fun main() {
         val sides = (0 until 6).map { Matrix.rotateY(it * PI / 3) }.map {
             side.withTransformation(it)
         }
-        Group(sides,Matrix.rotateX(-0.4363) * Matrix.rotateY(-PI / 18))
+        Group(sides, Matrix.rotateX(-0.4363) * Matrix.rotateY(-PI / 18))
     }
 
     val world = run {
