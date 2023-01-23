@@ -84,3 +84,6 @@ abstract class Shape(val transformation: Matrix,
         private val DefaultMaterial = Material()
     }
 }
+
+internal fun <T: Shape> List<T>.boundingBox(): BoundingBox =
+    fold(BoundingBox.Empty) { curr, shape -> curr.merge(shape.parentBounds) }

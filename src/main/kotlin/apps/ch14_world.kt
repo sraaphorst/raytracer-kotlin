@@ -24,14 +24,14 @@ fun main() {
         val cones = transforms.map {
             Cone(-1, 0, false, it * trans)
         }
-        Group(children = cones)
+        Group(cones)
     }
 
     val wacky = run {
         val legs = transforms.map(side::withTransformation)
         val cap1 = cap.withTransformation(Matrix.translate(0, 1, 0))
         val cap2 = cap.withTransformation(Matrix.rotateX(PI) * Matrix.translate(0, 1, 0))
-        Group(children = legs + listOf(cap1, cap2))
+        Group(legs + listOf(cap1, cap2))
     }
 
     val backdrop = run {

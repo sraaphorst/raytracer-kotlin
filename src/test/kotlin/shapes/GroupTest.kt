@@ -45,10 +45,10 @@ class GroupTest {
         val s1 = Sphere()
         val s2 = Sphere(transformation = Matrix.translate(0, 0, -3))
         val s3 = Sphere(transformation = Matrix.translate(5, 0, 0))
-        val g = Group(children = listOf(s1, s2, s3))
+        val g = Group(listOf(s1, s2, s3))
 
         val r = Ray(Tuple.point(0, 0, -5), Tuple.VZ)
-        val xs = g.localIntersect(r)
+        val xs = g.localIntersect(r).sortedBy { it.t }
         assertEquals(4, xs.size)
         val sp1 = g[0]
         val sp2 = g[1]
@@ -61,7 +61,7 @@ class GroupTest {
     @Test
     fun `Intersect ray with transformed group`() {
         val s = Sphere(transformation = Matrix.translate(5, 0, 0))
-        val g = Group(transformation = Matrix.scale(2, 2, 2), children = listOf(s))
+        val g = Group(listOf(s), Matrix.scale(2, 2, 2))
 
         val r = Ray(Tuple.point(10, 0, -10), Tuple.VZ)
         val xs = g.intersect(r)
@@ -71,16 +71,18 @@ class GroupTest {
     @Test
     fun `Calling withXXX properties on groups`() {
         val g1 = run {
-            val s1 = Sphere(transformation = Matrix.translate(-1, -1, -1) * Matrix.scale(0.5, 0.5, 0.5))
+            val s1 = Sphere(transformation =
+                Matrix.translate(-1, -1, -1) * Matrix.scale(0.5, 0.5, 0.5)
+            )
             val c1 = Cylinder(transformation = Matrix.rotateY(PI / 2) * Matrix.scale(0.33, 0.33, 0.33))
-            Group(children = listOf(s1, c1))
+            Group(listOf(s1, c1))
         }
 
         // g1 is no longer relevant:
         // 1. The children of g1g should have g1g as their parent.
         // 2. The parent of g1g should be g2.
         // 3. The transformations of g1 and g1g should still be the same.
-        val g2 = Group(Matrix.scale(0.1, 0.1, 0.1), children = listOf(g1))
+        val g2 = Group(listOf(g1), Matrix.scale(0.1, 0.1, 0.1))
         val g1g = g2.children[0] as Group
 
         assertSame(g2, g1g.parent)

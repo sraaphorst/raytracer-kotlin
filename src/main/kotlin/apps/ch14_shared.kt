@@ -16,5 +16,5 @@ val side = run {
         Matrix.translate(0, 0, -1) * Matrix.rotateY(-PI / 6)
                 * Matrix.rotateZ(-PI / 2) * Matrix.scale(0.25, 1, 0.25)
     )
-    Group(children = listOf(corner, edge))
+    Group(listOf(corner, edge))
 }
