@@ -19,6 +19,10 @@ class Group(
     val isEmpty = children.isEmpty()
     val isNotEmpty = children.isNotEmpty()
 
+    val isAllTriangles: Boolean by lazy {
+        children.all { it is Triangle }
+    }
+
     operator fun get(idx: Int): Shape =
         children[idx]
 
@@ -65,11 +69,21 @@ class Group(
         children.withIndex()
 
     // Only process children if the ray intersects the bounding box for this group.
-    override fun localIntersect(rayLocal: Ray): List<Intersection> =
+    // We do not need to sort as World sorts all intersections by t.
+    private fun localIntersectAll(rayLocal: Ray): List<Intersection> =
         if (bounds.intersects(rayLocal).isNotEmpty())
-            children.flatMap { it.intersect(rayLocal) }.sortedBy { it.t }
+            children.flatMap { it.intersect(rayLocal) }//.sortedBy { it.t }
         else
             emptyList()
+
+    // Turn on and off using the KD Tree by swapping between these methods.
+//    override
+//    fun localIntersect(rayLocal: Ray): List<Intersection> =
+//        localIntersectAll(rayLocal)
+
+    override
+    fun localIntersect(rayLocal: Ray): List<Intersection> =
+        kdTree?.localIntersect(rayLocal) ?: localIntersectAll(rayLocal)
 
     override fun localNormalAt(localPoint: Tuple): Tuple =
         throw NotImplementedError("Groups do not have local normals.")
@@ -79,6 +93,13 @@ class Group(
         // 1. minPoint at INF, INF, INF
         // 2. maxPoint at -INF, -INF, -INF.
         // We make the space larger from the children.
-        children.fold(BoundingBox.Empty) { curr, shape -> curr.merge(shape.parentBounds) }
+        children.boundingBox()
+    }
+
+    // If we are a triangle mesh, we can have a KD Tree.
+    private val kdTree: KDNode? by lazy {
+        if (isAllTriangles)
+            buildKDTree(bounds, children.map{ it as Triangle})
+        else null
     }
 }

@@ -74,9 +74,9 @@ abstract class Shape(val transformation: Matrix,
     internal abstract fun localNormalAt(localPoint: Tuple): Tuple
 
     // Untransformed bounds for each Shape type.
-    abstract val bounds: BoundingBox
+    internal abstract val bounds: BoundingBox
 
-    val parentBounds: BoundingBox by lazy {
+    internal val parentBounds: BoundingBox by lazy {
         bounds.transform(transformation)
     }
 
@@ -84,3 +84,6 @@ abstract class Shape(val transformation: Matrix,
         private val DefaultMaterial = Material()
     }
 }
+
+internal fun <T: Shape> List<T>.boundingBox(): BoundingBox =
+    fold(BoundingBox.Empty) { curr, shape -> curr.merge(shape.parentBounds) }

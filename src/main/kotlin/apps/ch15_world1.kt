@@ -8,19 +8,16 @@ import material.Material
 import math.Color
 import math.Matrix
 import math.Tuple
-import pattern.CheckerPattern
-import pattern.GradientPattern
 import pattern.RingPattern
-import pattern.StripedPattern
 import scene.Camera
 import scene.World
-import shapes.Cube
 import shapes.Plane
 import java.io.File
 import kotlin.math.PI
 import kotlin.system.measureTimeMillis
 
 fun main() {
+    val bearStart = System.currentTimeMillis()
     val bear = OBJParser.fromURL({}.javaClass.getResource("/teddybear.obj"))
         .groups.getValue(OBJParser.DefaultGroup)
 
@@ -29,6 +26,7 @@ fun main() {
         val m = Material(Color(0.5, 0.5, 0.5), specular = 0)
         bear.withTransformation(t).withMaterial(m)
     }
+    println("Time elapsed (processing bear): ${(System.currentTimeMillis() - bearStart) / 1000.0} s")
 
     val floorboards = run {
         val m = Material(RingPattern(Color(0.5, 0.25, 0.25), Color(0.25, 0.5, 0.5)))
@@ -63,12 +61,12 @@ fun main() {
         val to = Tuple.PY
         val up = Tuple.VY
         val t = from.viewTransformationFrom(to, up)
-        Camera(1200, 1200, PI / 2, t)
+        Camera(400, 400, PI / 2, t)
     }
 
     val elapsed = measureTimeMillis {
         val canvas = camera.render(world)
         canvas.toPPMFile(File("output/ch15_world1.ppm"))
     }
-    println("Time elapsed: ${elapsed / 1000.0} s")
+    println("Time elapsed (rendering): ${elapsed / 1000.0} s")
 }

@@ -2,13 +2,14 @@ package math
 
 // By Sebastian Raaphorst, 2023.
 
+import shapes.Shape
 import kotlin.math.max
 import kotlin.math.min
 
 // Unless otherwise stated, a bounding box is empty, as indicated by setting the
 // 1. minPoint to INF, INF, INF
 // 2. maxPoint to -INF, -INF, -INF
-data class BoundingBox(val minPoint: Tuple = MaxPoint, val maxPoint: Tuple = MinPoint) {
+internal data class BoundingBox(val minPoint: Tuple = MaxPoint, val maxPoint: Tuple = MinPoint) {
     init {
         if (!minPoint.isPoint())
             throw IllegalArgumentException("BoundingBox minPoint is not a point: $minPoint.")
@@ -84,6 +85,7 @@ data class BoundingBox(val minPoint: Tuple = MaxPoint, val maxPoint: Tuple = Min
         else
             emptyList()
     }
+
     operator fun contains(point: Tuple): Boolean {
         if (!point.isPoint())
             throw IllegalArgumentException("BoundingBox contains passed vector: $point.")
