@@ -16,7 +16,7 @@ internal sealed class KDNode {
 
     companion object {
         // Default value for the stopping point.
-        private const val DefaultStoppingPoint = 10
+        private const val DefaultStoppingPoint = 1
 
         // Creates a stopping point function for division of the Group's objects into KDNodes.
         internal fun stopAt(num: Int = DefaultStoppingPoint): (List<Triangle>) -> Boolean =
@@ -81,8 +81,8 @@ internal fun buildKDTree(
     val medianIdx = triangles.size / 2
 
     // Divide into left and right lists.
-    val leftTriangles = sortedTriangles.subList(0, medianIdx + 1)
-    val rightTriangles = sortedTriangles.subList(medianIdx + 1, triangles.size)
+    val leftTriangles = sortedTriangles.subList(0, medianIdx)
+    val rightTriangles = sortedTriangles.subList(medianIdx, triangles.size)
 
     // Find the bounding boxes.
     val leftBoundingBox = leftTriangles.boundingBox()
