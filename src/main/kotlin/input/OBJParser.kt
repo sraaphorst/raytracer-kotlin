@@ -4,6 +4,8 @@ package input
 
 import math.Tuple
 import shapes.Group
+import shapes.PlainTriangle
+import shapes.SmoothTriangle
 import shapes.Triangle
 import java.io.*
 import java.net.URI
@@ -20,8 +22,8 @@ class OBJParser(reader: Reader) {
     val failedLines: List<String>
 
     internal val points: Map<Int, Tuple>
-    private val textureCoordinates: List<TextureCoordinate>
-    private val normals: List<Tuple>
+    internal val textureCoordinates: Map<Int, TextureCoordinate>
+    internal val normals: Map<Int, Tuple>
     private val faces: List<Face>
 
     init {
@@ -148,9 +150,9 @@ class OBJParser(reader: Reader) {
         }
 
         // Advance the points by 1 since we begin at 1.
-        this.points = points.withIndex().associate { (idx, v) -> ((idx + 1) to v) }
-        this.textureCoordinates = textureCoordinates.toList()
-        this.normals = normals.toList()
+        this.points = incrementer(points)
+        this.textureCoordinates = incrementer(textureCoordinates)
+        this.normals = incrementer(normals)
         this.faces = faces.toList()
         this.failedLines = failedLines.toList()
 
@@ -163,11 +165,28 @@ class OBJParser(reader: Reader) {
     private fun makeFace(face: Face): List<Triangle> {
         // Retrieve the points themselves.
         val points = face.pointIndices.map { points.getValue(it) }
+        val normals = face.normalIndices.map { normals.getValue(it) }
+
+        if (normals.isNotEmpty() && normals.size != points.size)
+            throw IllegalArgumentException("Illegal triangle face either needs normals at each point, or none at all.")
 
         // Create the fan pattern of (v1, v2, v3), (v1, v3, v4), etc.
         val p1 = points.first()
         val remainingPoints = points.drop(1)
-        return remainingPoints.zipWithNext().map { (p2, p3) -> Triangle(p1, p2, p3) }
+
+        // If we have no normals, we create a PlainTriangle.
+        // Otherwise, we create a SmoothTriangle.
+        return if (normals.isEmpty())
+            remainingPoints.zipWithNext().map { (p2, p3) -> PlainTriangle(p1, p2, p3) }
+        else {
+            val n1 = normals.first()
+            val remainingNormals = normals.drop(1)
+            remainingPoints.zip(remainingNormals).zipWithNext().map { (pair2, pair3) ->
+                val (p2, n2) = pair2
+                val (p3, n3) = pair3
+                SmoothTriangle(p1, p2, p3, n1, n2, n3)
+            }
+        }
     }
 
     companion object {
@@ -190,5 +209,10 @@ class OBJParser(reader: Reader) {
 
         fun fromURI(uri: URI) =
             fromURL(uri.toURL())
+
+        // Since WaveFront OBJ files are 1-indexed, instead of having a list, for simplicity,
+        // we use a map where things are indexed properly. This converts a list to such a map.
+        private fun <T> incrementer(lst: List<T>): Map<Int, T> =
+            lst.withIndex().associate { (idx, elem) -> (idx + 1) to elem }
     }
 }

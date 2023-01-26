@@ -33,7 +33,7 @@ class ShapeTest {
             return emptyList()
         }
 
-        override fun localNormalAt(localPoint: Tuple): Tuple =
+        override fun localNormalAt(localPoint: Tuple, hit: Intersection): Tuple =
             localPoint - Tuple.PZERO
 
         override val bounds: BoundingBox by lazy {

@@ -5,8 +5,11 @@ package input
 import math.Tuple
 import math.assertAlmostEquals
 import org.junit.jupiter.api.Test
+import shapes.PlainTriangle
+import shapes.SmoothTriangle
 import shapes.Triangle
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 class OBJParserTest {
@@ -94,5 +97,35 @@ class OBJParserTest {
         assertAlmostEquals(points.getValue(1), t2.p1)
         assertAlmostEquals(points.getValue(3), t2.p2)
         assertAlmostEquals(points.getValue(4), t2.p3)
+    }
+
+    @Test
+    fun `Faces with normals`() {
+        val parser = OBJParser.fromURL(object{}.javaClass.getResource("/faces_with_normals.obj"))
+        val points = parser.points
+        assertEquals(3, points.size)
+        val normals = parser.normals
+        assertEquals(3, normals.size)
+
+        assertEquals(1, parser.groups.size)
+
+        assertTrue(OBJParser.DefaultGroup in parser.groups)
+        val group = parser.groups.getValue(OBJParser.DefaultGroup)
+        assertEquals(2, group.size)
+
+        val t1 = group[0]
+        assertIs<PlainTriangle>(t1)
+        assertEquals(points.getValue(1), t1.p1)
+        assertEquals(points.getValue(2), t1.p2)
+        assertEquals(points.getValue(3), t1.p3)
+
+        val t2 = group[1]
+        assertIs<SmoothTriangle>(t2)
+        assertEquals(points.getValue(1), t2.p1)
+        assertEquals(points.getValue(2), t2.p2)
+        assertEquals(points.getValue(3), t2.p3)
+        assertEquals(normals.getValue(3), t2.n1)
+        assertEquals(normals.getValue(1), t2.n2)
+        assertEquals(normals.getValue(2), t2.n3)
     }
 }
