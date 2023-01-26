@@ -28,6 +28,7 @@ fun main() {
         model.withTransformation(t).withMaterial(m)
     }
     println("Time elapsed (processing model): ${(System.currentTimeMillis() - modelStart) / 1000.0} s")
+    model.kdTree?.let { println("KDtree has ${it.countNodes()} nodes.") }
 
     val room = run {
         val m = Material(CheckerPattern(Color(0.25, 0.25, 0.25), Color(0.75, 0.75, 0.75),
