@@ -14,6 +14,8 @@ internal sealed class KDNode {
 
     internal abstract fun localIntersect(rayLocal: Ray): List<Intersection>
 
+    internal abstract fun countNodes(): Long
+
     companion object {
         // Default value for the stopping point.
         private const val DefaultStoppingPoint = 1
@@ -36,6 +38,9 @@ internal class KDBranch(
     private val left: KDNode,
     private val right: KDNode,
 ): KDNode() {
+    override fun countNodes(): Long =
+        1L + left.countNodes() + right.countNodes()
+
     override fun localIntersect(rayLocal: Ray): List<Intersection> =
         // If we are in the bounding box, determine if we should check the left or right.
         if (boundingBox.intersects(rayLocal).isNotEmpty())
@@ -52,6 +57,8 @@ internal class KDLeaf(
     private val boundingBox: BoundingBox,
     private val triangles: List<Triangle>
 ): KDNode()  {
+    override fun countNodes(): Long = 1L
+
     override fun localIntersect(rayLocal: Ray): List<Intersection> =
         if (boundingBox.intersects(rayLocal).isNotEmpty())
             triangles.flatMap { it.intersect(rayLocal) }

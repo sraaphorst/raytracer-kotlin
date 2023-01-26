@@ -97,7 +97,7 @@ class Group(
     }
 
     // If we are a triangle mesh, we can have a KD Tree.
-    private val kdTree: KDNode? by lazy {
+    internal val kdTree: KDNode? by lazy {
         if (isAllTriangles)
             buildKDTree(bounds, children.map{ it as Triangle})
         else null
