@@ -57,13 +57,15 @@ abstract class Shape(val transformation: Matrix,
     // normalAt transforms the point from world to object (local) space and passes it to localNormalAt
     // which should comprise the concrete implementation of calculating the normal vector
     // at the point for the Shape. Then normalAt transforms it back into world space.
-    internal fun normalAt(worldPoint: Tuple): Tuple {
+    // We pass the hit to normalAt because it is needed by SmoothTriangle to calculate the interpolated normal.
+    // To make test cases pass, give a default value of DummyIntersection.
+    internal fun normalAt(worldPoint: Tuple, hit: Intersection = Intersection.DummyIntersection): Tuple {
         if (!worldPoint.isPoint())
             throw IllegalArgumentException("Shape::normalAt requires a point: $worldPoint")
 
         // Convert to object space.
         val localPoint = worldToLocal(worldPoint)
-        val localNormal = localNormalAt(localPoint)
+        val localNormal = localNormalAt(localPoint, hit)
 
         // Convert back to world space.
         return normalToWorld(localNormal)
@@ -71,7 +73,8 @@ abstract class Shape(val transformation: Matrix,
 
     // Normal at a point in object (local) space.
     // Normal should be returned in local space, and normalAt handles transforming it back to world space.
-    internal abstract fun localNormalAt(localPoint: Tuple): Tuple
+    // We pas the hit because it is used in SmoothTriangles to calculate the interpolated normal.
+    internal abstract fun localNormalAt(localPoint: Tuple, hit: Intersection = Intersection.DummyIntersection): Tuple
 
     // Untransformed bounds for each Shape type.
     internal abstract val bounds: BoundingBox

@@ -13,6 +13,7 @@ import kotlin.test.assertTrue
 class IntersectionTest {
     companion object {
         val s = Sphere()
+        internal val DummyIntersection = Intersection(0, Sphere())
     }
 
     @Test

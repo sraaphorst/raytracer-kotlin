@@ -39,7 +39,7 @@ class Cylinder(minimum: Number = Double.NEGATIVE_INFINITY,
         return xs1 + xs2
     }
 
-    override fun localNormalAt(localPoint: Tuple): Tuple {
+    override fun localNormalAt(localPoint: Tuple, hit: Intersection): Tuple {
         val dist = localPoint.x * localPoint.x + localPoint.z * localPoint.z
 
         // Check first if we are at the caps if they apply, and otherwise if we are on the body.

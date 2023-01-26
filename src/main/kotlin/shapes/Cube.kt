@@ -23,7 +23,7 @@ class Cube(transformation: Matrix = Matrix.I,
     override fun localIntersect(rayLocal: Ray): List<Intersection> =
         bounds.intersects(rayLocal).map { Intersection(it, this) }
 
-    override fun localNormalAt(localPoint: Tuple): Tuple {
+    override fun localNormalAt(localPoint: Tuple, hit: Intersection): Tuple {
         val posX = localPoint.x.absoluteValue
         val posY = localPoint.y.absoluteValue
         val posZ = localPoint.z.absoluteValue

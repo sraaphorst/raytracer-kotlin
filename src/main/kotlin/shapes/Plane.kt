@@ -26,7 +26,7 @@ class Plane(transformation: Matrix = Matrix.I,
         return listOf(Intersection(t, this))
     }
 
-    override fun localNormalAt(localPoint: Tuple): Tuple =
+    override fun localNormalAt(localPoint: Tuple, hit: Intersection): Tuple =
         Tuple.VY
 
     override val bounds: BoundingBox by lazy {

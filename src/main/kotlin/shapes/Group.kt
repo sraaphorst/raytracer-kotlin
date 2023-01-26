@@ -85,7 +85,7 @@ class Group(
     fun localIntersect(rayLocal: Ray): List<Intersection> =
         kdTree?.localIntersect(rayLocal) ?: localIntersectAll(rayLocal)
 
-    override fun localNormalAt(localPoint: Tuple): Tuple =
+    override fun localNormalAt(localPoint: Tuple, hit: Intersection): Tuple =
         throw NotImplementedError("Groups do not have local normals.")
 
     override val bounds: BoundingBox by lazy {
