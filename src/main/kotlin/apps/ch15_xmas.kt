@@ -152,11 +152,11 @@ fun main() {
                 Matrix.translate(-0.2, -1.25, 0) * Matrix.rotateY(PI / 9),
                 Matrix.translate(-1.2, 0.1, 0) * Matrix.rotateY(PI / 6) *
                         Matrix.rotateX(PI / 36),
-                Matrix.translate(-1.2, -0.35, 0.5) * Matrix.rotateX(PI / 6) *
+                Matrix.translate(-1.2, -0.35, 0.5) * Matrix.rotateY(PI / 6) *
                         Matrix.rotateX(-PI / 18),
                 Matrix.translate(-0.2, 1.5, 0.25) * Matrix.rotateY(-PI / 6) *
                         Matrix.rotateX(PI / 36),
-                Matrix.translate(1.3, 0.4, 0) * Matrix.rotateY(- PI / 6) *
+                Matrix.translate(1.3, 0.4, 0) * Matrix.rotateY(-PI / 6) *
                         Matrix.rotateX(-PI / 36),
                 Matrix.translate(1.5, -0.4, 0) * Matrix.rotateY(-PI / 18) *
                         Matrix.rotateX(PI / 36)
