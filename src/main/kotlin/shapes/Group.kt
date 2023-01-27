@@ -19,7 +19,7 @@ class Group(
     val isEmpty = children.isEmpty()
     val isNotEmpty = children.isNotEmpty()
 
-    val isAllTriangles: Boolean by lazy {
+    private val isAllTriangles: Boolean by lazy {
         children.all { it is Triangle }
     }
 
