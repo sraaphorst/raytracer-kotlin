@@ -21,14 +21,13 @@ fun main() {
     val model = OBJParser.fromURL({}.javaClass.getResource("/flaccid.obj"))
         .groups.getValue(OBJParser.DefaultGroup)
 
-    val model1 = run {
+    val modelAdjusted = run {
         val t = Matrix.translate(0, 0, -5) * Matrix.rotateY(4 * PI / 5) *
                 Matrix.translate(0, 3, 0) * Matrix.scale(0.05, 0.05,0.05)
         val m = Material(Color.fromHex(0xffe5b2), specular = 0, shininess = 36, transparency = 0)
         model.withTransformation(t).withMaterial(m)
     }
     println("Time elapsed (processing model): ${(System.currentTimeMillis() - modelStart) / 1000.0} s")
-    model.kdTree?.let { println("KDtree has ${it.countNodes()} nodes.") }
 
     val room = run {
         val m = Material(CheckerPattern(Color(0.25, 0.25, 0.25), Color(0.75, 0.75, 0.75),
@@ -40,7 +39,7 @@ fun main() {
     val world = run {
         val light1 = PointLight(Tuple.point(-5, 10, -15), Color(0.6, 0.4, 0.4))
         val light2 = PointLight(Tuple.point(8, 15, -10), Color(0.4, 0.6, 0.4))
-        World(listOf(room, model1), listOf(light1, light2))
+        World(listOf(room, modelAdjusted), listOf(light1, light2))
     }
 
     val camera = run {

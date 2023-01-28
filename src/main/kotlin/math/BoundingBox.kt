@@ -2,7 +2,6 @@ package math
 
 // By Sebastian Raaphorst, 2023.
 
-import shapes.Shape
 import kotlin.math.max
 import kotlin.math.min
 
@@ -92,6 +91,23 @@ internal data class BoundingBox(val minPoint: Tuple = MaxPoint, val maxPoint: Tu
         return point.x >= minPoint.x && point.y >= minPoint.y && point.z >= minPoint.z &&
                 point.x <= maxPoint.x && point.y <= maxPoint.y && point.z <= maxPoint.z
     }
+
+    private val corners: Set<Tuple> by lazy {
+        val (minX, minY, minZ) = minPoint
+        val (maxX, maxY, maxZ) = maxPoint
+        setOf(
+            minPoint,
+            Tuple.point(minX, minY, maxZ),
+            Tuple.point(minX, maxY, minZ),
+            Tuple.point(minX, maxY, maxZ),
+            Tuple.point(maxX, minY, minZ),
+            Tuple.point(maxX, minY, maxZ),
+            Tuple.point(maxX, maxY, minZ),
+            maxPoint)
+    }
+
+    fun intersects(box: BoundingBox): Boolean =
+        corners.any(box::contains) || box.corners.any(this::contains)
 
     operator fun contains(box: BoundingBox): Boolean =
         contains(box.minPoint) && contains(box.maxPoint)

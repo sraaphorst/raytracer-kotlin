@@ -11,6 +11,7 @@ import math.Tuple
 import pattern.RingPattern
 import scene.Camera
 import scene.World
+import shapes.Group
 import shapes.Plane
 import java.io.File
 import kotlin.math.PI
@@ -21,13 +22,12 @@ fun main() {
     val model = OBJParser.fromURL({}.javaClass.getResource("/teddybear.obj"))
         .groups.getValue(OBJParser.DefaultGroup)
 
-    val bear1 = run {
+    val modelAdjusted = run {
         val t = Matrix.translate(0, 3.26, 1.8) * Matrix.rotateY(PI) * Matrix.scale(0.15, 0.15, 0.15)
         val m = Material(Color(0.5, 0.5, 0.5), specular = 0)
         model.withTransformation(t).withMaterial(m)
     }
     println("Time elapsed (processing model): ${(System.currentTimeMillis() - modelStart) / 1000.0} s")
-    model.kdTree?.let { println("KDtree has ${it.countNodes()} nodes.") }
 
     val floorboards = run {
         val m = Material(RingPattern(Color(0.5, 0.25, 0.25), Color(0.25, 0.5, 0.5)))
@@ -53,9 +53,8 @@ fun main() {
 
     val world = run {
         val light = PointLight(Tuple.point(-10, 10, -10))
-        World(listOf(floorboards, leftWall, rightWall, bear1), listOf(light))
+        World(listOf(floorboards, leftWall, rightWall, modelAdjusted), listOf(light))
     }
-
 
     val camera = run {
         val from = Tuple.point(0, 5, -5)

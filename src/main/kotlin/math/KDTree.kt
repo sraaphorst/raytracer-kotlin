@@ -4,47 +4,37 @@ package math
 
 import shapes.Triangle
 import shapes.boundingBox
+import kotlin.math.max
 
-internal sealed class KDNode {
+internal sealed class KDTreeNode: TreeNode {
+    // k-d trees split on axes.
     enum class Axis: ((Triangle) -> Double) {
         X { override fun invoke(t: Triangle): Double = t.center.x },
         Y { override fun invoke(t: Triangle): Double = t.center.y },
         Z { override fun invoke(t: Triangle): Double = t.center.z }
     }
-
-    internal abstract fun localIntersect(rayLocal: Ray): List<Intersection>
-
-    internal abstract fun countNodes(): Long
-
-    companion object {
-        // Default value for the stopping point.
-        private const val DefaultStoppingPoint = 1
-
-        // Creates a stopping point function for division of the Group's objects into KDNodes.
-        internal fun stopAt(num: Int = DefaultStoppingPoint): (List<Triangle>) -> Boolean =
-            { it.size <= num }
-    }
 }
 
-
-// In a KDBranch, we have:
-// 1. The axis on which we split.
-// 2. The bounding box for the values contained in the subtree rooted at this node.
-// 3. The triangle represented by this node.
-// 4. The left tree rooted at this branch.
-// 5. The right tree rooted at this branch.
-internal class KDBranch(
+// In a KDTreeBranch, we have:
+// 1. The bounding box for the values contained in the subtree rooted at this node.
+// 2. The left tree rooted at this branch.
+// 3. The right tree rooted at this branch.
+internal class KDTreeBranch(
     private val boundingBox: BoundingBox,
-    private val left: KDNode,
-    private val right: KDNode,
-): KDNode() {
+    private val left: KDTreeNode,
+    private val right: KDTreeNode,
+): KDTreeNode() {
     override fun countNodes(): Long =
         1L + left.countNodes() + right.countNodes()
+
+    override val depth: Int by lazy {
+        max(left.depth, right.depth)
+    }
 
     override fun localIntersect(rayLocal: Ray): List<Intersection> =
         // If we are in the bounding box, determine if we should check the left or right.
         if (boundingBox.intersects(rayLocal).isNotEmpty())
-            // Not sure how to divide a ray, so check both left and right: one should be empty.
+            // Median values could be on both sides for axis, so check both children.
             left.localIntersect(rayLocal) + right.localIntersect(rayLocal)
         else
             emptyList()
@@ -53,10 +43,11 @@ internal class KDBranch(
 // In a KDLeaf, we have:
 // 1. The bounding box for the values contained in this node.
 // 2. The triangles represented in this node.
-internal class KDLeaf(
+internal class KDTreeLeaf(
+    override val depth: Int,
     private val boundingBox: BoundingBox,
     private val triangles: List<Triangle>
-): KDNode()  {
+): KDTreeNode()  {
     override fun countNodes(): Long = 1L
 
     override fun localIntersect(rayLocal: Ray): List<Intersection> =
@@ -66,22 +57,22 @@ internal class KDLeaf(
             emptyList()
  }
 
-// Build a KDNode based on the information provided. Parameters are:
+// Build a KDTreeNode based on the information provided. Parameters are:
 // 1. Depth of the tree at this level.
-// 1. BoundingBox for the list of Triangles.
-// 2. Triangles to be represented in the subtree rooted at the returned KDNode.
-// 3. A stopping condition wherein a KDLeaf will be returned, e.g. # of triangles.
+// 2. BoundingBox for the list of Triangles.
+// 3. Triangles to be represented in the subtree rooted at the returned node.
+// 4. A stopping condition wherein a leaf will be returned, e.g. # of triangles.
 internal fun buildKDTree(
     boundingBox: BoundingBox,
     triangles: List<Triangle>,
-    stoppingCondition: (List<Triangle>) -> Boolean = KDNode.stopAt(),
+    stoppingCondition: TreeStoppingCondition = TreeNode.stopAt(),
     depth: Int = 0
-): KDNode {
-    if (stoppingCondition(triangles))
-        return KDLeaf(boundingBox, triangles)
+): KDTreeNode {
+    if (stoppingCondition(depth, triangles))
+        return KDTreeLeaf(depth, boundingBox, triangles)
 
     // Divide the triangles up according to axis dependent on depth.
-    val axis = KDNode.Axis.values()[depth % 3]
+    val axis = KDTreeNode.Axis.values()[depth % 3]
     val sortedTriangles = triangles.sortedBy { axis }
 
     // Get the median triangle.
@@ -98,5 +89,5 @@ internal fun buildKDTree(
     val leftNode = buildKDTree(leftBoundingBox, leftTriangles, stoppingCondition, depth + 1)
     val rightNode = buildKDTree(rightBoundingBox, rightTriangles, stoppingCondition, depth + 1)
 
-    return KDBranch(boundingBox, leftNode, rightNode)
+    return KDTreeBranch(boundingBox, leftNode, rightNode)
 }
