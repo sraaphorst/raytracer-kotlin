@@ -5,7 +5,6 @@ package shapes
 import math.Ray
 import math.Tuple
 import math.assertAlmostEquals
-import math.intersections
 import org.junit.jupiter.api.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -52,7 +51,7 @@ class SmoothTriangleTest {
     fun `Preparing normal`() {
         val x = smoothTriangle.createIntersection(1, Pair(0.45, 0.25))
         val r = Ray(Tuple.point(-0.2, 0.3, -2), Tuple.VZ)
-        val xs = intersections(x)
+        val xs = listOf(x)
         val comps = x.computations(r, xs)
         assertAlmostEquals(Tuple.vector(-0.5547, 0.83205, 0), comps.normalV)
     }

@@ -27,7 +27,10 @@ class Group(
         children[idx]
 
     operator fun contains(s: Shape): Boolean =
-        s in children
+        children.any { it === s }
+
+    override fun deepContains(s: Shape): Boolean =
+        (this === s) || children.any { it.deepContains(s) }
 
     // Note due to Kotlin semantics, we have to use objMaterial here.
     override fun withParent(parent: Shape?): Shape =
@@ -72,7 +75,7 @@ class Group(
     // We do not need to sort as World sorts all intersections by t.
     private fun localIntersectAll(rayLocal: Ray): List<Intersection> =
         if (bounds.intersects(rayLocal).isNotEmpty())
-            children.flatMap { it.intersect(rayLocal) }//.sortedBy { it.t }
+            children.flatMap { it.intersect(rayLocal) }
         else
             emptyList()
 

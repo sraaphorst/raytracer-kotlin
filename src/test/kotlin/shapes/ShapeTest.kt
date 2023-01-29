@@ -7,6 +7,8 @@ import math.*
 import org.junit.jupiter.api.Test
 import kotlin.math.PI
 import kotlin.math.sqrt
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class ShapeTest {
     internal class TestShape(transformation: Matrix = Matrix.I,
@@ -14,7 +16,7 @@ class ShapeTest {
                     parent: Shape? = null):
         Shape(transformation, material, true, parent) {
         // We need to use a var here to store a ray.
-        internal var savedRay = Ray(Tuple.PZERO, Tuple.VZERO)
+        internal var savedRay: Ray? = null
 
         override fun withParent(parent: Shape?): Shape {
             val s = TestShape(transformation, material, parent)
@@ -38,8 +40,8 @@ class ShapeTest {
 
         override val bounds: BoundingBox by lazy {
             BoundingBox(
-                Tuple.point(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY),
-                Tuple.point(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY)
+                Tuple.point(-1, -1, -1),
+                Tuple.point(1, 1, 1)
             )
         }
     }
@@ -50,8 +52,11 @@ class ShapeTest {
         val t = Matrix.scale(2, 2, 2)
         val s = TestShape(t)
         s.intersect(r)
-        assertAlmostEquals(Tuple.point(0, 0, -2.5), s.savedRay.origin)
-        assertAlmostEquals(Tuple.vector(0, 0, 0.5), s.savedRay.direction)
+
+        val savedRay = s.savedRay
+        assertNotNull(savedRay)
+        assertAlmostEquals(Tuple.point(0, 0, -2.5), savedRay.origin)
+        assertAlmostEquals(Tuple.vector(0, 0, 0.5), savedRay.direction)
     }
 
     @Test
@@ -60,8 +65,11 @@ class ShapeTest {
         val t = Matrix.translate(5, 0, 0)
         val s = TestShape(t)
         s.intersect(r)
-        assertAlmostEquals(Tuple.point(-5, 0, -5), s.savedRay.origin)
-        assertAlmostEquals(Tuple.VZ, s.savedRay.direction)
+
+        val savedRay = s.savedRay
+        assertNotNull(savedRay)
+        assertAlmostEquals(Tuple.point(-5, 0, -5), savedRay.origin)
+        assertAlmostEquals(Tuple.VZ, savedRay.direction)
     }
 
     @Test
@@ -114,5 +122,19 @@ class ShapeTest {
         val sp = (g1.children[0] as Group).children[0]
         val n = sp.normalAt(Tuple.point(1.7321, 1.1547, -5.5774))
         assertAlmostEquals(Tuple.vector(0.28570, 0.42854, -0.85716), n)
+    }
+
+    @Test
+    fun `Test shape has bounding box`() {
+        val s = TestShape()
+        assertEquals(Tuple.point(-1, -1, -1), s.bounds.minPoint)
+        assertEquals(Tuple.point(1, 1, 1), s.bounds.maxPoint)
+    }
+
+    @Test
+    fun `Shape bounding box in parent space`() {
+        val s = Sphere(Matrix.translate(1, -3, 5) * Matrix.scale(0.5, 2, 4))
+        assertAlmostEquals(Tuple.point(0.5, -5, 1), s.parentBounds.minPoint)
+        assertAlmostEquals(Tuple.point(1.5, -1, 9), s.parentBounds.maxPoint)
     }
 }

@@ -5,6 +5,7 @@ package pattern
 import math.Color
 import math.Matrix
 import math.Tuple
+import math.posmod
 import kotlin.math.floor
 import kotlin.math.sqrt
 
@@ -23,8 +24,9 @@ class RingPattern(private val patterns: List<Pattern>, transformation: Matrix = 
 
     // Color at the pattern point.
     override fun patternAt(patternPoint: Tuple): Color {
-        val idx = floor(sqrt(patternPoint.x * patternPoint.x + patternPoint.z * patternPoint.z)).toInt()
-        val p = patterns[((idx % patterns.size) + patterns.size) % patterns.size]
+        val idx = floor(sqrt(patternPoint.x * patternPoint.x + patternPoint.z * patternPoint.z)).toInt() posmod
+                patterns.size
+        val p = patterns[idx]
         return p.patternAt(p.transformation.inverse * patternPoint)
     }
 }

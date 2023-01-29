@@ -65,4 +65,14 @@ class PlainTriangleTest {
         assertEquals(1, xs.size)
         assertAlmostEquals(2, xs[0].t)
     }
+
+    @Test
+    fun `Triangle has bounding box`() {
+        val p1 = Tuple.point(-3, 7, 2)
+        val p2 = Tuple.point(6, 2, -4)
+        val p3 = Tuple.point(2, -1, -1)
+        val t = PlainTriangle(p1, p2, p3)
+        assertEquals(Tuple.point(-3, -1, -4), t.bounds.minPoint)
+        assertEquals(Tuple.point(6, 7, 2), t.bounds.maxPoint)
+    }
 }

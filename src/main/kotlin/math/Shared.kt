@@ -12,10 +12,8 @@ interface CanBeList<T> {
 }
 
 // Take the mod of an Int and make sure the result is positive.
-infix fun Int.posmod(mod: Int): Int {
-    val n = this % mod
-    return if (n >= 0) n else (n + mod)
-}
+infix fun Int.posmod(mod: Int): Int =
+    ((this % mod) + mod) % mod
 
 fun <S : Number, T : Number> almostEquals(x: S,
                                           y: T,

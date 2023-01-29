@@ -3,28 +3,19 @@ package pattern
 // By Sebastian Raaphorst, 2023.
 // Converted to Kotlin from https://github.com/SRombauts/SimplexNoise
 
-import math.Color
 import math.Tuple
 import kotlin.math.floor
 
 class SimplexNoisePattern(pattern: Pattern,
                           scale: Double = 0.3,
-                          pscale: Double = 0.7): NoisePattern(pattern, scale, pscale) {
-    override fun patternAt(patternPoint: Tuple): Color {
-        val (x, y, z, _) = patternPoint
-
-        val nx = x * pscale + noise(x, y, z + 0) * scale
-        val ny = y * pscale + noise(x, y, z + 1) * scale
-        val nz = z * pscale + noise(x, y, z + 2) * scale
-        val noisyPoint = Tuple.point(nx, ny, nz)
-        return pattern.patternAt(pattern.transformation.inverse * noisyPoint)
-    }
+                          pscale: Double = 0.7)
+    : NoisePattern(pattern, scale, pscale, SimplexNoisePattern::noise) {
 
     companion object {
         private const val F = 1.0 / 3.0
         private const val G = 1.0 / 6.0
 
-        private val pMod12 = NoisePattern.p.map { it % 12 }
+        private val pMod12 = p.map { it % 12 }
 
         private val grad3 = listOf(
             Tuple.vector(1.0, 1.0, 0.0),

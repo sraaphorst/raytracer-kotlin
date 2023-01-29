@@ -131,4 +131,18 @@ class CylinderTest {
             assertEquals(normal, c.localNormalAt(point))
         }
     }
+
+    @Test
+    fun `Unbounded cylinder has bounding box`() {
+        val c = Cylinder()
+        assertEquals(Tuple.point(-1, Double.NEGATIVE_INFINITY, -1), c.bounds.minPoint)
+        assertEquals(Tuple.point(1, Double.POSITIVE_INFINITY, 1), c.bounds.maxPoint)
+    }
+
+    @Test
+    fun `Bounded cylinder has bounding box`() {
+        val c = Cylinder(-5, 3)
+        assertEquals(Tuple.point(-1, -5, -1), c.bounds.minPoint)
+        assertEquals(Tuple.point(1, 3 ,1), c.bounds.maxPoint)
+    }
 }

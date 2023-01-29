@@ -1,20 +1,11 @@
 package pattern
 
-import math.Color
-import math.Tuple
+// By Sebastian Raaphorst, 2023.
+
 import kotlin.math.floor
 
 class PerlinNoisePattern(pattern: Pattern, scale: Double = 0.3, pscale: Double = 0.7)
-    : NoisePattern(pattern, scale, pscale) {
-    override fun patternAt(patternPoint: Tuple): Color {
-        val (x, y, z, _) = patternPoint
-
-        val nx = x * pscale + noise(x, y, z + 0) * scale
-        val ny = y * pscale + noise(x, y, z + 1) * scale
-        val nz = z * pscale + noise(x, y, z + 2) * scale
-        val noisyPoint = Tuple.point(nx, ny, nz)
-        return pattern.patternAt(pattern.transformation.inverse * noisyPoint)
-    }
+    : NoisePattern(pattern, scale, pscale, PerlinNoisePattern::noise) {
 
     companion object {
         fun noise(x: Double, y: Double, z: Double): Double {
