@@ -61,7 +61,6 @@ data class World(val shapes: List<Shape>, val lights: List<Light>) {
     // It connects the other functions together, which would be private if not for test cases.
     internal fun colorAt(r: Ray, remaining: Int = DEFAULT_REMAINING): Color {
         val xs = intersect(r)
-        val hit = xs.hit()
         return xs.hit()?.computations(r, xs)?.let { shadeHit(it, remaining) } ?: Color.BLACK
     }
 

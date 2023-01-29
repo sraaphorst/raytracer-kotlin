@@ -33,6 +33,13 @@ abstract class Shape(val transformation: Matrix,
     // This method creates a copy of the object with the specified material.
     abstract fun withMaterial(material: Material): Shape
 
+    // deepContains performs the following:
+    // 1. For basic Shapes, it checks if s is a reference to the shape.
+    // 2. For Groups, it checks if s is the Group and if not, traverses the children.
+    // 3. For CSGShapes, it checks if s is the CSGShape, and if not, traverses the left and right.
+    internal open fun deepContains(s: Shape): Boolean =
+        this === s
+
     // Convert a point from world space to object space.
     // Later on, we use parent here.
     internal fun worldToLocal(tuple: Tuple): Tuple =
@@ -88,5 +95,6 @@ abstract class Shape(val transformation: Matrix,
     }
 }
 
-internal fun <T: Shape> List<T>.boundingBox(): BoundingBox =
+// Find the bounding box around a collection of Shapes.
+internal fun <T: Shape> Collection<T>.boundingBox(): BoundingBox =
     fold(BoundingBox.Empty) { curr, shape -> curr.merge(shape.parentBounds) }

@@ -94,10 +94,6 @@ internal data class Intersection(
     }
 }
 
-// Combine variable number of intersections into a list.
-internal fun intersections(vararg xs: Intersection): List<Intersection> =
-    xs.toList()
-
 // The hit is the intersection with the smallest positive t value.
 // In order to ignore objects that do not cast a shadow when looking for shadow hits,
 // the function accepts a boolean parameter to indicate whether we are looking for a

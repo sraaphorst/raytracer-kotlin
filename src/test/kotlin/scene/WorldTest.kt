@@ -202,7 +202,7 @@ class WorldTest {
         val s = w.shapes.first()
 
         val r = Ray(Tuple.point(0, 0, -5), Tuple.VZ)
-        val xs = intersections(Intersection(4, s), Intersection(6, s))
+        val xs = listOf(Intersection(4, s), Intersection(6, s))
         val comps = xs[0].computations(r, xs)
         val c = w.refractedColor(comps, 5)
         assertEquals(Color.BLACK, c)
@@ -218,7 +218,7 @@ class WorldTest {
         val w = World(listOf(s1, s2), light)
 
         val r = Ray(Tuple.point(0, 0, -5), Tuple.VZ)
-        val xs = intersections(Intersection(4, s1), Intersection(6, s1))
+        val xs = listOf(Intersection(4, s1), Intersection(6, s1))
         val comps = xs[0].computations(r, xs)
         val c = w.refractedColor(comps, 0)
         assertEquals(Color.BLACK, c)
@@ -234,7 +234,7 @@ class WorldTest {
         val w = World(listOf(s1, s2), light)
 
         val r = Ray(Tuple.point(0, 0, sqrt2by2), Tuple.VY)
-        val xs = intersections(Intersection(-sqrt2by2, s1), Intersection(sqrt2by2, s1))
+        val xs = listOf(Intersection(-sqrt2by2, s1), Intersection(sqrt2by2, s1))
 
         // We are inside the sphere, so we need to look at xs[1], not xs[0].
         val comps = xs[1].computations(r, xs)
@@ -252,7 +252,7 @@ class WorldTest {
         val w = World(listOf(s1, s2), light)
 
         val r = Ray(Tuple.point(0, 0, 0.1), Tuple.VY)
-        val xs = intersections(
+        val xs = listOf(
             Intersection(-0.9899, s1), Intersection(-0.4899, s2),
             Intersection(0.4899, s2), Intersection(0.9899, s1)
         )
@@ -272,7 +272,7 @@ class WorldTest {
         val w = World(listOf(s1, s2, plane, ball), light)
 
         val r = Ray(Tuple.point(0, 0, -3), Tuple.vector(0, -sqrt2by2, sqrt2by2))
-        val xs = intersections(Intersection(sqrt2, plane))
+        val xs = listOf(Intersection(sqrt2, plane))
         val comps = xs[0].computations(r, xs)
         val c = w.shadeHit(comps)
         assertAlmostEquals(Color(0.93642, 0.68642, 0.68642), c)
@@ -290,7 +290,7 @@ class WorldTest {
         val w = World(listOf(s1, s2, plane, ball), light)
 
         val r = Ray(Tuple.point(0, 0, -3), Tuple.vector(0, -sqrt2by2, sqrt2by2))
-        val xs = intersections(Intersection(sqrt2, plane))
+        val xs = listOf(Intersection(sqrt2, plane))
         val comps = xs[0].computations(r, xs)
         val c = w.shadeHit(comps)
         assertAlmostEquals(Color(0.93391, 0.69643, 0.69243), c)
