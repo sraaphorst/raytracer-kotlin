@@ -5,6 +5,7 @@ package pattern
 import math.Color
 import math.Matrix
 import math.Tuple
+import math.posmod
 import kotlin.math.floor
 
 class CheckerPattern(private val pattern1: Pattern, private val pattern2: Pattern, transformation: Matrix = Matrix.I)
@@ -15,7 +16,7 @@ class CheckerPattern(private val pattern1: Pattern, private val pattern2: Patter
     override fun patternAt(patternPoint: Tuple): Color =
         if ((floor(patternPoint.x) +
                     floor(patternPoint.y) +
-                    floor(patternPoint.z)).toInt() % 2 == 0)
+                    floor(patternPoint.z)).toInt() posmod 2 == 0)
             pattern1.patternAt(pattern1.transformation.inverse * patternPoint)
         else
             pattern2.patternAt(pattern2.transformation.inverse * patternPoint)

@@ -2,12 +2,26 @@ package pattern
 
 // By Sebastian Raaphorst, 2023.
 
+import math.Color
 import math.Matrix
+import math.Tuple
 
 abstract class NoisePattern(
     protected val pattern: Pattern,
     protected val scale: Double = 0.3,
-    protected val pscale: Double = 0.7) : Pattern(Matrix.I) {
+    private val pscale: Double = 0.7,
+    protected val noise: (Double, Double, Double) -> Double) : Pattern(Matrix.I) {
+
+    override fun patternAt(patternPoint: Tuple): Color {
+        val (x, y, z, _) = patternPoint
+
+        val nx = x * pscale + noise(x, y, z + 0) * scale
+        val ny = y * pscale + noise(x, y, z + 1) * scale
+        val nz = z * pscale + noise(x, y, z + 2) * scale
+        val noisyPoint = Tuple.point(nx, ny, nz)
+        return pattern.patternAt(pattern.transformation.inverse * noisyPoint)
+    }
+
     companion object {
         private val permutation = listOf(151, 160, 137, 91, 90, 15,
             131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23,

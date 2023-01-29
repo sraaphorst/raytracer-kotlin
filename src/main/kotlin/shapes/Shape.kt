@@ -6,7 +6,6 @@ import material.Material
 import math.*
 import math.Intersection
 import java.util.UUID
-import kotlin.math.PI
 
 abstract class Shape(val transformation: Matrix,
                      material: Material? = null,
