@@ -72,4 +72,20 @@ class ConeTest {
             assertEquals(normal, c.localNormalAt(point))
         }
     }
+
+    @Test
+    fun `Unbounded cone has bounding box`() {
+        val c = Cone()
+        assertEquals(Tuple.point(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY),
+            c.bounds.minPoint)
+        assertEquals(Tuple.point(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY),
+            c.bounds.maxPoint)
+    }
+
+    @Test
+    fun `Bounded cone has bounding box`() {
+        val c = Cone(-5, 3)
+        assertEquals(Tuple.point(-5, -5, -5), c.bounds.minPoint)
+        assertEquals(Tuple.point(5, 3, 5), c.bounds.maxPoint)
+    }
 }

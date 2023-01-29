@@ -131,4 +131,36 @@ class GroupTest {
         assertNotSame(g2.transformation, g2p.transformation)
         assertSame(g2m.transformation, g2p.transformation)
     }
+
+    @Test
+    fun `Group has bounding box from children union`() {
+        val s = Sphere(Matrix.translate(2, 5, -3) * Matrix.scale(2, 2, 2))
+        val c = Cylinder(2, 2,
+            transformation = Matrix.translate(-4, -1, 4) * Matrix.scale(0.5, 1, 0.5))
+
+        val g = Group(listOf(s, c))
+        assertAlmostEquals(Tuple.point(-4.5, 1, -5), g.bounds.minPoint)
+        assertAlmostEquals(Tuple.point(4, 7, 4.5), g.bounds.maxPoint)
+    }
+
+    @Test
+    fun `Intersecting ray with group ignores children`() {
+        val c = ShapeTest.TestShape()
+        val g = Group(listOf(c))
+
+        val ray = Ray(Tuple.point(0, 0, -5), Tuple.VY)
+        val xs = g.intersect(ray)
+        assertNull(c.savedRay)
+    }
+
+    @Test
+    fun `Intersecting ray with group tests children if bounding box hit`() {
+        val c = ShapeTest.TestShape()
+        val g = Group(listOf(c))
+        val newC = g[0] as ShapeTest.TestShape
+
+        val ray = Ray(Tuple.point(0, 0, -5), Tuple.VZ)
+        val xs = g.intersect((ray))
+        assertNotNull(newC.savedRay)
+    }
 }

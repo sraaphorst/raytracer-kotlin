@@ -115,4 +115,11 @@ class SphereTest {
         val nv = s.normalAt(Tuple.point(sqrt3by3, sqrt3by3, sqrt3by3))
         assertAlmostEquals(nv.normalized, nv)
     }
+
+    @Test
+    fun `Sphere has bounding box`() {
+        val s = Sphere()
+        assertEquals(Tuple.point(-1, -1, -1), s.bounds.minPoint)
+        assertEquals(Tuple.point(1, 1, 1), s.bounds.maxPoint)
+    }
 }

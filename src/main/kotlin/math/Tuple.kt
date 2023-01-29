@@ -103,14 +103,23 @@ data class Tuple(val x: Double, val y: Double, val z: Double, val w: Double): Ca
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+        if (other !is Tuple) return false
 
-        other as Tuple
-        return almostEquals(this, other)
+        if (x != other.x) return false
+        if (y != other.y) return false
+        if (z != other.z) return false
+        if (w != other.w) return false
+
+        return true
     }
 
-    override fun hashCode(): Int =
-        31 * (31 * (31 * x.hashCode() + y.hashCode()) + z.hashCode()) + w.hashCode()
+    override fun hashCode(): Int {
+        var result = x.hashCode()
+        result = 31 * result + y.hashCode()
+        result = 31 * result + z.hashCode()
+        result = 31 * result + w.hashCode()
+        return result
+    }
 
     companion object {
         fun point(x: Number, y: Number, z: Number): Tuple =

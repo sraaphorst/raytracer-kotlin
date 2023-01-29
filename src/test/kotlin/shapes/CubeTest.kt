@@ -82,4 +82,11 @@ class CubeTest {
             assertAlmostEquals(normal, c.localNormalAt(point))
         }
     }
+
+    @Test
+    fun `Cube has bounding box`() {
+        val c = Cube()
+        assertEquals(Tuple.point(-1, -1, -1), c.bounds.minPoint)
+        assertEquals(Tuple.point(1, 1, 1), c.bounds.maxPoint)
+    }
 }

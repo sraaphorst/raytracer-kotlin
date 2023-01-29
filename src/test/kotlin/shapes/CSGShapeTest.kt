@@ -11,7 +11,7 @@ import kotlin.test.*
 
 class CSGShapeTest {
     @Test
-    fun `CSG creation`() {
+    fun `CSGShape creation`() {
         val s1 = Sphere()
         val s2 = Cube()
         val csg = CSGShape(Operation.Union, s1, s2)
@@ -84,7 +84,7 @@ class CSGShapeTest {
     }
 
     @Test
-    fun `Ray misses CSG object`() {
+    fun `Ray misses CSGShape`() {
         val csg = CSGShape(Operation.Union, Sphere(), Cube())
         val ray = Ray(Tuple.point(0, -2, 5), Tuple.VZ)
 
@@ -93,7 +93,7 @@ class CSGShapeTest {
     }
 
     @Test
-    fun `Ray hits CSG object`() {
+    fun `Ray hits CSGShape`() {
         val s1 = Sphere()
         val s2 = Sphere(Matrix.translate(0, 0, 0.5))
         val csg = CSGShape(Operation.Union, s1, s2)
@@ -106,5 +106,41 @@ class CSGShapeTest {
         assertSame(s1p, xs[0].shape)
         assertEquals(6.5, xs[1].t)
         assertSame(s2p, xs[1].shape)
+    }
+
+    @Test
+    fun `CSGShape has bounding box`() {
+        val s1 = Sphere()
+        val s2 = Sphere(Matrix.translate(2, 3, 4))
+
+        val csg = CSGShape(Operation.Difference, s1, s2)
+        assertEquals(Tuple.point(-1, -1, -1), csg.bounds.minPoint)
+        assertEquals(Tuple.point(3, 4, 5), csg.bounds.maxPoint)
+    }
+
+    @Test
+    fun `Intersecting ray with CSGShape ignores children`() {
+        val s1 = ShapeTest.TestShape()
+        val s2 = ShapeTest.TestShape()
+        val csg = CSGShape(Operation.Difference, s1, s2)
+
+        val ray = Ray(Tuple.point(0, 0, -5), Tuple.VY)
+        val xs = csg.intersect(ray)
+        assertNull(s1.savedRay)
+        assertNull(s2.savedRay)
+    }
+
+    @Test
+    fun `Intersecting ray with CSGShape tests children if bounding box hit`() {
+        val s1 = ShapeTest.TestShape()
+        val s2 = ShapeTest.TestShape()
+        val csg = CSGShape(Operation.Difference, s1, s2)
+        val newS1 = csg.left as ShapeTest.TestShape
+        val newS2 = csg.right as ShapeTest.TestShape
+
+        val ray = Ray(Tuple.point(0, 0, -5), Tuple.VZ)
+        val xs = csg.intersect(ray)
+        assertNotNull(newS1.savedRay)
+        assertNotNull(newS2.savedRay)
     }
 }

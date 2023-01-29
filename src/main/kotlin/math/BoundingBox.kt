@@ -2,9 +2,11 @@ package math
 
 // By Sebastian Raaphorst, 2023.
 
-import shapes.Shape
+import kotlin.math.PI
 import kotlin.math.max
 import kotlin.math.min
+
+// Note that a BoundingBox is a monoid with identity EmptyBox and operator merge.
 
 // Unless otherwise stated, a bounding box is empty, as indicated by setting the
 // 1. minPoint to INF, INF, INF
@@ -24,7 +26,7 @@ internal data class BoundingBox(val minPoint: Tuple = MaxPoint, val maxPoint: Tu
         !isEmpty
     }
 
-    private fun add(point: Tuple): BoundingBox {
+    internal fun add(point: Tuple): BoundingBox {
         if (!point.isPoint())
             throw IllegalArgumentException("Tried to add vector to BoundingBox: $point.")
         return BoundingBox(

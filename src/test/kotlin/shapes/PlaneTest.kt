@@ -53,4 +53,11 @@ class PlaneTest {
         assertAlmostEquals(1, xs[0].t)
         assertEquals(p, xs[0].shape)
     }
+
+    @Test
+    fun `Plane has bounding box`() {
+        val p = Plane()
+        assertEquals(Tuple.point(Double.NEGATIVE_INFINITY, 0, Double.NEGATIVE_INFINITY), p.bounds.minPoint)
+        assertEquals(Tuple.point(Double.POSITIVE_INFINITY, 0, Double.POSITIVE_INFINITY), p.bounds.maxPoint)
+    }
 }

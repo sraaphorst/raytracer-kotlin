@@ -47,7 +47,7 @@ class TupleTest {
     fun `Tuple precision equality`() {
         val v1 = Tuple.point(1.000001, 2.000005, 3.000007)
         val v2 = Tuple.point(1.000002, 2.000009, 3.000001)
-        assertEquals(v1, v2)
+        assertAlmostEquals(v1, v2)
     }
 
     @Test

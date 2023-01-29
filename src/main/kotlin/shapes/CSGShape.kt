@@ -75,7 +75,10 @@ class CSGShape(
         }.first
 
     override fun localIntersect(rayLocal: Ray): List<Intersection> =
-        filterIntersection((left.intersect(rayLocal) + right.intersect(rayLocal)).sortedBy { it.t })
+        if (bounds.intersects(rayLocal).isNotEmpty())
+            filterIntersection((left.intersect(rayLocal) + right.intersect(rayLocal)).sortedBy { it.t })
+        else
+            emptyList()
 
     override fun localNormalAt(localPoint: Tuple, hit: Intersection): Tuple =
         throw NotImplementedError("Normals are not defined for CSGShapes.")

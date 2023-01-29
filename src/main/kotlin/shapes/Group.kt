@@ -75,7 +75,7 @@ class Group(
     // We do not need to sort as World sorts all intersections by t.
     private fun localIntersectAll(rayLocal: Ray): List<Intersection> =
         if (bounds.intersects(rayLocal).isNotEmpty())
-            children.flatMap { it.intersect(rayLocal) }//.sortedBy { it.t }
+            children.flatMap { it.intersect(rayLocal) }
         else
             emptyList()
 
