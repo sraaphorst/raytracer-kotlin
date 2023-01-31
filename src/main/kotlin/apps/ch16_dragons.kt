@@ -29,7 +29,7 @@ fun main() {
         Group(listOf(rawBox), t)
     }
 
-    val dragon = OBJParser.fromURL({}.javaClass.getResource("/dragon.obj"))
+    val dragon = OBJParser.fromURL({}.javaClass.getResource("/dragon.obj")!!)
         .groups.getValue(OBJParser.DefaultGroup)
         .withTransformation(
             Matrix.scale(0.268, 0.268, 0.268) * Matrix.translate(0, 0.1217, 0)
