@@ -91,15 +91,17 @@ fun durandKernerSolver2(coefficients: List<Double>): List<Cartesian> {
         return if (i.absoluteValue < 0.00001) Cartesian(r, 0) else v
     }
 
+    val n = coefficients.size - 1
     val c = Cartesian(0.4, 0.9)
-    val roots = coefficients.indices.map { c.ipow(it) }.toMutableList()
+    val roots = (0 until n).map { c.ipow(it) }.toMutableList()
 
     while (true) {
+//        println(roots)
         val diffs = mutableListOf<Double>()
 
-        coefficients.indices.forEach { i ->
+        (0 until n).forEach { i ->
             var product = Cartesian.ONE
-            coefficients.indices.forEach { j ->
+            (0 until n).forEach { j ->
                 if (i != j)
                     product *= (roots[i] - roots[j])
             }
@@ -109,7 +111,8 @@ fun durandKernerSolver2(coefficients: List<Double>): List<Cartesian> {
             roots[i] = newr
         }
 
-        val maxDiff = diffs.max()
+//        val maxDiff = diffs.max()
+//        println("diffs = $diffs, maxDiff=$maxDiff")
         if (diffs.max() < 0.000001)
             break
     }
@@ -158,3 +161,15 @@ fun durandKernerSolver(coefficients: List<Double>,
 
     return aux().map(::roundComplex)
 }
+
+fun main() {
+    val coefficients = listOf(
+            1496.5625,
+            -909.5575910595585,
+            215.01929321300094,
+            -23.370672726281093,
+            1.0
+    )
+    println(durandKernerSolver2(coefficients))
+}
+
