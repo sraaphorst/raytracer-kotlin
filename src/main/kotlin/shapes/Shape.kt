@@ -78,17 +78,6 @@ abstract class Shape(val transformation: Matrix,
         return normalToWorld(localNormal)
     }
 
-    // Given values for a, b, and c, return an ordered list of t-values if there is a (possible) intersection.
-    internal fun processDiscriminant(a: Double, b: Double, c: Double): List<Double> {
-        val disc = b * b - 4 * a * c
-        if (disc < 0)
-            return emptyList()
-
-        val t0 = (-b - sqrt(disc)) / (2 * a)
-        val t1 = (-b + sqrt(disc)) / (2 * a)
-        return listOf(t0, t1).sorted()
-    }
-
     // Normal at a point in object (local) space.
     // Normal should be returned in local space, and normalAt handles transforming it back to world space.
     // We pas the hit because it is used in SmoothTriangles to calculate the interpolated normal.
@@ -103,6 +92,17 @@ abstract class Shape(val transformation: Matrix,
 
     companion object {
         private val DefaultMaterial = Material()
+
+        // Given values for a, b, and c, return an ordered list of t-values if there is a (possible) intersection.
+        internal fun processDiscriminant(a: Double, b: Double, c: Double): List<Double> {
+            val disc = b * b - 4 * a * c
+            if (disc < 0)
+                return emptyList()
+
+            val t0 = (-b - sqrt(disc)) / (2 * a)
+            val t1 = (-b + sqrt(disc)) / (2 * a)
+            return listOf(t0, t1).sorted()
+        }
     }
 }
 
