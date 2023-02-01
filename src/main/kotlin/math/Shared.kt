@@ -79,6 +79,7 @@ fun radiansToDegrees(radians: Number): Double =
 
 fun durandKernerSolver(coefficients: List<Double>,
                        start: Cartesian = Cartesian(0.4, 0.9)): List<Cartesian> {
+//    println("Starting Durand-Kerner...")
     // Evaluate the polynomial represented by the coefficients at x.
     fun evaluatePolynomial(x: Cartesian): Cartesian =
         coefficients.withIndex().fold(Cartesian.ZERO) { sum, coefficientInfo ->
@@ -107,9 +108,15 @@ fun durandKernerSolver(coefficients: List<Double>,
             roots[i] = newRoot
             (newRoot - oldRoot).magnitude
         }
+//        println("\tRoots=${roots}")
+//        println("\tMax diff=${diffs.max()}")
+        if (diffs.max().isNaN()) {
+            println(diffs)
+        }
+
         if (almostEquals(0.0, diffs.max()))
             break
     }
-
+//    println("Ending Durand-Kerner...")
     return roots.map(::roundComplex)
 }

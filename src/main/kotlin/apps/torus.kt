@@ -11,7 +11,6 @@ import pattern.CheckerPattern
 import scene.Camera
 import scene.World
 import shapes.Cube
-import shapes.Plane
 import shapes.Torus
 import java.io.File
 import kotlin.math.PI
@@ -25,14 +24,14 @@ fun main() {
         Cube(t, m)
     }
 
-    val torus2 = run {
+    val torus = run {
         val t = Matrix.translate(0, -1.5, 3) * Matrix.rotateX(PI / 2)
         Torus(2, 0.5, t)
     }
 
     val world = run {
         val light = PointLight(Tuple.point(-1, 3.5, -1))
-        World(listOf(cube, torus2), listOf(light))
+        World(listOf(cube, torus), listOf(light))
     }
 
     val camera = run {

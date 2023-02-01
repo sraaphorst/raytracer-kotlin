@@ -6,6 +6,7 @@ import material.Material
 import math.*
 import math.Intersection
 import java.util.UUID
+import kotlin.math.sqrt
 
 abstract class Shape(val transformation: Matrix,
                      material: Material? = null,
@@ -75,6 +76,17 @@ abstract class Shape(val transformation: Matrix,
 
         // Convert back to world space.
         return normalToWorld(localNormal)
+    }
+
+    // Given values for a, b, and c, return an ordered list of t-values if there is a (possible) intersection.
+    internal fun processDiscriminant(a: Double, b: Double, c: Double): List<Double> {
+        val disc = b * b - 4 * a * c
+        if (disc < 0)
+            return emptyList()
+
+        val t0 = (-b - sqrt(disc)) / (2 * a)
+        val t1 = (-b + sqrt(disc)) / (2 * a)
+        return listOf(t0, t1).sorted()
     }
 
     // Normal at a point in object (local) space.

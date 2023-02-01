@@ -27,6 +27,7 @@ abstract class Cappable(
     }
 
     internal fun intersectCaps(rayLocal: Ray, minRadius: Double, maxRadius: Double): List<Intersection> {
+        // Not closed or ray is moving parallel to caps.
         if (!closed or almostEquals(0, rayLocal.direction.y))
             return emptyList()
 
@@ -42,19 +43,15 @@ abstract class Cappable(
     }
 
     internal fun intersectBody(rayLocal: Ray, a: Double, b: Double, c: Double): List<Intersection> {
-        val disc = b * b - 4 * a * c
+        val ts = processDiscriminant(a, b, c)
+        if (ts.isEmpty())
+            return emptyList()
 
-        if (disc < 0)
-            emptyList<Intersection>()
+        // Otherwise, we have the possibility for intersections.
+        val (t0, t1) = ts
 
-        val sqrtDisc = sqrt(disc)
-        val (t0, t1) = run {
-            val t0Tmp = (-b - sqrtDisc) / (2 * a)
-            val t1Tmp = (-b + sqrtDisc) / (2 * a)
-            if (t0Tmp <= t1Tmp) Pair(t0Tmp, t1Tmp) else Pair(t1Tmp, t0Tmp)
-        }
-
-        // Check for intersections with the body of the cone.
+        // Check for intersections with the body, i.e. the y-values at t0 and t1 have to be between
+        // maximum and minimum for the intersection to happen.
         val y0 = rayLocal.origin.y + t0 * rayLocal.direction.y
         val y1 = rayLocal.origin.y + t1 * rayLocal.direction.y
         val t0Int = minimum < y0 && y0 < maximum
