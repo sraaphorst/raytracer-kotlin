@@ -77,8 +77,8 @@ fun degreesToRadians(degrees: Number): Double =
 fun radiansToDegrees(radians: Number): Double =
     180.0 * radians.toDouble() / PI
 
-fun durandKernerSolver2(coefficients: List<Double>,
-                        start: Cartesian = Cartesian(0.4, 0.9)): List<Cartesian> {
+fun durandKernerSolver(coefficients: List<Double>,
+                       start: Cartesian = Cartesian(0.4, 0.9)): List<Cartesian> {
     // Evaluate the polynomial represented by the coefficients at x.
     fun evaluatePolynomial(x: Cartesian): Cartesian =
         coefficients.withIndex().fold(Cartesian.ZERO) { sum, coefficientInfo ->
@@ -86,19 +86,16 @@ fun durandKernerSolver2(coefficients: List<Double>,
             sum + coefficient * x.ipow(n)
         }
 
-    fun roundComplex(v: Cartesian): Cartesian {
-        if (v.isReal) return v
-        val i = v.im
-        val r = v.re
-        return if (i.absoluteValue < 0.00001) Cartesian(r, 0) else v
-    }
+    // Round a complex to real or imaginary if it is close enough.
+    fun roundComplex(v: Cartesian): Cartesian =
+        if (v.isReal) Cartesian(v.re, 0)
+        else if (v.isImaginary) Cartesian(0, v.im)
+        else v
 
     val n = coefficients.size - 1
     val roots = (0 until n).map { start.ipow(it) }.toMutableList()
 
     while (true) {
-//        println(roots)
-
         val diffs = (0 until n).map { i ->
             val product = (0 until n).fold(Cartesian.ONE) { currentProduct, j ->
                 if (i == j) currentProduct
@@ -110,66 +107,9 @@ fun durandKernerSolver2(coefficients: List<Double>,
             roots[i] = newRoot
             (newRoot - oldRoot).magnitude
         }
-
-//        val maxDiff = diffs.max()
-//        println("diffs = $diffs, maxDiff=$maxDiff")
-        if (diffs.max() < 0.000001)
+        if (almostEquals(0.0, diffs.max()))
             break
     }
+
     return roots.map(::roundComplex)
 }
-
-// The Durand-Kerner method of finding the roots of polynomials.
-// We use 0.4 - 0.9i as the default polar since it is neither real nor a root of unity, although
-//   any such other value would do. We work with Polars since they are faster and easier.
-fun durandKernerSolver(coefficients: List<Double>,
-                       polar: Polar = Cartesian(0.4, 0.9).toPolar,
-                       precision: Double = DEFAULT_PRECISION): List<Polar> {
-
-    // Evaluate the polynomial represented by coefficients with the specified value for x.
-    fun evaluatePolynomial(x: Polar): Polar =
-        coefficients.withIndex().fold(Polar.ZERO) { eval, coefficientInfo ->
-            val (n, coefficient) = coefficientInfo
-            eval + coefficient * x.pow(n)
-        }
-
-    // Iterative function of Durand-Kerner, initialized with the default roots to use.
-    fun aux(roots: List<Polar> = coefficients.indices.map { polar.pow(it) }): List<Polar> {
-        // Find the differences and the new roots.
-        val (differences, newRoots) = roots.withIndex().map { (i, rootI) ->
-            // Calculate the denominator to be used to calculate the new i-th root,
-            // which is the product of all the roots except the i-th root.
-            val product = (coefficients.indices - i).fold(Polar(1, 0)) { curr, j ->
-                curr * (rootI - roots[j])
-            }
-
-            val newRoot = rootI - evaluatePolynomial(rootI) / product
-            Pair((newRoot - rootI).magnitude, newRoot)
-        }.unzip()
-
-        val maxdiff = differences.max()
-        return if (almostEquals(0.0, differences.max(), precision)) newRoots
-        else aux(newRoots)
-    }
-
-    // Round a polar to get rid of small values.
-    fun roundComplex(polar: Polar): Polar = when {
-        polar.isReal -> Polar(polar.r, 0)
-        polar.isImaginary -> Polar(0, polar.theta)
-        else -> polar
-    }
-
-    return aux().map(::roundComplex)
-}
-
-fun main() {
-    val coefficients = listOf(
-            1496.5625,
-            -909.5575910595585,
-            215.01929321300094,
-            -23.370672726281093,
-            1.0
-    )
-    println(durandKernerSolver2(coefficients))
-}
-

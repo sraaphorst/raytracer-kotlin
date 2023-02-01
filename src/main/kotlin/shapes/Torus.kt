@@ -62,7 +62,7 @@ class Torus(
         val c3 = 4.0 * sumD2 * f
         val c4 = sumD2 * sumD2
 
-        return durandKernerSolver2(listOf(c0, c1, c2, c3, c4))
+        return durandKernerSolver(listOf(c0, c1, c2, c3, c4))
             .filter { it.isReal && it.re.isFinite() }
             .map { Intersection(it.re, this) }
     }
