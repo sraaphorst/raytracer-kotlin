@@ -25,7 +25,7 @@ fun main() {
     }
 
     val torus = run {
-        val t = Matrix.translate(0, -1.5, 3) * Matrix.rotateX(PI / 2)
+        val t = Matrix.translate(0, -1.5, 3) * Matrix.rotateX(PI / 2) * Matrix.scale(0.25, 1, 0.5)
         Torus(2, 0.5, t)
     }
 

@@ -79,9 +79,17 @@ fun radiansToDegrees(radians: Number): Double =
 
 fun durandKernerSolver(coefficients: List<Double>,
                        start: Cartesian = Cartesian(0.4, 0.9)): List<Cartesian> {
+    val trimmedCoefficients = coefficients.dropLastWhile { it == 0.0 }
+    if (trimmedCoefficients.size < 3)
+        throw IllegalArgumentException("Must have at least an x^3 term for Durand-Kerner: $coefficients.")
+
+    val normalizedCoefficients =
+        if (trimmedCoefficients.last() == 1.0) trimmedCoefficients
+        else trimmedCoefficients.map { it / trimmedCoefficients.last() }
+
     // Evaluate the polynomial represented by the coefficients at x.
     fun evaluatePolynomial(x: Cartesian): Cartesian =
-        coefficients.withIndex().fold(Cartesian.ZERO) { sum, coefficientInfo ->
+        normalizedCoefficients.withIndex().fold(Cartesian.ZERO) { sum, coefficientInfo ->
             val (n, coefficient) = coefficientInfo
             sum + coefficient * x.ipow(n)
         }
@@ -92,7 +100,7 @@ fun durandKernerSolver(coefficients: List<Double>,
         else if (v.isImaginary) Cartesian(0, v.im)
         else v
 
-    val n = coefficients.size - 1
+    val n = normalizedCoefficients.size - 1
     val roots = (0 until n).map { start.ipow(it) }.toMutableList()
 
     while (true) {

@@ -61,13 +61,15 @@ class Torus(
         val f = ox * dx + oy * dy + oz * dz
         val fourA2 = 4.0 * inner2
 
-        val c0 = e * e - fourA2 * (outer2 - oy2)
-        val c1 = 4.0 * f * e + 2.0 * fourA2 * oy * dy
-        val c2 = 2.0 * sumD2 * e + 4.0 * f * f + fourA2 * dy2
-        val c3 = 4.0 * sumD2 * f
-        val c4 = sumD2 * sumD2
+        val coefficients = listOf(
+            e * e - fourA2 * (outer2 - oy2),
+            4.0 * f * e + 2.0 * fourA2 * oy * dy,
+            2.0 * sumD2 * e + 4.0 * f * f + fourA2 * dy2,
+            4.0 * sumD2 * f,
+            sumD2 * sumD2
+        )
 
-        return durandKernerSolver(listOf(c0, c1, c2, c3, c4))
+        return durandKernerSolver(coefficients)
             .filter { it.isReal && it.re.isFinite() }
             .map { Intersection(it.re, this) }
     }
