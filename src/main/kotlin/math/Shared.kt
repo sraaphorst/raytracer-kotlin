@@ -97,14 +97,18 @@ fun durandKernerSolver2(coefficients: List<Double>,
     val roots = (0 until n).map { start.ipow(it) }.toMutableList()
 
     while (true) {
-        val diffs = (0 until n).map { i ->
+//        println(roots)
+        val diffs = mutableListOf<Double>()
+
+        (0 until n).forEach { i ->
             val product = (0 until n).fold(Cartesian.ONE) { currentProduct, j ->
-                if (i == j) currentProduct else currentProduct * (roots[i] - roots[j])
+                if (i == j) currentProduct
+                else currentProduct * (roots[i] - roots[j])
             }
 
-            val newRoot = roots[i] - evaluatePolynomial(roots[i]) / product
-            roots[i] = newRoot
-            (newRoot - roots[i]).magnitude
+            val newr = roots[i] - evaluatePolynomial(roots[i]) / product
+            diffs.add((newr - roots[i]).magnitude)
+            roots[i] = newr
         }
 
 //        val maxDiff = diffs.max()
