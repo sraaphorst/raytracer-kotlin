@@ -106,9 +106,9 @@ fun durandKernerSolver2(coefficients: List<Double>,
                 else currentProduct * (roots[i] - roots[j])
             }
 
-            val newr = roots[i] - evaluatePolynomial(roots[i]) / product
-            diffs.add((newr - roots[i]).magnitude)
-            roots[i] = newr
+            val newRoot = roots[i] - evaluatePolynomial(roots[i]) / product
+            diffs.add((newRoot - roots[i]).magnitude)
+            roots[i] = newRoot
         }
 
 //        val maxDiff = diffs.max()
