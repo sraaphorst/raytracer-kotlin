@@ -34,7 +34,7 @@ fun main() {
         val t = Matrix.translate(0, 0.25, 0)
         val m = Material(Color.fromHex(0x111111),
             ambient = 0, diffuse = 0.1, specular = 0.9, shininess = 100, reflectivity = 0.9)
-        Torus(0.75, 0.25, t, m)
+        Torus(transformation = t, material = m)
     }
 
     val world = run {

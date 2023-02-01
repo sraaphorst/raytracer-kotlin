@@ -25,14 +25,7 @@ fun main() {
         Cube(t, m)
     }
 
-    val plane = run {
-        val t = Matrix.translate(0, -2.5, 0)
-        val m = Material(CheckerPattern(Color(0.9, 0.4, 0.4), Color.WHITE), specular = 0)
-        Plane(t, m)
-    }
-
     val torus2 = run {
-//        val t = Matrix.translate(0, 0, 2) * Matrix.rotateX(PI / 2)
         val t = Matrix.translate(0, -1.5, 3) * Matrix.rotateX(PI / 2)
         Torus(2, 0.5, t)
     }

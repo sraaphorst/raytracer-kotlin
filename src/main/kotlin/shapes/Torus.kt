@@ -8,12 +8,17 @@ import math.BoundingBox
 import math.Intersection
 
 // A torus is a quartic surface, and thus requires the Durand-Kerner polynomial solver.
-// The inner radius r is the radius from the center to where the torus actually begins.
-// The outer radius R is the radius from the center to where the torus actually ends.
-// Thus, if thought of in two dimensions, the torus would have area π * (R^2 - r^2).
+// The inner radius r is the radius from the centre of the torus to the centre of the cylinder
+//   making up the torus.
+// The outer radius R is the radius of the cylinder making up the torus.
+//
+// Defaults of inner=0.75, outer=0.25 gives a torus of:
+//   width  (x) -1 to 1
+//   height (y) -0.25 to 0.25
+//   depth  (z) -1 to 1
 class Torus(
-    val innerRadius: Double,
-    val outerRadius: Double,
+    private val innerRadius: Double = 0.75,
+    private val outerRadius: Double = 0.25,
     transformation: Matrix = Matrix.I,
     material: Material? = null,
     castsShadow: Boolean = true,
