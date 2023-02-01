@@ -18,7 +18,7 @@ import kotlin.system.measureTimeMillis
 
 fun main() {
     val modelStart = System.currentTimeMillis()
-    val model = OBJParser.fromURL({}.javaClass.getResource("/teddybear.obj"))
+    val model = OBJParser.fromURL({}.javaClass.getResource("/teddybear.obj")!!)
         .groups.getValue(OBJParser.DefaultGroup)
 
     val bear1 = run {

@@ -18,7 +18,7 @@ fun main() {
     // 49.156 points.
     // 49,152 quadrilaterals -> 98,304 triangles.
     val modelStart = System.currentTimeMillis()
-    val model = OBJParser.fromURL({}.javaClass.getResource("/flaccid.obj"))
+    val model = OBJParser.fromURL({}.javaClass.getResource("/flaccid.obj")!!)
         .groups.getValue(OBJParser.DefaultGroup)
 
     val model1 = run {
