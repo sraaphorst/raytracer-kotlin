@@ -77,8 +77,10 @@ fun degreesToRadians(degrees: Number): Double =
 fun radiansToDegrees(radians: Number): Double =
     180.0 * radians.toDouble() / PI
 
-fun durandKernerSolver2(coefficients: List<Double>): List<Cartesian> {
-    fun polyEval(x: Cartesian): Cartesian =
+fun durandKernerSolver2(coefficients: List<Double>,
+                        start: Cartesian = Cartesian(0.4, 0.9)): List<Cartesian> {
+    // Evaluate the polynomial represented by the coefficients at x.
+    fun evaluatePolynomial(x: Cartesian): Cartesian =
         coefficients.withIndex().fold(Cartesian.ZERO) { sum, coefficientInfo ->
             val (n, coefficient) = coefficientInfo
             sum + coefficient * x.ipow(n)
@@ -92,23 +94,19 @@ fun durandKernerSolver2(coefficients: List<Double>): List<Cartesian> {
     }
 
     val n = coefficients.size - 1
-    val c = Cartesian(0.4, 0.9)
-    val roots = (0 until n).map { c.ipow(it) }.toMutableList()
+    val roots = (0 until n).map { start.ipow(it) }.toMutableList()
 
     while (true) {
-//        println(roots)
         val diffs = mutableListOf<Double>()
 
         (0 until n).forEach { i ->
-            var product = Cartesian.ONE
-            (0 until n).forEach { j ->
-                if (i != j)
-                    product *= (roots[i] - roots[j])
+            val product = (0 until n).fold(Cartesian.ONE) { currentProduct, j ->
+                if (i == j) currentProduct else currentProduct * (roots[i] - roots[j])
             }
 
-            val newr = roots[i] - polyEval(roots[i]) / product
-            diffs.add((newr - roots[i]).magnitude)
-            roots[i] = newr
+            val newRoot = roots[i] - evaluatePolynomial(roots[i]) / product
+            diffs.add((newRoot - roots[i]).magnitude)
+            roots[i] = newRoot
         }
 
 //        val maxDiff = diffs.max()
