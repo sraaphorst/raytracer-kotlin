@@ -33,19 +33,17 @@ fun main() {
     val torusGenus2 = run {
         val torus1 = run {
             val t = Matrix.translate(0, 0, innerRadius)
-            Torus(innerRadius, outerRadius, t, castsShadow = false)
+            Torus(innerRadius, outerRadius, t)
         }
         val torus2 = run {
             val t = Matrix.translate(0, 0, -innerRadius)
-            Torus(innerRadius, outerRadius, t, castsShadow = false)
+            Torus(innerRadius, outerRadius, t)
         }
-        val cylinder = run {
-            val t =  Matrix.rotateZ(PI / 2 ) * Matrix.scale(outerRadius, 1, outerRadius)
-            Cylinder(-innerRadius, innerRadius, true, t, castsShadow = false)
-        }
-//        CSGShape(Operation.Intersection, torus1, torus2)
-        Group(listOf(torus1, torus2))
+        val torusIntersection = TorusIntersection(innerRadius, outerRadius)
+        Group(listOf(torus1, torus2, torusIntersection))
+//        Group(listOf(torusIntersection))
     }
+
 //    val torusGroup = Group(listOf(torusGenus2))
     val torusGroup = torusGenus2
 

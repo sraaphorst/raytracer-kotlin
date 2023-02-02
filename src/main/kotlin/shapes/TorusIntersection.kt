@@ -22,12 +22,12 @@ import math.Intersection
 //
 // The shape we get then consists of the points:
 //
-// S = {(x,y,z) | y^2 + z^2 = f(x)^2, x ∈ [-R, R]}
-//   = {(x,y,z) | y^2 + z^2 = r^2 (1 - x^2 / R^2), x ∈ [-R, R]}
+// S = {(x,y,z) | y^2 + z^2 - f(x)^2 = 0, x ∈ [-R, R]}
+//   = {(x,y,z) | y^2 + z^2 - (r^2 (1 - x^2 / R^2))^2, x ∈ [-R, R]}
 
 class TorusIntersection(
-    private val innerRadius: Double,
-    private val outerRadius: Double,
+    private val innerRadius: Double = 0.75,
+    private val outerRadius: Double = 0.25,
     transformation: Matrix = Matrix.I,
     material: Material? = null,
     castsShadow: Boolean = true,
@@ -36,8 +36,10 @@ class TorusIntersection(
 
     // For convenience in equations.
     private val r = outerRadius
+    private val r2 = r * r
     private val bigR = innerRadius
     private val bigR2 = bigR * bigR
+    private val bigR4 = bigR2 * bigR2
 
     constructor(innerRadius: Number,
                 outerRadius: Number,
@@ -55,30 +57,41 @@ class TorusIntersection(
 
     override fun localIntersect(rayLocal: Ray): List<Intersection> {
         // We are in the bounding box if we reach this point, so x ∈ [-R, R], y ∈ [-r, r], z ∈ [-r, r].
+        // Ray is parameterized for t:
+        // ray = p + t * v
+        // We solve for t to get the intersections by plugging values:
+        // x = p.x + t * v.x
+        // y = p.y + t * v.y
+        // z = p.z + t * v.z
+        // into the equation for the shape and then see if we can solve for t, which should have at
+        // most two real solutions despite being a quartic polynomial.
         val (ox, oy, oz) = rayLocal.origin
         val (dx, dy, dz) = rayLocal.direction
         val ox2 = ox * ox
         val dx2 = dx * dx
+        val oy2 = oy * oy
+        val dy2 = dy * dy
+        val oz2 = oz * oz
+        val dz2 = dz * dz
 
-        // Calculate f(ox) and f(dx) as we will need them for a, b, and c.
-        // f(x) = r * (1 - x^2 / R^2)
-        val fox = r * (1 - ox2 / bigR2)
-        val fdx = r * (1 - dx2 / bigR2)
+        val coefficients = listOf(
+            oy2 + oz2 - r2 * (ox2 * ox2 - 2 * bigR2 * ox2 + bigR4),
+            2 * oy * dy + 2 * oz * dz - 4 * r2 * (ox2 * ox * dx - bigR2 * ox * dx),
+            dy2 + dz2 - 2 * r2 * (3 * ox2 * dx2 - bigR2 * dx2) / bigR4,
+            -4 * r2 * ox * dx2 * dx / bigR4,
+            -r2 * dx2 * dx2 / bigR4
+        )
 
-        // These are based on the values of a, b, c for the cone.
-        // TODO: Unsure if these are correct?
-        val a = dy * dy + dz * dz - fdx * fdx
-        val b = 2 * oy * dy + 2 * oz * dz - fox * fdx
-        val c = oy * oy + oz * oz - fox * fox
-
-        // Check the discriminant.
-        val ts = processDiscriminant(a, b, c)
-        return if (ts.isEmpty()) emptyList()
-        else ts.map { Intersection(it, this) }
+        return durandKernerSolver(coefficients)
+            .filter { it.isReal && it.re.isFinite() }
+            .map { Intersection(it.re, this) }
     }
 
     override fun localNormalAt(localPoint: Tuple, hit: Intersection): Tuple {
-        TODO("Not yet implemented")
+        // The partial derivatives of: y^2 + z^2 - f(x)^2 = 0 are:
+        // y' = 2y, z' = 2z, and x' = -4r^2 ( 1 - x^2 / R^2) (x / R^2)
+        val (x, y, z) = localPoint
+        return Tuple.vector(-4 * r2 * (1 - x * x / bigR2) * (x / bigR2), 2 * y, 2 * z)
     }
 
     override val bounds: BoundingBox by lazy {
