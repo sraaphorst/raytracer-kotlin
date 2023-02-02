@@ -40,8 +40,8 @@ fun main() {
             Torus(innerRadius, outerRadius, t)
         }
         val torusIntersection = TorusIntersection(innerRadius, outerRadius)
-        Group(listOf(torus1, torus2, torusIntersection))
-//        Group(listOf(torusIntersection))
+//        Group(listOf(torus1, torus2, torusIntersection))
+        Group(listOf(torusIntersection))
     }
 
 //    val torusGroup = Group(listOf(torusGenus2))
@@ -57,7 +57,7 @@ fun main() {
 
     val world = run {
         val light = PointLight(Tuple.point(0, 0, -2))
-        World(listOf(cube, torusRotated), listOf(light))
+        World(listOf(cube, torusGroup), listOf(light))
     }
 
     val camera = run {

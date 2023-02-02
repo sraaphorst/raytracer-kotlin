@@ -68,19 +68,63 @@ class TorusIntersection(
         val (ox, oy, oz) = rayLocal.origin
         val (dx, dy, dz) = rayLocal.direction
         val ox2 = ox * ox
+        val ox3 = ox2 * ox
+        val ox4 = ox2 * ox2
         val dx2 = dx * dx
+        val dx3 = dx2 * dx
+        val dx4 = dx2 * dx2
+
         val oy2 = oy * oy
         val dy2 = dy * dy
         val oz2 = oz * oz
         val dz2 = dz * dz
 
+//        val coefficients = listOf(
+//            oy2 + oz2 - r2 * (ox4 - 2 * bigR2 * ox2 + bigR4),
+//            2 * oy * dy + 2 * oz * dz - 4 * r2 * (ox3 * dx - bigR2 * ox * dx),
+//            dy2 + dz2 - 2 * r2 * (3 * ox2 * dx2 - bigR2 * dx2) / bigR4,
+//            -4 * r2 * ox * dx3 / bigR4,
+//            -r2 * dx4 / bigR4
+//        )
+
         val coefficients = listOf(
-            oy2 + oz2 - r2 * (ox2 * ox2 - 2 * bigR2 * ox2 + bigR4),
-            2 * oy * dy + 2 * oz * dz - 4 * r2 * (ox2 * ox * dx - bigR2 * ox * dx),
-            dy2 + dz2 - 2 * r2 * (3 * ox2 * dx2 - bigR2 * dx2) / bigR4,
-            -4 * r2 * ox * dx2 * dx / bigR4,
-            -r2 * dx2 * dx2 / bigR4
+            oy2 + oz2 - r2 * (ox4 - 2 * ox2 * bigR2 + bigR4) / bigR4,
+            2 * (oy * dy + oz * dz) - 4 * r2 * ox * dx * (ox2 - bigR2) / bigR4,
+            dy2 + dz2 - 2 * r2 * dx2 * (3 * ox2 - bigR2) / bigR4,
+            -4 * r2 * ox * dx3 / bigR4,
+            -r2 * dx4 / bigR4
         )
+
+//        val coefficients = listOf(
+//            oy2 + oz2 - r2 * ox4 / bigR4 + 2 * r2 * ox2 / bigR2 - r2,
+//            oy * dy + oz * dz - 4 * r2 * ox3 * dx / bigR4 + 2 * ox * dx / bigR2,
+//            dy2 + dz2 - 6 * r2 * ox2 * dx2 / bigR4 + 2 * dx2 / bigR2,
+//            -4 * r2 * ox * dx3 / bigR4,
+//            -r2 * dx4 / bigR4
+//        )
+
+//        val coefficients = listOf(
+//            oy2 + oz2 - r2 * ox4 / bigR4 + 2 * r2 * ox2 / bigR2 - r2,
+//            2 * oy * dy + 2* oz * dz - r2 * 4 * ox3 * dx / bigR4 + 2 * r2 * ox * dx / bigR2,
+//            dz2 + dz2 - r2 * 6 * ox2 * dx2 / bigR4 + r2 * dx2 / bigR2,
+//            -r2 * 4 * ox * dx3 / bigR4,
+//            -r2 * dx4 / bigR4
+//        )
+
+        println("\nCalling DK on $coefficients...")
+        val sols = durandKernerSolver(coefficients)
+        println("\nSolutions ${sols.size} are $sols.")
+        val dSols = sols.filter { it.isReal && it.re.isFinite() }.map { it.re }
+        val points = dSols.map { t -> Tuple.point(ox + t * dx, oy + t * dy, oz + t * dz) }
+        println("Solutions ${points.size} in R: $points.")
+        val evaluatedSolutions = points.map { (x, y, z) ->
+            val e = (-r * x * x / bigR2 + r)
+            Tuple.point(x, y, z)to (y * y + z * z - e * e)
+        }
+        val (goodSols, badSols) = evaluatedSolutions.partition { (_, ev) ->
+            almostEquals(0.0,  ev)
+        }
+        println("Good solutions: $goodSols, Bad solutions: $badSols")
 
         return durandKernerSolver(coefficients)
             .filter { it.isReal && it.re.isFinite() }
@@ -89,9 +133,18 @@ class TorusIntersection(
 
     override fun localNormalAt(localPoint: Tuple, hit: Intersection): Tuple {
         // The partial derivatives of: y^2 + z^2 - f(x)^2 = 0 are:
-        // y' = 2y, z' = 2z, and x' = -4r^2 ( 1 - x^2 / R^2) (x / R^2)
+        // x' = d/dx -(-rx^2/R^2 + r)^2
+        //    = - d/dx (-rx^2/R^2 + r)^2
+        //    = -2(-rx^2/R^2 + r)(-2rx/R^2)
+        //    = 4rx(-rx^2/R^2 + r)/R2
+        // y' = 2y
+        // z' = 2z, and x' = -4r^2 ( 1 - x^2 / R^2) (x / R^2)
         val (x, y, z) = localPoint
-        return Tuple.vector(-4 * r2 * (1 - x * x / bigR2) * (x / bigR2), 2 * y, 2 * z)
+        val dx = 4 * r * x * (-r * x * x / bigR2 + r) / bigR2
+        val dy = 2 * y
+        val dz = 2 * z
+        println("Normal at $localPoint is ($dx, $dy, $dz).")
+        return Tuple.vector(dx, dy, dz)
     }
 
     override val bounds: BoundingBox by lazy {
