@@ -93,7 +93,8 @@ abstract class Shape(val transformation: Matrix,
     companion object {
         private val DefaultMaterial = Material()
 
-        // Given values for a, b, and c, return an ordered list of t-values if there is a (possible) intersection.
+        // For shapes that can be defined quadratically, return sorted t-values where there may be
+        // an intersection.
         internal fun processDiscriminant(a: Double, b: Double, c: Double): List<Double> {
             val disc = b * b - 4 * a * c
             if (disc < 0)

@@ -27,9 +27,7 @@ class Sphere(transformation: Matrix = Matrix.I,
         val b = 2 * rayLocal.direction.dot(sphereToRay)
         val c = sphereToRay.dot(sphereToRay) - 1
 
-        val ts = processDiscriminant(a, b, c)
-        return if (ts.isEmpty()) emptyList()
-        else ts.map { Intersection(it, this) }
+        return processDiscriminant(a, b, c).map { Intersection(it, this) }
     }
 
     override fun localNormalAt(localPoint: Tuple, hit: Intersection): Tuple =
