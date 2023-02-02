@@ -45,7 +45,6 @@ class Torus(
 
         val (ox, oy, oz) = rayLocal.origin
         val (dx, dy, dz) = rayLocal.direction
-
         val ox2 = ox * ox
         val oy2 = oy * oy
         val oz2 = oz * oz

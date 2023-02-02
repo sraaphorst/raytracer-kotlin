@@ -32,20 +32,16 @@ fun main() {
     val outerRadius = 0.25
     val torusGenus2 = run {
         val torus1 = run {
-            val t = Matrix.translate(0, 0, innerRadius)
+            val t = Matrix.translate(0, 0, innerRadius - outerRadius/10)
             Torus(innerRadius, outerRadius, t)
         }
         val torus2 = run {
-            val t = Matrix.translate(0, 0, -innerRadius)
+            val t = Matrix.translate(0, 0, -innerRadius + outerRadius/10)
             Torus(innerRadius, outerRadius, t)
         }
-        val torusIntersection = TorusIntersection(innerRadius, outerRadius)
-//        Group(listOf(torus1, torus2, torusIntersection))
-        Group(listOf(torusIntersection))
+        val torusIntersection = TorusIntersection(innerRadius, outerRadius, Matrix.translate(0, 0.1, 0))
+        Group(listOf(torus1, torus2))//, torusIntersection))
     }
-
-//    val torusGroup = Group(listOf(torusGenus2))
-    val torusGroup = torusGenus2
 
     // Shrinks so that -1 to 1 in z.
     val torusGenus2Scaler = run {
@@ -53,11 +49,11 @@ fun main() {
         Matrix.scale(1.0 / z, 1.0 / z, 1.0 / z)
     }
 
-    val torusRotated = torusGroup.withTransformation(Matrix.translate(0, -1.5, 0) * Matrix.rotateX(PI / 2))// * torusGenus2Scaler)
+    val torusRotated = torusGenus2.withTransformation(Matrix.translate(0, -1.5, 0) * Matrix.rotateX(PI / 2))// * torusGenus2Scaler)
 
     val world = run {
         val light = PointLight(Tuple.point(0, 0, -2))
-        World(listOf(cube, torusGroup), listOf(light))
+        World(listOf(cube, torusRotated), listOf(light))
     }
 
     val camera = run {
