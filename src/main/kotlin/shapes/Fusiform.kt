@@ -8,13 +8,13 @@ import math.BoundingBox
 import math.Intersection
 import kotlin.math.absoluteValue
 
-// Radii are equivalent to the two torus that we are planning on joining.
-// innerRadius is R, outerRadius is r (radius of torus body)
-// The shape we then want is fully defined by the torus radii.
+// The term "radius" here is misleading, but it is based on the concept of a torus.
+// The outerRadius is half the length of the object (also called R).
+// The innerRadius is the maximum radius of the object at its endpoint (also called r).
 //
 // It comprises circles in the y-z plane with radius f(x) where x ∈ [-R, R] with radius f(x), such that:
-// 1. f(0) = r (to meet the height of the two torus at their inmost intersection)
-// 2. f(-R) = f(R) = 0 (to terminate where the two torus intersections terminate)
+// 1. f(0) = r
+// 2. f(-R) = f(R) = 0
 //
 // We want to interpolate quadratically from -R to R with these conditions, which gives us a parabola
 // segment defined by the equation:
@@ -25,10 +25,14 @@ import kotlin.math.absoluteValue
 //
 // S = {(x,y,z) | y^2 + z^2 - f(x)^2 = 0, x ∈ [-R, R]}
 //   = {(x,y,z) | y^2 + z^2 - (r^2 (1 - x^2 / R^2))^2, x ∈ [-R, R]}
+//
+// We allow for the radius to extend past the outerRadius with a leftBoundary and a rightBoundary.
 
-class TorusIntersection(
-    private val innerRadius: Double = 0.75,
-    private val outerRadius: Double = 0.25,
+class Fusiform(
+    private val outerRadius: Double = 0.75,
+    private val innerRadius: Double = 0.25,
+    private val leftBoundary: Double = -outerRadius,
+    private val rightBoundary: Double = outerRadius,
     transformation: Matrix = Matrix.I,
     material: Material? = null,
     castsShadow: Boolean = true,
@@ -36,25 +40,17 @@ class TorusIntersection(
     Shape(transformation, material, castsShadow, parent) {
 
     // For convenience in equations.
-    private val r = outerRadius
+    private val r = innerRadius
     private val r2 = r * r
-    private val bigR = innerRadius
+    private val bigR = outerRadius
     private val bigR2 = bigR * bigR
     private val bigR4 = bigR2 * bigR2
 
-    constructor(innerRadius: Number,
-                outerRadius: Number,
-                transformation: Matrix = Matrix.I,
-                material: Material? = null,
-                castsShadow: Boolean = true,
-                parent: Shape? = null):
-            this(innerRadius.toDouble(), outerRadius.toDouble(), transformation, material, castsShadow, parent)
-
     override fun withParent(parent: Shape?): Shape =
-        TorusIntersection(innerRadius, outerRadius, transformation, material, castsShadow, parent)
+        Fusiform(outerRadius, innerRadius, leftBoundary, rightBoundary, transformation, material, castsShadow, parent)
 
     override fun withMaterial(material: Material): Shape =
-        TorusIntersection(innerRadius, outerRadius, transformation, material, castsShadow, parent)
+        Fusiform(outerRadius, innerRadius, leftBoundary, rightBoundary, transformation, material, castsShadow, parent)
 
     override fun localIntersect(rayLocal: Ray): List<Intersection> {
         // We are in the bounding box if we reach this point, so x ∈ [-R, R], y ∈ [-r, r], z ∈ [-r, r].
@@ -92,7 +88,7 @@ class TorusIntersection(
             .map { it.re }
             .filter {
                 val x = ox + it * dx
-                x.absoluteValue <= bigR
+                x in leftBoundary..rightBoundary
             }
             .map { Intersection(it, this) }
     }
@@ -115,8 +111,8 @@ class TorusIntersection(
 
     override val bounds: BoundingBox by lazy {
         BoundingBox(
-            Tuple.point(-bigR, -r, -r),
-            Tuple.point(bigR, r, r)
+            Tuple.point(leftBoundary, -r, -r),
+            Tuple.point(rightBoundary, r, r)
         )
     }
 }
