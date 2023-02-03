@@ -39,8 +39,8 @@ fun main() {
             val t = Matrix.translate(0, 0, -innerRadius + outerRadius/10)
             Torus(innerRadius, outerRadius, t)
         }
-        val torusIntersection = TorusIntersection(innerRadius, outerRadius, Matrix.translate(0, 0.1, 0))
-        Group(listOf(torus1, torus2))//, torusIntersection))
+        val torusIntersection = TorusIntersection(innerRadius, outerRadius)
+        Group(listOf(torusIntersection))
     }
 
     // Shrinks so that -1 to 1 in z.
@@ -52,7 +52,8 @@ fun main() {
     val torusRotated = torusGenus2.withTransformation(Matrix.translate(0, -1.5, 0) * Matrix.rotateX(PI / 2))// * torusGenus2Scaler)
 
     val world = run {
-        val light = PointLight(Tuple.point(0, 0, -2))
+//        val light1 = PointLight(Tuple.point(0, 4, 3))
+        val light = PointLight(Tuple.point(0, 3, -3))
         World(listOf(cube, torusRotated), listOf(light))
     }
 
