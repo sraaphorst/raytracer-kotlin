@@ -6,6 +6,7 @@ import material.Material
 import math.*
 import math.Intersection
 import java.util.UUID
+import kotlin.math.sqrt
 
 abstract class Shape(val transformation: Matrix,
                      material: Material? = null,
@@ -91,6 +92,18 @@ abstract class Shape(val transformation: Matrix,
 
     companion object {
         private val DefaultMaterial = Material()
+
+        // For shapes that can be defined quadratically, return sorted t-values where there may be
+        // an intersection.
+        internal fun processDiscriminant(a: Double, b: Double, c: Double): List<Double> {
+            val disc = b * b - 4 * a * c
+            if (disc < 0)
+                return emptyList()
+
+            val t0 = (-b - sqrt(disc)) / (2 * a)
+            val t1 = (-b + sqrt(disc)) / (2 * a)
+            return listOf(t0, t1).sorted()
+        }
     }
 }
 

@@ -7,32 +7,29 @@ import math.Matrix
 import math.Tuple
 import scene.Camera
 import scene.World
-import shapes.Torus
+import shapes.*
 import java.io.File
-import kotlin.math.PI
 import kotlin.system.measureTimeMillis
 
 fun main() {
-    val torus = run {
-        val t = Matrix.translate(0, -1.5, 3) * Matrix.rotateX(PI / 2) * Matrix.scale(0.5, 1, 0.25)
-        Torus(2, 0.5, t)
-    }
+    val fusiform = Fusiform(0.75, 0.25, -1.0, 1.0,
+        Matrix.translate(0, -1.5, 0))
 
     val world = run {
-        val light = PointLight(Tuple.point(-1, 3.5, -1))
-        World(listOf(room, torus), listOf(light))
+        val light = PointLight(Tuple.point(0, 3, -3))
+        World(listOf(room, fusiform), listOf(light))
     }
 
     val camera = run {
         val from = Tuple.point(0, -1.5, -4)
         val to = Tuple.point(0, -1.5, 0)
         val t = from.viewTransformationFrom(to, Tuple.VY)
-        Camera(1000, 1000, 1, t)
+        Camera(1000, 2000, 1, t)
     }
 
     val elapsed = measureTimeMillis {
         val canvas = camera.render(world)
-        canvas.toPPMFile(File("output/torus.ppm"))
+        canvas.toPPMFile(File("output/fusiform.ppm"))
     }
     println("Time elapsed (rendering): ${elapsed / 1000.0} s")
 }
