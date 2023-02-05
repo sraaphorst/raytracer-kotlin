@@ -36,7 +36,7 @@ class Group(
     override fun withParent(parent: Shape?): Shape =
         Group(children, transformation, objMaterial, castsShadow, parent)
 
-    fun withTransformation(transformation: Matrix): Shape {
+    fun withTransformation(transformation: Matrix): Group {
         if (!transformation.isTransformation())
             throw IllegalArgumentException("Shapes must have 4x4 transformation matrices:\n" +
                     "\tShape: ${javaClass.name}\nTransformation:\n${transformation.show()}")
