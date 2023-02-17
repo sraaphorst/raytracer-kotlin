@@ -14,7 +14,7 @@ import kotlin.system.measureTimeMillis
 
 fun main() {
     val die = die6().withTransformation(
-        Matrix.rotateX(-PI / 4) * Matrix.rotateY(PI / 4))
+        Matrix.rotateY(PI) * Matrix.rotateX(-PI / 4) * Matrix.rotateY(PI / 4))
 
     val world = run {
         val light1 = PointLight(Tuple.point(-3, 10, -5))
