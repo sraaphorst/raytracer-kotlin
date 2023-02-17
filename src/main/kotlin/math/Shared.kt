@@ -124,3 +124,7 @@ fun durandKernerSolver(coefficients: List<Double>,
     }
     return roots.map(::roundComplex)
 }
+
+fun <T, U> Collection<T>.cartesianProduct(other: Collection<U>): List<Pair<T, U>> {
+    return flatMap { lhsElem -> other.map { rhsElem -> lhsElem to rhsElem } }
+}
