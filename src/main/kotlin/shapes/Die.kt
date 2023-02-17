@@ -92,22 +92,46 @@ fun die6(bevelRadius: Double = 0.1,
 
         // Make the faces of the die. We do this with cubes as there is no way to use planes.
         val faces = run {
-            val oneSixFace = Cube(
-                Matrix.scale(1 - bevelRadius, 1 - bevelRadius, 1),
+            val oneFace = Cube(Matrix.translate(0, 0, 0.5) *
+                        Matrix.scale(1 - bevelRadius, 1 - bevelRadius, 0.5),
                 Material(Color.RED)
             )
 
-            val twoFiveFace = Cube(
-                Matrix.scale(1, 1 - bevelRadius, 1 - bevelRadius),
+            val sixFace = Cube(Matrix.translate(0, 0, -0.5) *
+                    Matrix.scale(1 - bevelRadius, 1 - bevelRadius, 0.5),
+                Material(Color.CYAN)
+            )
+
+            val twoFace = Cube(Matrix.translate(-0.5, 0, 0) *
+                Matrix.scale(0.5, 1 - bevelRadius, 1 - bevelRadius),
+                Material(Color.MAGENTA)
+            )
+
+            val fiveFace = Cube(Matrix.translate(0.5, 0, 0) *
+                Matrix.scale(0.5, 1 - bevelRadius, 1 - bevelRadius),
                 Material(Color.GREEN)
             )
 
-            val threeFourFace = Cube(
-                Matrix.scale(1 - bevelRadius, 1, 1 - bevelRadius),
-                Material(Color.BLUE)
+//            val twoFiveFace = Cube(
+//                Matrix.scale(1, 1 - bevelRadius, 1 - bevelRadius),
+//                Material(Color.GREEN)
+//            )
+
+            val threeFace = Cube(Matrix.translate(0, 0.5, 0) *
+                Matrix.scale(1 - bevelRadius, 0.5, 1- bevelRadius),
+                Material(Color.YELLOW)
             )
 
-            Group(listOf(oneSixFace, twoFiveFace, threeFourFace))
+            val fourFace = Cube(Matrix.translate(0, -0.5, 0) *
+                Matrix.scale(1 - bevelRadius, 0.5, 1 - bevelRadius),
+                Material(Color.BLUE)
+            )
+//            val threeFourFace = Cube(
+//                Matrix.scale(1 - bevelRadius, 1, 1 - bevelRadius),
+//                Material(Color.BLUE)
+//            )
+
+            Group(listOf(oneFace, sixFace, twoFace, fiveFace, threeFace, fourFace))
         }
 
         Group(listOf(frame, faces))
@@ -118,33 +142,56 @@ fun die6(bevelRadius: Double = 0.1,
         // The pip is a tiny sphere
         val pip = Group(listOf(Sphere(Matrix.scale(pipRadius, pipRadius, pipRadius), pipMaterial)))
 
-        // A central pip.
-        val centralPip = pip.withTransformation(Matrix.translate(0, 0, -1))
-
         // The offset for pips from the edge of the die.
         val offset1 = -1 + pipOffset
         val offset2 = 1 - pipOffset
 
-        // An edge pip, which we need for six.
-        val edgePip = pip.withTransformation(Matrix.translate(offset1, 0, -1))
+        val onePips = run {
+            val center = pip.withTransformation(Matrix.translate(0, 0, 1))
+            Group(listOf(center))
+        }
 
-        // A corner pip, which we can rotate around to get every other corner pip.
-        val cornerPip = pip.withTransformation(Matrix.translate(offset1, offset1, -1))
+        val twoPips = run {
+            val corner1 = pip.withTransformation(Matrix.translate(1, offset1, offset2))
+            val corner2 = pip.withTransformation(Matrix.translate(1, offset2, offset1))
+            Group(listOf(corner1, corner2))
+        }
 
-        val testPips = Group(listOf(centralPip, edgePip, cornerPip))
+        val threePips = run {
+            val corner1 = pip.withTransformation(Matrix.translate(offset2, 1, offset1))
+            val corner2 = pip.withTransformation(Matrix.translate(offset1, 1, offset2))
+            val center   = pip.withTransformation(Matrix.translate(0, 1, 0))
+            Group(listOf(corner1, corner2, center))
+        }
+
+        val fourPips = run {
+            val corner1 = pip.withTransformation(Matrix.translate(offset1, -1, offset2))
+            val corner2 = pip.withTransformation(Matrix.translate(offset1, -1, offset1))
+            val corner3 = pip.withTransformation(Matrix.translate(offset2, -1, offset1))
+            val corner4 = pip.withTransformation(Matrix.translate(offset2, -1, offset2))
+            Group(listOf(corner1, corner2, corner3, corner4))
+        }
+
+        val fivePips = run {
+            val corner1 = pip.withTransformation(Matrix.translate(-1, offset1, offset2))
+            val corner2 = pip.withTransformation(Matrix.translate(-1, offset1, offset1))
+            val corner3 = pip.withTransformation(Matrix.translate(-1, offset2, offset1))
+            val corner4 = pip.withTransformation(Matrix.translate(-1, offset2, offset2))
+            val center  = pip.withTransformation(Matrix.translate(-1, 0, 0))
+            Group(listOf(corner1, corner2, corner3, corner4, center))
+        }
 
         val sixPips = run {
-            val lowerLeft = pip.withTransformation(Matrix.translate(offset1, offset1, -1))
-            val left      = pip.withTransformation(Matrix.translate(offset1, 0, -1))
-            val upperLeft = pip.withTransformation(Matrix.translate(offset1, offset2, -1))
-
-            val lowerRight = pip.withTransformation(Matrix.translate(offset2, offset1, -1))
-            val right      = pip.withTransformation(Matrix.translate(offset2, 0, -1))
-            val upperRight = pip.withTransformation(Matrix.translate(offset2, offset2, -1))
-            Group(listOf(lowerLeft, left, upperLeft, lowerRight, right, upperRight))
+            val corner1 = pip.withTransformation(Matrix.translate(offset1, offset1, -1))
+            val corner2 = pip.withTransformation(Matrix.translate(offset1, offset2, -1))
+            val corner3 = pip.withTransformation(Matrix.translate(offset2, offset1, -1))
+            val corner4 = pip.withTransformation(Matrix.translate(offset2, offset2, -1))
+            val edge1   = pip.withTransformation(Matrix.translate(offset1, 0, -1))
+            val edge2   = pip.withTransformation(Matrix.translate(offset2, 0, -1))
+            Group(listOf(corner1, corner2, corner3, corner4, edge1, edge2))
         }
-//        Group(listOf(testPips))
-        Group(listOf(sixPips))
+
+        Group(listOf(onePips, twoPips, threePips, fourPips, fivePips, sixPips))
     }
 
     // The CSG is the difference between the entire solid die and the pips,
