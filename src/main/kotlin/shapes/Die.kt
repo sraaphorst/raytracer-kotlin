@@ -125,55 +125,64 @@ fun die6(bevelRadius: Double = 0.1,
 
     // The pips are then all assembled as a group, and we take the difference.
     val pips = run {
-        // The pip is a tiny sphere
-        val pip = Group(listOf(Sphere(Matrix.scale(pipRadius, pipRadius, pipRadius))))
+        // The pip is a tiny sphere.
+        // NOTE: We must set castsShadow to false because of the difference, or the removed objects
+        // will still cast a shadow even though they do not appear!
+//        val pip = Group(listOf(Sphere(Matrix.scale(pipRadius, pipRadius, pipRadius), castsShadow = false)))
+        val pip = Group(listOf(Sphere(castsShadow = false)))
 
         // The offset for pips from the edge of the die.
         val offset1 = -1 + pipOffset
         val offset2 = 1 - pipOffset
 
         val onePips = run {
-            val center = pip.withTransformation(Matrix.translate(0, 0, 1))
+            val scaling = Matrix.scale(pipRadius, pipRadius, pipRadius / 2)
+            val center = pip.withTransformation(Matrix.translate(0, 0, 1) * scaling)
             Group(listOf(center)).withMaterial(pipMaterial[0])
         }
 
         val twoPips = run {
-            val corner1 = pip.withTransformation(Matrix.translate(1, offset1, offset2))
-            val corner2 = pip.withTransformation(Matrix.translate(1, offset2, offset1))
+            val scaling = Matrix.scale(pipRadius / 2, pipRadius, pipRadius)
+            val corner1 = pip.withTransformation(Matrix.translate(1, offset1, offset2) * scaling)
+            val corner2 = pip.withTransformation(Matrix.translate(1, offset2, offset1) * scaling)
             Group(listOf(corner1, corner2)).withMaterial(pipMaterial[1])
         }
 
         val threePips = run {
-            val corner1 = pip.withTransformation(Matrix.translate(offset2, 1, offset1))
-            val corner2 = pip.withTransformation(Matrix.translate(offset1, 1, offset2))
-            val center   = pip.withTransformation(Matrix.translate(0, 1, 0))
+            val scaling = Matrix.scale(pipRadius, pipRadius / 2, pipRadius)
+            val corner1 = pip.withTransformation(Matrix.translate(offset2, 1, offset1) * scaling)
+            val corner2 = pip.withTransformation(Matrix.translate(offset1, 1, offset2) * scaling)
+            val center   = pip.withTransformation(Matrix.translate(0, 1, 0) * scaling)
             Group(listOf(corner1, corner2, center)).withMaterial(pipMaterial[2])
         }
 
         val fourPips = run {
-            val corner1 = pip.withTransformation(Matrix.translate(offset1, -1, offset2))
-            val corner2 = pip.withTransformation(Matrix.translate(offset1, -1, offset1))
-            val corner3 = pip.withTransformation(Matrix.translate(offset2, -1, offset1))
-            val corner4 = pip.withTransformation(Matrix.translate(offset2, -1, offset2))
+            val scaling = Matrix.scale(pipRadius, pipRadius / 2, pipRadius)
+            val corner1 = pip.withTransformation(Matrix.translate(offset1, -1, offset2) * scaling)
+            val corner2 = pip.withTransformation(Matrix.translate(offset1, -1, offset1) * scaling)
+            val corner3 = pip.withTransformation(Matrix.translate(offset2, -1, offset1) * scaling)
+            val corner4 = pip.withTransformation(Matrix.translate(offset2, -1, offset2) * scaling)
             Group(listOf(corner1, corner2, corner3, corner4)).withMaterial(pipMaterial[3])
         }
 
         val fivePips = run {
-            val corner1 = pip.withTransformation(Matrix.translate(-1, offset1, offset2))
-            val corner2 = pip.withTransformation(Matrix.translate(-1, offset1, offset1))
-            val corner3 = pip.withTransformation(Matrix.translate(-1, offset2, offset1))
-            val corner4 = pip.withTransformation(Matrix.translate(-1, offset2, offset2))
-            val center  = pip.withTransformation(Matrix.translate(-1, 0, 0))
+            val scaling = Matrix.scale(pipRadius / 2, pipRadius, pipRadius)
+            val corner1 = pip.withTransformation(Matrix.translate(-1, offset1, offset2) * scaling)
+            val corner2 = pip.withTransformation(Matrix.translate(-1, offset1, offset1) * scaling)
+            val corner3 = pip.withTransformation(Matrix.translate(-1, offset2, offset1) * scaling)
+            val corner4 = pip.withTransformation(Matrix.translate(-1, offset2, offset2) * scaling)
+            val center  = pip.withTransformation(Matrix.translate(-1, 0, 0) * scaling)
             Group(listOf(corner1, corner2, corner3, corner4, center)).withMaterial(pipMaterial[4])
         }
 
         val sixPips = run {
-            val corner1 = pip.withTransformation(Matrix.translate(offset1, offset1, -1))
-            val corner2 = pip.withTransformation(Matrix.translate(offset1, offset2, -1))
-            val corner3 = pip.withTransformation(Matrix.translate(offset2, offset1, -1))
-            val corner4 = pip.withTransformation(Matrix.translate(offset2, offset2, -1))
-            val edge1   = pip.withTransformation(Matrix.translate(offset1, 0, -1))
-            val edge2   = pip.withTransformation(Matrix.translate(offset2, 0, -1))
+            val scaling = Matrix.scale(pipRadius, pipRadius, pipRadius / 2)
+            val corner1 = pip.withTransformation(Matrix.translate(offset1, offset1, -1) * scaling)
+            val corner2 = pip.withTransformation(Matrix.translate(offset1, offset2, -1) * scaling)
+            val corner3 = pip.withTransformation(Matrix.translate(offset2, offset1, -1) * scaling)
+            val corner4 = pip.withTransformation(Matrix.translate(offset2, offset2, -1) * scaling)
+            val edge1   = pip.withTransformation(Matrix.translate(offset1, 0, -1) * scaling)
+            val edge2   = pip.withTransformation(Matrix.translate(offset2, 0, -1) * scaling)
             Group(listOf(corner1, corner2, corner3, corner4, edge1, edge2)).withMaterial(pipMaterial[5])
         }
 

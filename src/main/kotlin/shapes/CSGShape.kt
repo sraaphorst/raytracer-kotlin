@@ -13,11 +13,11 @@ enum class Operation {
     },
     Intersection {
         override fun intersectionAllowed(leftHit: Boolean, inLeft: Boolean, inRight: Boolean): Boolean =
-            (leftHit and inRight) || (!leftHit && inLeft)
+            (leftHit && inRight) || (!leftHit && inLeft)
     },
     Difference {
         override fun intersectionAllowed(leftHit: Boolean, inLeft: Boolean, inRight: Boolean): Boolean =
-            (leftHit and !inRight) || (!leftHit && inLeft)
+            (leftHit && !inRight) || (!leftHit && inLeft)
     };
 
     // If leftHit is false, it means the hit was from the right.
@@ -60,7 +60,7 @@ class CSGShape(
     internal fun filterIntersection(xs: List<Intersection>): List<Intersection> =
         // Begin outside both children.
         // The parameters to fold are the list of intersections we are collection, inLeft, and inRight.
-        // We begin outside of both children.
+        // We begin outside both children.
         xs.fold(Triple<List<Intersection>, Boolean, Boolean>(emptyList(), false, false)) {
             curr, x ->
                 val (result, inLeft, inRight) = curr

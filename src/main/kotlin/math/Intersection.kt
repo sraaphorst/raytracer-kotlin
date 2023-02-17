@@ -99,4 +99,4 @@ internal data class Intersection(
 // the function accepts a boolean parameter to indicate whether we are looking for a
 // shadow hit: if so, shapes that do not cast a shadow are ignored.
 internal fun List<Intersection>.hit(shadow: Boolean = false): Intersection? =
-    this.filter { it.t > 0 && (!shadow || it.shape.castsShadow) }.minByOrNull { it.t }
+    this.filter { it.t >= 0 && (!shadow || it.shape.castsShadow) }.minByOrNull { it.t }

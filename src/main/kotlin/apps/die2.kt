@@ -40,7 +40,7 @@ fun main() {
             Matrix.rotateY(PI) * Matrix.rotateY(PI/5))
 
     val world = run {
-        val light = PointLight(Tuple.point(0, 4, -5))
+        val light = PointLight(Tuple.point(1, 4, -5))
         World(listOf(stage, die1, die2, die3), listOf(light))
     }
 
