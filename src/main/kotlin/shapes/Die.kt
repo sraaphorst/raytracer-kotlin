@@ -9,10 +9,10 @@ import kotlin.math.PI
 
 // A function that creates a six sided die exactly in the bounding box (-1, -1, -1) to (1, 1, 1)
 fun die6(bevelRadius: Double = 0.1,
-         pipRadius: Double = 0.15,
+         pipRadius: Double = 0.2,
          faceMaterial: Material = Material(Color.WHITE),
          pipMaterial: Material = Material(Color.BLACK),
-         pipOffset: Double = 0.5
+         pipOffset: Double = 0.55
 ): Group {
     // We want to reuse this cylinder multiple times, so we put it in a group.
     val edge = run {
@@ -122,17 +122,29 @@ fun die6(bevelRadius: Double = 0.1,
         val centralPip = pip.withTransformation(Matrix.translate(0, 0, -1))
 
         // The offset for pips from the edge of the die.
-        val offset = -1 + pipOffset
+        val offset1 = -1 + pipOffset
+        val offset2 = 1 - pipOffset
 
         // An edge pip, which we need for six.
-        val edgePip = pip.withTransformation(Matrix.translate(offset, 0, -1))
+        val edgePip = pip.withTransformation(Matrix.translate(offset1, 0, -1))
 
         // A corner pip, which we can rotate around to get every other corner pip.
-        val cornerPip = pip.withTransformation(Matrix.translate(offset, offset, -1))
+        val cornerPip = pip.withTransformation(Matrix.translate(offset1, offset1, -1))
 
         val testPips = Group(listOf(centralPip, edgePip, cornerPip))
 
-        Group(listOf(testPips))
+        val sixPips = run {
+            val lowerLeft = pip.withTransformation(Matrix.translate(offset1, offset1, -1))
+            val left      = pip.withTransformation(Matrix.translate(offset1, 0, -1))
+            val upperLeft = pip.withTransformation(Matrix.translate(offset1, offset2, -1))
+
+            val lowerRight = pip.withTransformation(Matrix.translate(offset2, offset1, -1))
+            val right      = pip.withTransformation(Matrix.translate(offset2, 0, -1))
+            val upperRight = pip.withTransformation(Matrix.translate(offset2, offset2, -1))
+            Group(listOf(lowerLeft, left, upperLeft, lowerRight, right, upperRight))
+        }
+//        Group(listOf(testPips))
+        Group(listOf(sixPips))
     }
 
     // The CSG is the difference between the entire solid die and the pips,
