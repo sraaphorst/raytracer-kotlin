@@ -5,6 +5,7 @@ package shapes
 import material.Material
 import math.Color
 import math.Matrix
+import math.cartesianProduct
 import kotlin.math.PI
 
 // A function that creates a six sided die exactly in the bounding box (-1, -1, -1) to (1, 1, 1)
@@ -15,65 +16,58 @@ fun die6(bevelRadius: Double = 0.1,
          frameMaterial: Material = Material(Color.WHITE),
          pipOffset: Double = 0.55
 ): Group {
-    // We want to reuse this cylinder multiple times, so we put it in a group.
-    val edge = run {
-        val edge = Cylinder(
-            -2 + 2 * bevelRadius, 0, false,
-            Matrix.scale(bevelRadius, 1, bevelRadius)
-        )
-        Group(listOf(edge))
-    }
-    // Branch occurs at (0, 0, 0) and travels down y.
-    val branch = run {
-        // We want the die to be 2x2x2 centered at the origin, so the branch (corner + edge) consists of:
-        // 1. Sphere at (0.5 - bevelSize), scaled to bevelSize.
-        // 2. Cylinder at (-1 + bevelSize) to (1 - bevelSize), scaled to bevelSize.
-        // Note the branch is length 2 - bevelSize.
-        val corner = Sphere(Matrix.scale(bevelRadius, bevelRadius, bevelRadius))
-        Group(listOf(corner, edge))
-    }
-
-    // Make the frame of the die.
+    // Make the solid parts of the die.
     val solid = run {
+        // Make the frame of the die.
         val frame = run {
-            val branch1 = branch.withTransformation(
+            val corner = Group(listOf(Sphere(Matrix.scale(bevelRadius, bevelRadius, bevelRadius))))
+            val edge = Group(listOf(Cylinder(-2 + 2 * bevelRadius, 0, false,
+                Matrix.scale(bevelRadius, 1, bevelRadius))))
+
+            val offsets = listOf(1 - bevelRadius, -1 + bevelRadius)
+
+            val corners = offsets.cartesianProduct(offsets).cartesianProduct(offsets).map { (vs, v3) ->
+                val (v1, v2) = vs
+                corner.withTransformation(Matrix.translate(v1, v2, v3))
+            }
+
+            val edge1 = edge.withTransformation(
                 Matrix.translate(-1 + bevelRadius, 1 - bevelRadius, -1 + bevelRadius)
             )
-            val branch2 = branch.withTransformation(
+            val edge2 = edge.withTransformation(
                 Matrix.translate(1 - bevelRadius, 1 - bevelRadius, -1 + bevelRadius)
             )
-            val branch3 = branch.withTransformation(
+            val edge3 = edge.withTransformation(
                 Matrix.translate(-1 + bevelRadius, 1 - bevelRadius, 1 - bevelRadius)
             )
-            val branch4 = branch.withTransformation(
+            val edge4 = edge.withTransformation(
                 Matrix.translate(1 - bevelRadius, 1 - bevelRadius, 1 - bevelRadius)
             )
-            val branch5 = branch.withTransformation(
+            val edge5 = edge.withTransformation(
                 Matrix.translate(-1 + bevelRadius, 1 - bevelRadius, -1 + bevelRadius) *
                         Matrix.rotateZ(PI / 2)
             )
-            val branch6 = branch.withTransformation(
+            val edge6 = edge.withTransformation(
                 Matrix.translate(-1 + bevelRadius, 1 - bevelRadius, 1 - bevelRadius) *
                         Matrix.rotateZ(PI / 2)
             )
-            val branch7 = branch.withTransformation(
+            val edge7 = edge.withTransformation(
                 Matrix.translate(-1 + bevelRadius, -1 + bevelRadius, -1 + bevelRadius) *
                         Matrix.rotateZ(PI / 2)
             )
-            val branch8 = branch.withTransformation(
+            val edge8 = edge.withTransformation(
                 Matrix.translate(-1 + bevelRadius, -1 + bevelRadius, 1 - bevelRadius) *
                         Matrix.rotateZ(PI / 2)
             )
-            val branch9 = branch.withTransformation(
+            val edge9 = edge.withTransformation(
                 Matrix.translate(-1 + bevelRadius, -1 + bevelRadius, 1 - bevelRadius) *
                         Matrix.rotateX(PI / 2)
             )
-            val branch10 = branch.withTransformation(
+            val edge10 = edge.withTransformation(
                 Matrix.translate(1 - bevelRadius, -1 + bevelRadius, 1 - bevelRadius) *
                         Matrix.rotateX(PI / 2)
             )
 
-            // Use cylinders only for the last two lines so that we don't repeat spheres.
             val edge11 = edge.withTransformation(
                 Matrix.translate(-1 + bevelRadius, 1 - bevelRadius, 1 - bevelRadius) *
                         Matrix.rotateX(PI / 2)
@@ -83,12 +77,12 @@ fun die6(bevelRadius: Double = 0.1,
                         Matrix.rotateX(PI / 2)
             )
 
-            Group(
-                listOf(
-                    branch1, branch2, branch3, branch4, branch5, branch6, branch7, branch8, branch9, branch10,
-                    edge11, edge12
-                )
-            ).withMaterial(frameMaterial)
+            val edges = listOf(
+                edge1, edge2, edge3, edge4, edge5, edge6,
+                edge7, edge8, edge9, edge10, edge11, edge12
+            )
+
+            Group(edges + corners).withMaterial(frameMaterial)
         }
 
         // Make the faces of the die. We do this with cubes as there is no way to use planes.
