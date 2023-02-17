@@ -28,7 +28,7 @@ fun main() {
         val from = Tuple.point(0, 0, -5)
         val to = Tuple.PZERO
         val t = from.viewTransformationFrom(to, Tuple.VY)
-        Camera(400, 400, 1, t)
+        Camera(800, 800, 1, t)
     }
 
     val elapsed = measureTimeMillis {
