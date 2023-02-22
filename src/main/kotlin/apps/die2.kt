@@ -8,6 +8,7 @@ import math.Color
 import math.Matrix
 import math.Tuple
 import pattern.CheckerPattern
+import scene.Antialiasing
 import scene.Camera
 import scene.World
 import shapes.Cube
@@ -25,17 +26,19 @@ fun main() {
         Cube(transform, material)
     }
 
+    val pipMaterial = List(6) { Material(Color.WHITE) }
+
     val material1 = Material(Color.fromHex(0x1016AA), shininess = 50.0)
-    val die1 = die6(faceMaterial = List(6) { material1 }, frameMaterial = material1)
+    val die1 = die6(faceMaterial = List(6) { material1 }, frameMaterial = material1, pipMaterial = pipMaterial)
         .withTransformation(Matrix.translate(-4, -4, 3) * Matrix.rotateY(PI / 6))
 
     val material2 = Material(Color.fromHex(0xA20412), shininess = 500.0)
-    val die2 = die6(faceMaterial = List(6) { material2}, frameMaterial = material2, pipMaterial = List(6) {Material(Color.WHITE)})
+    val die2 = die6(faceMaterial = List(6) { material2}, frameMaterial = material2, pipMaterial= pipMaterial)
         .withTransformation(Matrix.translate(0, -4, 2) * Matrix.rotateZ(PI) *
                 Matrix.rotateY(PI/4.2))
 
     val material3 = Material(Color.fromHex(0x1AB422), shininess = 5.0)
-    val die3 = die6(faceMaterial = List(6) { material3 }, frameMaterial = material3)
+    val die3 = die6(faceMaterial = List(6) { material3 }, frameMaterial = material3, pipMaterial = pipMaterial)
         .withTransformation(Matrix.translate(3.5, -4, 4) * Matrix.rotateZ(PI) *
             Matrix.rotateY(PI) * Matrix.rotateY(PI/5))
 
@@ -52,7 +55,7 @@ fun main() {
     }
 
     val elapsed = measureTimeMillis {
-        val canvas = camera.render(world)
+        val canvas = camera.render(world, Antialiasing.BLUR)
         canvas.toPPMFile(File("output/die2.ppm"))
     }
     println("Time elapsed: ${elapsed / 1000.0} s")

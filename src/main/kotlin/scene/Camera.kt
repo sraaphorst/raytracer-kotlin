@@ -8,6 +8,14 @@ import math.Tuple
 import output.Canvas
 import kotlin.math.tan
 
+import math.cartesianProduct
+
+
+enum class Antialiasing {
+    NONE,
+    BLUR
+}
+
 // Map a 3D scene onto a 2D canvas.
 class Camera(private val hSize: Int,
              private val vSize: Int,
@@ -46,14 +54,34 @@ class Camera(private val hSize: Int,
 
     // Render the world with the camera.
     // Computation is parallelized.
-    fun render(world: World): Canvas {
+    fun render(world: World, antialiasing: Antialiasing = Antialiasing.NONE): Canvas {
         val image = Canvas(hSize, vSize)
         (0 until vSize).forEach { y ->
-            (0 until hSize).toList().stream().forEach { x ->
+            (0 until hSize).toList().parallelStream().forEach { x ->
                 val ray = rayForPixel(x, y)
                 val color = world.colorAt(ray)
                 image[x, y] = color
             }
+        }
+
+        // If we are doing incredibly simple anti-aliasing, we create a new Image where each pixel
+        // is the average of itself and the surrounding pixels.
+        if (antialiasing == Antialiasing.BLUR) {
+            val aaImage = Canvas(hSize, vSize)
+            (0 until vSize).forEach { y ->
+                (0 until hSize).toList().parallelStream().forEach { x ->
+                    // Determine the pixels for this component.
+                    val offsets1D = listOf(-1, 0, 1)
+                    val pixels = offsets1D.cartesianProduct(offsets1D).map { (dx, dy) ->
+                        x + dx to y + dy
+                    }.filter { (px, py) -> px in (0 until hSize) && py in (0 until vSize) }
+
+                    aaImage[x, y] = pixels.map { (px, py) ->
+                        image[px, py]
+                    }.reduce { c1, c2 -> c1 + c2} / pixels.size
+                }
+            }
+            return aaImage
         }
         return image
     }
