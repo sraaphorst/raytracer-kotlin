@@ -125,6 +125,10 @@ fun durandKernerSolver(coefficients: List<Double>,
     return roots.map(::roundComplex)
 }
 
+// Linear interpolation from a to b at interpolation point t.
+fun lerp(t: Double, a: Double, b: Double): Double =
+    a + t * (b - a)
+
 fun <T, U> Collection<T>.cartesianProduct(other: Collection<U>): Collection<Pair<T, U>> {
     return flatMap { lhsElem -> other.map { rhsElem -> lhsElem to rhsElem } }
 }
