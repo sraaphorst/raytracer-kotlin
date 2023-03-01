@@ -2,6 +2,7 @@ package pattern
 
 // By Sebastian Raaphorst, 2023.
 
+import math.lerp
 import kotlin.math.floor
 
 class PerlinNoisePattern(pattern: Pattern, scale: Double = 0.3, pscale: Double = 0.7)
@@ -45,9 +46,6 @@ class PerlinNoisePattern(pattern: Pattern, scale: Double = 0.3, pscale: Double =
 
         private fun fade(t: Double): Double =
             t * t * t * (t * (t * 6 - 15) + 10)
-
-        private fun lerp(t: Double, a: Double, b: Double): Double =
-            a + t * (b - a)
 
         private fun grad(hash: Int, x: Double, y: Double, z: Double): Double {
             // Convert the lower four bits of the hash into 12 gradient directions.

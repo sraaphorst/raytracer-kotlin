@@ -8,9 +8,8 @@ import math.Color
 import math.Matrix
 import math.Tuple
 import pattern.CheckerPattern
-import scene.BlurAntiAliasing
+import scene.AntiAliasing
 import scene.Camera
-import scene.SuperScaleAntiAliasing
 import scene.World
 import shapes.Cube
 import shapes.die6
@@ -56,8 +55,9 @@ fun main() {
     }
 
     val elapsed = measureTimeMillis {
-        val canvas = camera.render(world)
-        canvas.toPPMFile(File("output/die2.ppm"))
+//        val canvas = camera.render(world, AntiAliasing.BlurAntiAliasing)
+        val canvas = camera.render(world, AntiAliasing.DistributedAntiAliasing())
+        canvas.toPPMFile(File("output/die2-daa.ppm"))
     }
     println("Time elapsed: ${elapsed / 1000.0} s")
 }
