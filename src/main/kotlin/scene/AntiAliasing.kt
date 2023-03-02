@@ -116,57 +116,21 @@ sealed class AntiAliasing {
 
     class AdaptiveAntiAliasing(private val factor: Int = 4, private val tolerance: Double = 1e-2) : AntiAliasing() {
         override fun render(world: World, camera: Camera): Canvas {
-            // Idea: for each pixel, cast rays out for the pixels, If the differences between the corners
-            // is nearly none, then take the value as the pixel value.
+            // Idea: for a grid of pixels, cast rays out for the pixels, If the differences between pixels
+            // in the same grid region is greater than the tolerance in some color value, then split that
+            // square in the grid into four squares by casting a ray out for the central point.
             // If, on the other hand, the corner differences are large, we recurse.
-            // https://web.cs.wpi.edu/~matt/courses/cs563/talks/antialiasing/adaptive.html
             // https://courses.cs.washington.edu/courses/csep557/01sp/lectures/aa-and-drt.pdf
-            // ChatGPT:
-            /**
-             * In this pseudocode, renderScene is a function that renders the entire scene at a low resolution
-             * using a specified number of rays per pixel. renderPixel is a function that renders a single pixel
-             * at a higher resolution, using a specified number of rays per pixel. blendPixels is a function that
-             * blends a high resolution pixel with the corresponding low resolution pixel, taking into account the
-             * amount of detail in each region. finalizeImage is a function that applies any final post-processing
-             * steps to the image, such as gamma correction or tone mapping.
-             */
-            /**
-             * From Craddick, T: Improved ray tracing performance through tri-adaptive sampling, MSc Project, 2023:
-             * https://scholarworks.alaska.edu/bitstream/handle/11122/11862/Craddick_T_2020.pdf
-             *
-             * The basic premise involves first rendering the scene at a
-             * low resolution, some power of two fractionally lower than the target resolution. This lower
-             * resolution represents the under-sampled state of the scene render, where one ray represents
-             * multiple pixels of the render at the target resolution.
-             * Information about the scene is collected from the render at a given resolution, ranging
-             * from information about where and how the ray hit the closest object, to the color of the
-             * resulting rendered image. This data is stored into a batch of individual textures matching
-             * the respective resolution. These texture files are then upscaled to match the next higher
-             * scene resolution.
-             * At this new resolution tier, the renderer samples the textures of the previous resolution in
-             * order to determine whether to shoot new rays at the current resolution. This is accomplished
-             * by comparing the values of the textures respective to the current pixel with the values of
-             * the neighboring pixels. If there is a significant difference between the current pixel and
-             * the neighboring pixels, then it is assumed that something of interest is occurring within
-             * the local pixel block, and new rays should be shot at the current resolution. Conversely, if
-             * there is little difference between the current pixel and its neighbors, then there is no need
-             * to shoot new rays, and the results from the lower resolution render can be taken for the
-             * current resolution. This trace versus sample structure is what composes the core of the
-             * multi-resolution approach.
-             * This process continues until the target resolution has been met, at which point all undersampling
-             * has been accomplished.
-             */
 
             // First, check that the factor is a power of 2.
             val l2f = log2(factor.toDouble())
             val l2fInt = l2f.roundToInt()
             if (abs(l2f - l2fInt) > DEFAULT_PRECISION || factor < 2)
-                throw IllegalArgumentException("Factor $factor is not appropriate for adaptive anti-aliasing.")
+                throw IllegalArgumentException("Factor $factor is not a positive power of 2.")
 
             // The super scale camera for the most resolution. This is atypical since we need to
             // multiply by factor and add one since we will be sharing corners between pixels.
-            // Example:
-            // 1234
+            // Example: a 1x3 view, blown up to (4 * 1 + 1)x(4 * 3 + 1) = 5x13.
             // for a factor of 4 could go to:
             // x___x___x___x
             // __x_x________
