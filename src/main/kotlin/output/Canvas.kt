@@ -58,4 +58,8 @@ class Canvas(val width: Int,
 
     fun toPPMFile(file: File) =
         file.writeText(toPPM())
+
+    companion object {
+        val NO_COLOR = Color(-1.0, -1.0, -1.0)
+    }
 }

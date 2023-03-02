@@ -7,6 +7,7 @@ import math.Ray
 import math.Tuple
 import output.Canvas
 import kotlin.math.tan
+import kotlin.random.Random
 
 
 // Map a 3D scene onto a 2D canvas.
@@ -27,15 +28,19 @@ class Camera(
     private val halfHeight = if (aspect >= 1) halfView / aspect else halfView
     val pixelSize = 2 * halfWidth / hSize
 
-    fun rayForPixel(px: Int, py: Int): Ray {
+    fun rayForPixel(px: Int, py: Int, jitter: Boolean = false): Ray {
         // Calculate offset from edge of canvas to pixel's centre.
         val xOffset = (px + 0.5) * pixelSize
         val yOffset = (py + 0.5) * pixelSize
 
+        // For distributed ray tracing, we want to allow some jittering.
+        val xJitter = if (jitter) Random.nextDouble(-0.5, 0.5) * pixelSize else 0.0
+        val yJitter = if (jitter) Random.nextDouble(-0.5, 0.5) * pixelSize else 0.0
+
         // The untransformed coordinates of the pixel in world space.
         // Remember that the camera looks towards -z, so +x is to the left.
-        val worldX = halfWidth - xOffset
-        val worldY = halfHeight - yOffset
+        val worldX = halfWidth - xOffset + xJitter
+        val worldY = halfHeight - yOffset + yJitter
 
         // Using the camera matrix, transform the canvas point and origin,
         // and then compute the ray's direction vector.
