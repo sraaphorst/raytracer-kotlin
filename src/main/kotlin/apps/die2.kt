@@ -17,6 +17,8 @@ import java.io.File
 import kotlin.math.PI
 import kotlin.system.measureTimeMillis
 
+// This renders a scene with three six sided dice against a checkered background using
+// each of the different types of anti-aliasing, and records the time needed for each type.
 fun main() {
     val stage = run {
         val transform = Matrix.scale(10, 5, 8)
@@ -54,10 +56,17 @@ fun main() {
         Camera(1800, 1200, PI/2, t)
     }
 
-    val elapsed = measureTimeMillis {
-//        val canvas = camera.render(world, AntiAliasing.BlurAntiAliasing)
-        val canvas = camera.render(world, AntiAliasing.DistributedAntiAliasing())
-        canvas.toPPMFile(File("output/die2-daa.ppm"))
+    mapOf(
+        "naa" to AntiAliasing.NoAntiAliasing,
+        "baa" to AntiAliasing.BlurAntiAliasing,
+        "daa" to AntiAliasing.DistributedAntiAliasing(),
+        "aaa" to AntiAliasing.AdaptiveAntiAliasing(),
+        "saa" to AntiAliasing.SuperScaleAntiAliasing()
+    ).forEach { (antiAliasingName, antiAliasing) ->
+        val elapsed = measureTimeMillis {
+            val canvas = camera.render(world, antiAliasing)
+            canvas.toPPMFile(File("output/die2-$antiAliasingName.ppm"))
+        }
+        println("$antiAliasingName time elapsed: ${elapsed / 1000.0} s")
     }
-    println("Time elapsed: ${elapsed / 1000.0} s")
 }

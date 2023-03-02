@@ -57,7 +57,7 @@ sealed class AntiAliasing {
         }
     }
 
-    class SuperScaleAntiAliasing(private val factor: Int) : AntiAliasing() {
+    class SuperScaleAntiAliasing(private val factor: Int = 4) : AntiAliasing() {
         override fun render(world: World, camera: Camera): Canvas  {
             // Make a super camera to capture the larger image.
             val superCamera = AntiAliasing.superScaleCanvas(camera, factor)
@@ -103,7 +103,7 @@ sealed class AntiAliasing {
                         .asSequence()
                         .shuffled()
                         .take(numRays)
-                        .map { (r, c) -> world.colorAt(superScaleCamera.rayForPixel(r, c)) }
+                        .map { (r, c) -> world.colorAt(superScaleCamera.rayForPixel(r, c, true)) }
                         .toList()
                         .reduce { c1, c2 -> c1 + c2} / numRays
                     image[x, y] = color
@@ -114,7 +114,7 @@ sealed class AntiAliasing {
         }
     }
 
-    class AdaptiveAntiAliasing(private val factor: Int) : AntiAliasing() {
+    class AdaptiveAntiAliasing(private val factor: Int = 4, private val tolerance: Double = 1e-2) : AntiAliasing() {
         override fun render(world: World, camera: Camera): Canvas {
             // Idea: for each pixel, cast rays out for the pixels, If the differences between the corners
             // is nearly none, then take the value as the pixel value.
@@ -157,34 +157,115 @@ sealed class AntiAliasing {
              * has been accomplished.
              */
 
-            // Create the default canvas.
-            val superScaleCamera = superScaleCanvas(camera, factor)
-
-            // For each pixel, shoot out this many rays.
+            // First, check that the factor is a power of 2.
             val l2f = log2(factor.toDouble())
-            if (abs(l2f - l2f.roundToInt()) > DEFAULT_PRECISION || factor < 2)
+            val l2fInt = l2f.roundToInt()
+            if (abs(l2f - l2fInt) > DEFAULT_PRECISION || factor < 2)
                 throw IllegalArgumentException("Factor $factor is not appropriate for adaptive anti-aliasing.")
 
-            val image = Canvas(camera.hSize, camera.vSize)
-            val imageCalculated = Array(camera.hSize) { Array(camera.vSize) {false} }
+            // The super scale camera for the most resolution. This is atypical since we need to
+            // multiply by factor and add one since we will be sharing corners between pixels.
+            // Example:
+            // 1234
+            // for a factor of 4 could go to:
+            // x___x___x___x
+            // __x_x________
+            // ___xx________
+            // x_xxx___x___x
+            val superScaleCamera = Camera(
+                factor * camera.hSize + 1,
+                factor * camera.vSize + 1,
+                camera.fov,
+                camera.transformation
+            )
 
-            fun renderSubsection(startX: Int, startY: Int, endX: Int, endY: Int, stepSize: Int) {
-                (startY..endY step stepSize).forEach { y ->
-                    (startX .. endX step stepSize).forEach { x ->
-                        // If already calculated, don't recalculate.
-                        if (!imageCalculated[x][y]) {
-                            val t = imageCalculated[x]
-                            imageCalculated[x][y] = true
-                            val ray = camera.rayForPixel(x, y)
-                            val color = world.colorAt(ray)
-                            image[x, y] = color
+            // Create the canvas for the larger image and mark it uncolored.
+            val largerImage = Canvas(factor * camera.hSize + 1, factor * camera.vSize + 1)
+            largerImage.clear(Canvas.NO_COLOR)
+
+            // Create the camera for the image, which must be (factor * size + 1) so we can do shared corners
+            // between pixels.
+            val image = Canvas(camera.hSize, camera.vSize)
+
+            // Check the tolerance between two pixels to see if they are far enough apart
+            // to justify subdivision. We need to check each color independently.
+            fun subdivide(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
+                val diff = largerImage[x1, y1] - largerImage[x2, y2]
+                return abs(diff.r) > tolerance || abs(diff.g) > tolerance || abs(diff.b) > tolerance
+            }
+
+            // Render a subsection of the larger image.
+            fun renderSubsection(startX: Int, startY: Int, endX: Int, endY: Int, delta: Int) {
+                // We will render a square in the larger image and subdivide as necessary.
+                (startY..endY step delta).forEach { y ->
+                    (startX..endX step delta).toList().parallelStream().forEach { x ->
+                        // Render pixel (x, y) in the larger image if it has not already been rendered.
+                        if (largerImage[x, y] == Canvas.NO_COLOR)
+                            largerImage[x, y] = world.colorAt(superScaleCamera.rayForPixel(x, y))
+                    }
+                }
+
+                // Now check to see if there is enough difference between the pixels to subdivide.
+                // As per the diagram below, we have the colors for the points marked a, b, c, d.
+                // Check the corner points we just calculated and if any of them result in subdivisions,
+                // calculate the four subdivisions determined by the points marked * and recurse,
+                // provided delta > 1 (for if delta == 1, we are at maximum resolution).
+                // a _ * _ b
+                // _ 1 _ 2 _
+                // * _ * _ *
+                // _ 3 _ 4 _
+                // c _ * _ d
+                if (delta > 1) {
+                (startY..(endY-delta) step delta).forEach { y ->
+                    (startX..(endX-delta) step delta).toList().parallelStream().forEach { x ->
+                        // Upper left is (x, y).
+                        // Upper right is (x, y + delta).
+                        // Lower left is (x + delta, y).
+                        // Lower right is (x + delta, y + delta).
+                        // Center point is (x + newDelta, y + newDelta)
+                        val newDelta = delta / 2
+
+                        // Check all six possible combinations of points for UL, UR, LL, LR to see
+                        // if the tolerance is exceeded, in which case we subdivide.
+                        if (subdivide(x, y, x, y + delta) ||
+                            subdivide(x, y, x + delta, y) ||
+                            subdivide(x, y + delta, x + delta, y + delta) ||
+                            subdivide(x + delta, y, x + delta, y + delta) ||
+                            subdivide(x, y, x + delta, y + delta) ||
+                            subdivide(x + delta, y, x, y + delta)) {
+                                // Subsection 1
+                                renderSubsection(x, y, x + newDelta, y + newDelta, newDelta)
+                                // Subsection 2
+                                renderSubsection(x, y + newDelta, x + newDelta, y + delta, newDelta)
+                                // Subsection 3
+                                renderSubsection(x + newDelta, y, x + delta, y + newDelta, newDelta)
+                                // Subsection 4
+                                renderSubsection(x + newDelta, y + newDelta,
+                                    x + delta, y + delta, newDelta)
+                            }
                         }
                     }
                 }
             }
 
-            // Begin by calculating
-            TODO()
+            // We begin by rendering the corners in the larger pixel and traverse down as needed.
+            renderSubsection(0, 0, factor * camera.hSize, factor * camera.vSize, factor)
+
+            // Now combine the sections by gathering all the points and averaging them out.
+            (0 until camera.vSize).forEach { y ->
+                (0 until camera.hSize).toList().parallelStream().forEach { x ->
+                    // Get all the points in the larger canvas that correspond to these.
+                    // The points are in the range:
+                    // [x * factor, (x + 1) * factor] X [y * factor, (y + 1) * factor]
+                    val points = ((x * factor)..((x + 1) * factor)).flatMap { xp ->
+                        ((y * factor)..((y + 1) * factor)).map { yp -> largerImage[xp, yp] }
+                            .filter { it != Canvas.NO_COLOR }
+                    }
+                    image[x, y] = points.reduce { c1, c2 -> c1 + c2 } / points.size
+                }
+            }
+
+            return image
         }
     }
 
