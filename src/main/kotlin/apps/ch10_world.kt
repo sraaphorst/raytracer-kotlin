@@ -23,7 +23,7 @@ fun main() {
                 Matrix.rotateY(PI/4) * Matrix.scale(0.75, 0.75, 0.75))
             val p2 = StripedPattern(Color.WHITE, Color.GREEN,
                 Matrix.rotateY(-PI/4) * Matrix.scale(0.75, 0.75, 0.75))
-            val p = PerlinNoisePattern(BlendedPattern(p1, p2), 0.5)
+            val p = PerlinNoisePattern(BlendedPattern(p1, p2), 1.0)
             val m = Material(p)
             Plane(Matrix.I, m)
         }
@@ -48,7 +48,7 @@ fun main() {
                     Matrix.scale(0.15, 0.15, 0.15)
             val p1 = RingPattern(Color(1, 0.5, 0), Color(0.5, 1, 1),
                 Matrix.translate(25, 0, 15))
-            val p = SimplexNoisePattern(p1, 0.5)
+            val p = SimplexNoisePattern(p1, 1.0)
             val m = Material(p, specular = 0.0)
             Plane(t, m)
         }

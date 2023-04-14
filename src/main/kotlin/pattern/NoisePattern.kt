@@ -12,7 +12,7 @@ abstract class NoisePattern(
     protected val noise: (Double, Double, Double) -> Double) : Pattern(Matrix.I) {
 
     init {
-        if (scale <= 0.0 || scale >= 1.0)
+        if (scale < 0.0 || scale > 1.0)
             throw IllegalArgumentException("Noise scale is $scale, must be in [0,1].")
     }
     private val pscale = 1.0 - scale
