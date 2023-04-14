@@ -6,10 +6,8 @@ package pattern
 import math.Tuple
 import kotlin.math.floor
 
-class SimplexNoisePattern(pattern: Pattern,
-                          scale: Double = 0.3,
-                          pscale: Double = 0.7)
-    : NoisePattern(pattern, scale, pscale, SimplexNoisePattern::noise) {
+class SimplexNoisePattern(pattern: Pattern, scale: Double = 0.2)
+    : NoisePattern(pattern, scale, SimplexNoisePattern::noise) {
 
     companion object {
         private const val F = 1.0 / 3.0

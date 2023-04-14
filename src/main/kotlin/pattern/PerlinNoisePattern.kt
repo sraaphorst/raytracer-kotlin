@@ -5,8 +5,8 @@ package pattern
 import math.lerp
 import kotlin.math.floor
 
-class PerlinNoisePattern(pattern: Pattern, scale: Double = 0.3, pscale: Double = 0.7)
-    : NoisePattern(pattern, scale, pscale, PerlinNoisePattern::noise) {
+class PerlinNoisePattern(pattern: Pattern, scale: Double = 0.2)
+    : NoisePattern(pattern, scale, PerlinNoisePattern::noise) {
 
     companion object {
         fun noise(x: Double, y: Double, z: Double): Double {

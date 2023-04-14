@@ -9,8 +9,13 @@ import math.Tuple
 abstract class NoisePattern(
     protected val pattern: Pattern,
     protected val scale: Double = 0.3,
-    private val pscale: Double = 0.7,
     protected val noise: (Double, Double, Double) -> Double) : Pattern(Matrix.I) {
+
+    init {
+        if (scale <= 0.0 || scale >= 1.0)
+            throw IllegalArgumentException("Noise scale is $scale, must be in [0,1].")
+    }
+    private val pscale = 1.0 - scale
 
     override fun patternAt(patternPoint: Tuple): Color {
         val (x, y, z, _) = patternPoint
