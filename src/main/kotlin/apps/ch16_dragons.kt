@@ -2,17 +2,18 @@ package apps
 
 // By Sebastian Raaphorst, 2023.
 
-import input.OBJParser
-import light.PointLight
-import material.Material
-import math.Color
-import math.Matrix
-import math.Tuple
-import scene.Camera
-import scene.World
-import shapes.Cube
-import shapes.Cylinder
-import shapes.Group
+import org.vorpal.raytracer.input.OBJParser
+import org.vorpal.raytracer.input.ResourceManager
+import org.vorpal.raytracer.light.PointLight
+import org.vorpal.raytracer.material.Material
+import org.vorpal.raytracer.math.Color
+import org.vorpal.raytracer.math.Matrix
+import org.vorpal.raytracer.math.Tuple
+import org.vorpal.raytracer.scene.Camera
+import org.vorpal.raytracer.scene.World
+import org.vorpal.raytracer.shapes.Cube
+import org.vorpal.raytracer.shapes.Cylinder
+import org.vorpal.raytracer.shapes.Group
 import java.io.File
 import kotlin.math.PI
 import kotlin.system.measureTimeMillis
@@ -29,7 +30,7 @@ fun main() {
         Group(listOf(rawBox), t)
     }
 
-    val dragon = OBJParser.fromURL({}.javaClass.getResource("/dragon.obj")!!)
+    val dragon = OBJParser.fromURL(ResourceManager.getResource("/dragon.obj"))
         .groups.getValue(OBJParser.DefaultGroup)
         .withTransformation(
             Matrix.scale(0.268, 0.268, 0.268) * Matrix.translate(0, 0.1217, 0)

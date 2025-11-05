@@ -3,16 +3,16 @@ package apps
 // By Sebastian Raaphorst, 2023.
 // From https://forum.raytracerchallenge.com/thread/7/cylinders-scene-description
 
-import light.PointLight
-import material.Material
-import math.Color
-import math.Matrix
-import math.Tuple
-import pattern.CheckerPattern
-import scene.Camera
-import scene.World
-import shapes.Cylinder
-import shapes.Plane
+import org.vorpal.raytracer.light.PointLight
+import org.vorpal.raytracer.material.Material
+import org.vorpal.raytracer.math.Color
+import org.vorpal.raytracer.math.Matrix
+import org.vorpal.raytracer.math.Tuple
+import org.vorpal.raytracer.pattern.CheckerPattern
+import org.vorpal.raytracer.scene.Camera
+import org.vorpal.raytracer.scene.World
+import org.vorpal.raytracer.shapes.Cylinder
+import org.vorpal.raytracer.shapes.Plane
 import java.io.File
 import kotlin.math.PI
 import kotlin.system.measureTimeMillis
@@ -111,7 +111,7 @@ fun main() {
 
     val elapsed = measureTimeMillis {
         val canvas = camera.render(world)
-        canvas.toPPMFile(File("output/ch13_world.ppm"))
+        canvas.toPPMFile(File("org/vorpal/raytracer/output/ch13_world.ppm"))
     }
     println("Time elapsed: ${elapsed / 1000.0} s")
 }

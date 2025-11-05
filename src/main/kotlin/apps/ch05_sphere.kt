@@ -2,12 +2,12 @@ package apps
 
 // By Sebastian Raaphorst, 2023.
 
-import math.hit
-import math.Color
-import math.Ray
-import math.Tuple
-import output.Canvas
-import shapes.Sphere
+import org.vorpal.raytracer.math.hit
+import org.vorpal.raytracer.math.Color
+import org.vorpal.raytracer.math.Ray
+import org.vorpal.raytracer.math.Tuple
+import org.vorpal.raytracer.output.Canvas
+import org.vorpal.raytracer.shapes.Sphere
 import java.io.File
 
 fun main() {
@@ -51,5 +51,5 @@ fun main() {
         }
     }
 
-    canvas.toPPMFile(File("output/ch05_sphere.ppm"))
+    canvas.toPPMFile(File("org/vorpal/raytracer/output/ch05_sphere.ppm"))
 }

@@ -2,16 +2,16 @@ package apps
 
 // By Sebastian Raaphorst, 2023.
 
-import light.PointLight
-import material.Material
-import math.Color
-import math.Matrix
-import math.Tuple
-import pattern.*
-import scene.Camera
-import scene.World
-import shapes.Plane
-import shapes.Sphere
+import org.vorpal.raytracer.light.PointLight
+import org.vorpal.raytracer.material.Material
+import org.vorpal.raytracer.math.Color
+import org.vorpal.raytracer.math.Matrix
+import org.vorpal.raytracer.math.Tuple
+import org.vorpal.raytracer.pattern.*
+import org.vorpal.raytracer.scene.Camera
+import org.vorpal.raytracer.scene.World
+import org.vorpal.raytracer.shapes.Plane
+import org.vorpal.raytracer.shapes.Sphere
 import java.io.File
 import kotlin.math.PI
 import kotlin.system.measureTimeMillis
@@ -23,7 +23,7 @@ fun main() {
                 Matrix.rotateY(PI/4) * Matrix.scale(0.75, 0.75, 0.75))
             val p2 = StripedPattern(Color.WHITE, Color.GREEN,
                 Matrix.rotateY(-PI/4) * Matrix.scale(0.75, 0.75, 0.75))
-            val p = PerlinNoisePattern(BlendedPattern(p1, p2))
+            val p = PerlinNoisePattern(BlendedPattern(p1, p2), 0.2)
             val m = Material(p)
             Plane(Matrix.I, m)
         }
@@ -48,7 +48,7 @@ fun main() {
                     Matrix.scale(0.15, 0.15, 0.15)
             val p1 = RingPattern(Color(1, 0.5, 0), Color(0.5, 1, 1),
                 Matrix.translate(25, 0, 15))
-            val p = SimplexNoisePattern(SimplexNoisePattern(p1))
+            val p = SimplexNoisePattern(p1, 0.2)
             val m = Material(p, specular = 0.0)
             Plane(t, m)
         }
@@ -98,7 +98,7 @@ fun main() {
 
     val elapsed = measureTimeMillis {
         val canvas = camera.render(world)
-        canvas.toPPMFile(File("output/ch10_world.ppm"))
+        canvas.toPPMFile(File("org/vorpal/raytracer/output/ch10_world.ppm"))
     }
     println("Time elapsed: ${elapsed / 1000.0} s")
 }

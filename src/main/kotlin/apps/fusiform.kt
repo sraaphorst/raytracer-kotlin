@@ -2,18 +2,20 @@ package apps
 
 // By Sebastian Raaphorst, 2023.
 
-import light.PointLight
-import math.Matrix
-import math.Tuple
-import scene.Camera
-import scene.World
-import shapes.*
+import org.vorpal.raytracer.light.PointLight
+import org.vorpal.raytracer.math.Matrix
+import org.vorpal.raytracer.math.Tuple
+import org.vorpal.raytracer.shapes.Fusiform
+import org.vorpal.raytracer.scene.Camera
+import org.vorpal.raytracer.scene.World
 import java.io.File
 import kotlin.system.measureTimeMillis
 
 fun main() {
-    val fusiform = Fusiform(0.75, 0.25, -1.0, 1.0,
-        Matrix.translate(0, -1.5, 0))
+    val fusiform = Fusiform(
+        0.75, 0.25, -1.0, 1.0,
+        Matrix.translate(0, -1.5, 0)
+    )
 
     val world = run {
         val light = PointLight(Tuple.point(0, 3, -3))

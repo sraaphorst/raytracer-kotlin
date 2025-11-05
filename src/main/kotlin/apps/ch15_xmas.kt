@@ -7,15 +7,18 @@ package apps
 // have all triangular elements: thus, the renderer will use bounding boxes for the mixed
 // groups, but KDTrees for the subgroups containing only triangles.
 
-import light.PointLight
-import material.Material
-import math.Color
-import math.Matrix
-import math.Tuple
-import pattern.CheckerPattern
-import scene.Camera
-import scene.World
-import shapes.*
+import org.vorpal.raytracer.light.PointLight
+import org.vorpal.raytracer.material.Material
+import org.vorpal.raytracer.math.Color
+import org.vorpal.raytracer.math.Matrix
+import org.vorpal.raytracer.math.Tuple
+import org.vorpal.raytracer.shapes.Cylinder
+import org.vorpal.raytracer.shapes.Group
+import org.vorpal.raytracer.shapes.PlainTriangle
+import org.vorpal.raytracer.shapes.Sphere
+import org.vorpal.raytracer.pattern.CheckerPattern
+import org.vorpal.raytracer.scene.Camera
+import org.vorpal.raytracer.scene.World
 import java.io.File
 import kotlin.math.PI
 import kotlin.random.Random
@@ -82,7 +85,7 @@ fun main() {
         // Light sources are all coupled with physical objects, so that they appear as reflections on ornaments.
         val light1 = PointLight(Tuple.point(-10, 10, -10), Color(0.6, 0.6, 0.6))
         val sphere1 = Sphere(
-             Matrix.translate(-10, 10, -10) * Matrix.scale(1.5, 1.5, 1.5),
+            Matrix.translate(-10, 10, -10) * Matrix.scale(1.5, 1.5, 1.5),
             Material(Color.WHITE, ambient = 0.6, diffuse = 0, specular = 0),
             false
         )
@@ -104,14 +107,14 @@ fun main() {
         val light4 = PointLight(Tuple.point(-1, -2, -6), Color(0.1, 0.2, 0.1))
         val sphere4 = Sphere(
             Matrix.translate(-1, -2, -6) * Matrix.scale(0.4, 0.4, 0.4),
-                    Material(Color(0.5, 1,0.5), ambient = 0.6, diffuse = 0, specular = 0),
+            Material(Color(0.5, 1, 0.5), ambient = 0.6, diffuse = 0, specular = 0),
             false
         )
 
         val light5 = PointLight(Tuple.point(3, -1, -6), Color(0.2, 0.2, 0.2))
         val sphere5 = Sphere(
             Matrix.translate(3, -1, -6) * Matrix.scale(0.5, 0.5, 0.5),
-                    Material(Color.WHITE, ambient = 0.6, diffuse = 0, specular = 0),
+            Material(Color.WHITE, ambient = 0.6, diffuse = 0, specular = 0),
             false
         )
 
@@ -128,7 +131,8 @@ fun main() {
             )
 
             // Silver crown atop the ornament.
-            val crown = Cylinder(0.0, 1.0,
+            val crown = Cylinder(
+                0.0, 1.0,
                 transformation = Matrix.rotateZ(-0.1) * Matrix.translate(0, 0.9, 0) *
                         Matrix.scale(0.2, 0.3, 0.2),
                 material = Material(

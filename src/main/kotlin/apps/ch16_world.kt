@@ -3,14 +3,18 @@ package apps
 // By Sebastian Raaphorst, 2023.
 // Adapted from https://github.com/lerouxrgd/raytracer/blob/master/samples/scenes/csg.yaml
 
-import light.PointLight
-import material.Material
-import math.Color
-import math.Matrix
-import math.Tuple
-import scene.Camera
-import scene.World
-import shapes.*
+import org.vorpal.raytracer.light.PointLight
+import org.vorpal.raytracer.material.Material
+import org.vorpal.raytracer.math.Color
+import org.vorpal.raytracer.math.Matrix
+import org.vorpal.raytracer.math.Tuple
+import org.vorpal.raytracer.shapes.CSGShape
+import org.vorpal.raytracer.shapes.Cube
+import org.vorpal.raytracer.shapes.Cylinder
+import org.vorpal.raytracer.shapes.Operation
+import org.vorpal.raytracer.shapes.Sphere
+import org.vorpal.raytracer.scene.Camera
+import org.vorpal.raytracer.scene.World
 import java.io.File
 import kotlin.math.PI
 import kotlin.system.measureTimeMillis
@@ -28,10 +32,10 @@ fun main() {
                 val s1 = Cylinder(
                     transformation = Matrix.rotateY(PI / 3) * Matrix.scale(0.6, 0.6, 0.6),
                     material = Material(Color.RED)
-                    )
+                )
                 val s2 = Cylinder(
                     transformation = Matrix.rotateY(PI / 3) * Matrix.rotateX(PI / 2) *
-                        Matrix.scale(0.6, 0.6, 0.6),
+                            Matrix.scale(0.6, 0.6, 0.6),
                     material = Material(Color.BLUE)
                 )
                 CSGShape(Operation.Union, s1, s2)
@@ -39,7 +43,7 @@ fun main() {
 
             val innerS2 = Cylinder(
                 transformation = Matrix.rotateY(PI / 3) * Matrix.rotateZ(PI / 2) *
-                    Matrix.scale(0.6, 0.6, 0.6),
+                        Matrix.scale(0.6, 0.6, 0.6),
                 material = Material(Color.GREEN)
             )
 

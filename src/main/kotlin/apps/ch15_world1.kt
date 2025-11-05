@@ -2,23 +2,24 @@ package apps
 
 // By Sebastian Raaphorst, 2023.
 
-import input.OBJParser
-import light.PointLight
-import material.Material
-import math.Color
-import math.Matrix
-import math.Tuple
-import pattern.RingPattern
-import scene.Camera
-import scene.World
-import shapes.Plane
+import org.vorpal.raytracer.input.OBJParser
+import org.vorpal.raytracer.input.ResourceManager
+import org.vorpal.raytracer.light.PointLight
+import org.vorpal.raytracer.material.Material
+import org.vorpal.raytracer.math.Color
+import org.vorpal.raytracer.math.Matrix
+import org.vorpal.raytracer.math.Tuple
+import org.vorpal.raytracer.pattern.RingPattern
+import org.vorpal.raytracer.scene.Camera
+import org.vorpal.raytracer.scene.World
+import org.vorpal.raytracer.shapes.Plane
 import java.io.File
 import kotlin.math.PI
 import kotlin.system.measureTimeMillis
 
 fun main() {
     val modelStart = System.currentTimeMillis()
-    val model = OBJParser.fromURL({}.javaClass.getResource("/teddybear.obj")!!)
+    val model = OBJParser.fromURL(ResourceManager.getResource("/teddybear.obj")!!)
         .groups.getValue(OBJParser.DefaultGroup)
 
     val bear1 = run {

@@ -2,12 +2,12 @@ package apps
 
 // By Sebastian Raaphorst, 2023.
 
-import light.PointLight
-import math.Matrix
-import math.Tuple
-import scene.Camera
-import scene.World
-import shapes.Group
+import org.vorpal.raytracer.light.PointLight
+import org.vorpal.raytracer.math.Matrix
+import org.vorpal.raytracer.math.Tuple
+import org.vorpal.raytracer.scene.Camera
+import org.vorpal.raytracer.scene.World
+import org.vorpal.raytracer.shapes.Group
 import java.io.File
 import kotlin.math.PI
 import kotlin.system.measureTimeMillis
@@ -34,7 +34,7 @@ fun main() {
 
     val elapsed = measureTimeMillis {
         val canvas = camera.render(world)
-        canvas.toPPMFile(File("output/ch14_hexagon.ppm"))
+        canvas.toPPMFile(File("org/vorpal/raytracer/output/ch14_hexagon.ppm"))
     }
     println("Time elapsed: ${elapsed / 1000.0} s")
 }

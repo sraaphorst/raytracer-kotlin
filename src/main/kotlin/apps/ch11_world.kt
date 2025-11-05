@@ -3,17 +3,17 @@ package apps
 // By Sebastian Raaphorst, 2023.
 // From https://forum.raytracerchallenge.com/thread/4/reflection-refraction-scene-description
 
-import light.PointLight
-import material.Material
-import math.Color
-import math.Matrix
-import math.Tuple
-import pattern.CheckerPattern
-import pattern.StripedPattern
-import scene.Camera
-import scene.World
-import shapes.Plane
-import shapes.Sphere
+import org.vorpal.raytracer.light.PointLight
+import org.vorpal.raytracer.material.Material
+import org.vorpal.raytracer.math.Color
+import org.vorpal.raytracer.math.Matrix
+import org.vorpal.raytracer.math.Tuple
+import org.vorpal.raytracer.pattern.CheckerPattern
+import org.vorpal.raytracer.pattern.StripedPattern
+import org.vorpal.raytracer.scene.Camera
+import org.vorpal.raytracer.scene.World
+import org.vorpal.raytracer.shapes.Plane
+import org.vorpal.raytracer.shapes.Sphere
 import java.io.File
 import kotlin.math.PI
 import kotlin.system.measureTimeMillis
@@ -116,7 +116,7 @@ fun main() {
 
     val elapsed = measureTimeMillis {
         val canvas = camera.render(world)
-        canvas.toPPMFile(File("output/ch11_world.ppm"))
+        canvas.toPPMFile(File("org/vorpal/raytracer/output/ch11_world.ppm"))
     }
     println("Time elapsed: ${elapsed / 1000.0} s")
 }
