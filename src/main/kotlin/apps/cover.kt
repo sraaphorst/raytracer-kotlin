@@ -3,16 +3,16 @@ package apps
 // By Sebastian Raaphorst, 2023.
 // Cover image of The Ray Tracing Challenge, by Jamis Buck.
 
-import light.PointLight
-import material.Material
-import math.Color
-import math.Matrix
-import math.Tuple
-import scene.Camera
-import scene.World
-import shapes.Cube
-import shapes.Plane
-import shapes.Sphere
+import org.vorpal.raytracer.light.PointLight
+import org.vorpal.raytracer.material.Material
+import org.vorpal.raytracer.math.Color
+import org.vorpal.raytracer.math.Matrix
+import org.vorpal.raytracer.math.Tuple
+import org.vorpal.raytracer.scene.Camera
+import org.vorpal.raytracer.scene.World
+import org.vorpal.raytracer.shapes.Cube
+import org.vorpal.raytracer.shapes.Plane
+import org.vorpal.raytracer.shapes.Sphere
 import java.io.File
 import kotlin.math.PI
 import kotlin.system.measureTimeMillis

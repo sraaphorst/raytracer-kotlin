@@ -2,23 +2,23 @@ package apps
 
 // By Sebastian Raaphorst, 2023.
 
-import light.PointLight
-import material.Material
-import math.Color
-import math.Matrix
-import math.Tuple
-import pattern.CheckerPattern
-import scene.AntiAliasing
-import scene.Camera
-import scene.World
-import shapes.Cube
-import shapes.die6
+import org.vorpal.raytracer.light.PointLight
+import org.vorpal.raytracer.material.Material
+import org.vorpal.raytracer.math.Color
+import org.vorpal.raytracer.math.Matrix
+import org.vorpal.raytracer.math.Tuple
+import org.vorpal.raytracer.pattern.CheckerPattern
+import org.vorpal.raytracer.scene.AntiAliasing
+import org.vorpal.raytracer.scene.Camera
+import org.vorpal.raytracer.scene.World
+import org.vorpal.raytracer.shapes.Cube
+import org.vorpal.raytracer.shapes.die6
 import java.io.File
 import kotlin.math.PI
 import kotlin.system.measureTimeMillis
 
 // This renders a scene with three six sided dice against a checkered background using
-// each of the different types of anti-aliasing, and records the time needed for each type.
+// each of the different types of antialiasing, and records the time needed for each type.
 fun main() {
     val stage = run {
         val transform = Matrix.scale(10, 5, 8)

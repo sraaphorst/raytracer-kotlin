@@ -1,15 +1,16 @@
 package apps
 
-import input.OBJParser
-import light.PointLight
-import material.Material
-import math.Color
-import math.Matrix
-import math.Tuple
-import pattern.CheckerPattern
-import scene.Camera
-import scene.World
-import shapes.Cube
+import org.vorpal.raytracer.input.OBJParser
+import org.vorpal.raytracer.input.ResourceManager
+import org.vorpal.raytracer.light.PointLight
+import org.vorpal.raytracer.material.Material
+import org.vorpal.raytracer.math.Color
+import org.vorpal.raytracer.math.Matrix
+import org.vorpal.raytracer.math.Tuple
+import org.vorpal.raytracer.pattern.CheckerPattern
+import org.vorpal.raytracer.scene.Camera
+import org.vorpal.raytracer.scene.World
+import org.vorpal.raytracer.shapes.Cube
 import java.io.File
 import kotlin.math.PI
 import kotlin.system.measureTimeMillis
@@ -18,7 +19,7 @@ fun main() {
     // 49.156 points.
     // 49,152 quadrilaterals -> 98,304 triangles.
     val modelStart = System.currentTimeMillis()
-    val model = OBJParser.fromURL({}.javaClass.getResource("/flaccid.obj")!!)
+    val model = OBJParser.fromURL(ResourceManager.getResource("/flaccid.obj")!!)
         .groups.getValue(OBJParser.DefaultGroup)
 
     val model1 = run {

@@ -2,7 +2,7 @@ package apps
 
 // By Sebastian Raaphorst, 2022.
 
-import math.Tuple
+import org.vorpal.raytracer.math.Tuple
 
 data class Projectile(val position: Tuple, val velocity: Tuple) {
     init {

@@ -2,12 +2,12 @@ package apps
 
 // By Sebastian Raaphorst, 2023.
 
-import light.PointLight
-import math.Matrix
-import math.Tuple
-import scene.Camera
-import scene.World
-import shapes.Torus
+import org.vorpal.raytracer.light.PointLight
+import org.vorpal.raytracer.math.Matrix
+import org.vorpal.raytracer.math.Tuple
+import org.vorpal.raytracer.scene.Camera
+import org.vorpal.raytracer.scene.World
+import org.vorpal.raytracer.shapes.Torus
 import java.io.File
 import kotlin.math.PI
 import kotlin.system.measureTimeMillis

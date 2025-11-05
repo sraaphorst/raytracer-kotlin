@@ -2,10 +2,10 @@ package apps
 
 // By Sebastian Raaphorst, 2023.
 
-import math.Color
-import math.Matrix
-import math.Tuple
-import output.Canvas
+import org.vorpal.raytracer.math.Color
+import org.vorpal.raytracer.math.Matrix
+import org.vorpal.raytracer.math.Tuple
+import org.vorpal.raytracer.output.Canvas
 import java.io.File
 import java.time.LocalTime
 import kotlin.math.PI
@@ -59,5 +59,5 @@ fun main() {
         canvas[newP.x, newP.y] = minuteColor
     }
 
-    canvas.toPPMFile(File("output/ch04_clock.ppm"))
+    canvas.toPPMFile(File("org/vorpal/raytracer/output/ch04_clock.ppm"))
 }

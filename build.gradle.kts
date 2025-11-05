@@ -1,11 +1,8 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-    kotlin("jvm") version "1.8.0"
-    application
+    kotlin("jvm") version "2.2.20"
 }
 
-group = "me.sraaphorst"
+group = "org.vorpal.raytracer"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -13,20 +10,14 @@ repositories {
 }
 
 dependencies {
+    implementation(kotlin("stdlib"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
     testImplementation(kotlin("test"))
 }
 
 tasks.test {
     useJUnitPlatform()
 }
-
-java {
-    sourceCompatibility = org.gradle.api.JavaVersion.VERSION_11
-    targetCompatibility = org.gradle.api.JavaVersion.VERSION_11
-}
-
-tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions {
-        jvmTarget = "11"
-    }
+kotlin {
+    jvmToolchain(21)
 }

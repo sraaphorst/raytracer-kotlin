@@ -2,15 +2,51 @@ package apps
 
 // By Sebastian Raaphorst, 2023.
 
-import material.Material
-import math.Color
-import math.Matrix
-import pattern.CheckerPattern
-import shapes.Cube
-import shapes.Cylinder
-import shapes.Group
-import shapes.Sphere
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import org.vorpal.raytracer.material.Material
+import org.vorpal.raytracer.math.Color
+import org.vorpal.raytracer.math.Matrix
+import org.vorpal.raytracer.pattern.CheckerPattern
+import org.vorpal.raytracer.scene.Camera
+import org.vorpal.raytracer.scene.World
+import org.vorpal.raytracer.shapes.Cube
+import org.vorpal.raytracer.shapes.Cylinder
+import org.vorpal.raytracer.shapes.Group
+import org.vorpal.raytracer.shapes.Sphere
+import java.io.File
 import kotlin.math.PI
+import kotlin.math.min
+import kotlin.system.measureTimeMillis
+
+data class RenderJob(
+    val name: String,
+    val camera: Camera,
+    val world: World,
+    val outputFile: File
+)
+
+fun runJobsInParallel(jobs: List<RenderJob>) {
+    val elapsed = measureTimeMillis {
+        runBlocking {
+            jobs.map { job ->
+                async(Dispatchers.Default) {
+                    println("Starting render: ${job.name}")
+                    val canvas = job.camera.render(job.world)
+                    job.outputFile.parentFile?.mkdirs()
+                    canvas.toPPMFile(job.outputFile)
+                    println("Finished render: ${job.name}")
+                }
+            }.awaitAll()
+        }
+    }
+    println("Total time for ${jobs.size} images: ${elapsed / 1000.0} s")
+}
 
 // The shared side of a hexagon.
 val side = run {

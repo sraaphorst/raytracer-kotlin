@@ -2,9 +2,9 @@ package apps
 
 // By Sebastian Raaphorst, 2022.
 
-import math.Color
-import math.Tuple
-import output.Canvas
+import org.vorpal.raytracer.math.Color
+import org.vorpal.raytracer.math.Tuple
+import org.vorpal.raytracer.output.Canvas
 import java.io.File
 import kotlin.math.roundToInt
 
@@ -38,6 +38,6 @@ fun main() {
             } }
         }
 
-        toPPMFile(File("output/ch02_cannonrender.ppm"))
+        toPPMFile(File("org/vorpal/raytracer/output/ch02_cannonrender.ppm"))
     }
 }

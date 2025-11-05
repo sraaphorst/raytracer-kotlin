@@ -3,18 +3,18 @@ package apps
 // By Sebastian Raaphorst, 2023.
 // Scene details provided by Jamis Buck, private communication.
 
-import light.PointLight
-import material.Material
-import math.Color
-import math.Matrix
-import math.Tuple
-import math.degreesToRadians
-import pattern.CheckerPattern
-import scene.Camera
-import scene.World
-import shapes.Cube
-import shapes.Plane
-import shapes.Torus
+import org.vorpal.raytracer.light.PointLight
+import org.vorpal.raytracer.material.Material
+import org.vorpal.raytracer.math.Color
+import org.vorpal.raytracer.math.Matrix
+import org.vorpal.raytracer.math.Tuple
+import org.vorpal.raytracer.math.degreesToRadians
+import org.vorpal.raytracer.pattern.CheckerPattern
+import org.vorpal.raytracer.scene.Camera
+import org.vorpal.raytracer.scene.World
+import org.vorpal.raytracer.shapes.Cube
+import org.vorpal.raytracer.shapes.Plane
+import org.vorpal.raytracer.shapes.Torus
 import java.io.File
 import kotlin.system.measureTimeMillis
 

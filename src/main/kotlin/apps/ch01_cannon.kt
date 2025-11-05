@@ -2,7 +2,7 @@ package apps
 
 // By Sebastian Raaphorst, 2022.
 
-import math.Tuple
+import org.vorpal.raytracer.math.Tuple
 
 fun main() {
     val projectile = Projectile(Tuple.point(0, 1, 0), Tuple.vector(1, 1, 0).normalized)
